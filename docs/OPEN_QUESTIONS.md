@@ -2,10 +2,9 @@
 
 Cosas que el producto o la técnica no definen y que **no se inventan**. Cada una con contexto y una opción provisional si bloquea el avance.
 
-## Q-001 — Documentos de producto no disponibles
-- **Contexto**: `AGENTS.md` y `docs/ARCHITECTURE.md` referencian `docs/PRODUCT.md`, `docs/DOMAIN.md` y `docs/PARSER.md` (pantallas S1–S11, vectores de cálculo, fixtures del parser). Al arrancar este proyecto nuevo no se han aportado esos documentos.
-- **Bloquea**: no a M0. Sí a M1 (vectores de `DOMAIN.md`) y M2 (fixtures del parser).
-- **Propuesta**: aportarlos antes de empezar M1.
+## Q-001 — Documentos de producto — RESUELTA
+- **Contexto**: `AGENTS.md` y `docs/ARCHITECTURE.md` referencian `docs/PRODUCT.md`, `docs/DOMAIN.md` y `docs/PARSER.md` (pantallas S1–S11, vectores de cálculo, fixtures del parser).
+- **Estado**: resuelta el 2026-10-10; los tres documentos ya están en `docs/`. M1 y M3 pueden empezar.
 
 ## Q-002 — Nombre comercial y bundle identifier definitivos
 - **Contexto**: `PresupuestApp` es provisional (D-001).

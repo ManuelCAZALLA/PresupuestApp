@@ -1,0 +1,56 @@
+# Dominio
+
+Todo este documento vive en `Packages/QuoteCore`. Sin SwiftUI, SwiftData ni UIKit.
+
+## Entidades
+- **Trade**: `plumber`, `mason`, `electrician`, `other`.
+- **MeasureUnit**: `unit` (ud), `meter` (m), `squareMeter` (m2), `cubicMeter` (m3), `hour` (h), `lumpSum` (global).
+- **ItemKind**: `material`, `labor`, `travel`, `other`.
+- **Item** (partida): `id`, `name`, `aliases: [String]`, `unit`, `unitPrice: Decimal` (sin IVA), `kind`, `category: String?`, `trade`.
+- **Kit**: `id`, `name`, `entries: [(itemID, quantity)]`.
+- **Client**: `name`, `phone`, `address`, `workAddress?` (todo texto libre).
+- **QuoteLine**: `id`, `itemID?`, `name` (copia), `unit` (copia), `quantity: Decimal`, `unitPrice: Decimal` (copia, sin IVA), `vatRate: Decimal`, `origin` (`parser`, `manual`, `kit`).
+- **Discount**: `none`, `percent(Decimal)`, `amount(Decimal)`.
+- **QuoteStatus**: `draft`, `sent`, `accepted`, `rejected`.
+- **Quote**: `id`, `number`, `date`, `validityDays`, `client`, `status`, `lines`, `discount`, `notes`, `defaultVATRate`.
+- **BusinessProfile**: `name`, `taxID`, `phone`, `email`, `logo: Data?`, `defaultVATRate`, `terms`, `validityDays`, `numberPrefix`.
+
+## Precios y redondeo (regla única)
+- Todo con `Decimal`. Los precios unitarios se guardan con hasta 4 decimales (por la conversión desde precios con IVA) y se muestran con 2.
+- Redondeo a 2 decimales con `NSDecimalNumber.RoundingMode.plain` (mitad hacia arriba). Se redondea SOLO en: total de línea, descuento, base por tipo de IVA y cuota de IVA.
+- Importes en euros. Formato de presentación es-ES (coma decimal) en `Presentation/Shared`, nunca en el dominio.
+
+## Cálculo de un presupuesto (`QuoteCalculator`)
+1. `lineTotal = round2(quantity × unitPrice)`.
+2. `subtotal = Σ lineTotal`.
+3. Descuento: `percent(p)` → `round2(subtotal × p/100)`; `amount(a)` → `min(a, subtotal)`; `none` → 0.
+4. Agrupar `lineTotal` por tipo de IVA. Repartir el descuento entre grupos proporcionalmente a su base (el último grupo absorbe el resto de céntimos para que la suma sea exacta).
+5. Por grupo: `base = baseSinDescuento − descuentoDelGrupo`; `iva = round2(base × rate)`.
+6. `total = Σ (base + iva)`.
+Devuelve `QuoteTotals`: subtotal, descuento, desglose por tipo de IVA (base, cuota) y total.
+
+### Vectores de prueba obligatorios
+| # | Entrada | Resultado |
+|---|---|---|
+| 1 | 4 × 50,00 @21 % + 1 × 120,00 @21 % | subtotal 320,00; IVA 67,20; total 387,20 |
+| 2 | 1 × 100,00 @21 % + 1 × 200,00 @10 % | subtotal 300,00; IVA21 21,00; IVA10 20,00; total 341,00 |
+| 3 | 2,5 × 10,01 @21 % | línea 25,03 (25,025 redondea hacia arriba); IVA 5,26; total 30,29 |
+| 4 | Vector 2 con descuento 10 % | descuento 30,00; bases 90,00 y 180,00; IVA21 18,90; IVA10 18,00; total 306,90 |
+| 5 | Descuento fijo 500,00 sobre subtotal 300,00 | descuento 300,00 (nunca mayor que el subtotal); total 0,00 |
+| 6 | Presupuesto sin líneas | `DomainError.emptyQuote` al intentar guardarlo como enviado |
+
+### Precios con IVA incluido (importación)
+`netPrice = round4(priceWithVAT / (1 + rate))`. Ejemplo: 121,00 con IVA 21 % → 100,0000. 25,00 → 20,6612.
+
+## Reglas
+- Cambiar el precio de una partida NO modifica presupuestos existentes (las líneas son copias).
+- Duplicar un presupuesto copia las líneas tal cual (precios del momento), con número nuevo, fecha de hoy y estado `draft`. Una acción aparte "actualizar precios" puede recalcular desde el catálogo.
+- Numeración: `<prefijo>-<año>-<secuencia de 4 dígitos>`, p. ej. `P-2026-0001`. La secuencia reinicia cada año.
+- Estados: `draft → sent → accepted | rejected`. Un presupuesto `sent` se puede volver a editar, pero pasa otra vez a `draft`.
+- Límite gratuito: 5 presupuestos creados por mes natural (`QuotaPolicy`, con `Clock` inyectado). El plan lo decide `EntitlementProvider` (puerto).
+
+## Alias aprendidos
+Cuando el usuario resuelve una línea ambigua o sin coincidencia, `LearnAlias` guarda la frase normalizada (sin cantidad ni unidad) como alias de la partida elegida. Reglas: único por partida, máximo 20 por partida, nunca duplica el nombre ni otro alias existente de la misma partida.
+
+## Casos de uso (nombres)
+`InterpretRequest`, `ResolveAmbiguousLine`, `LearnAlias`, `CalculateQuote`, `CreateQuote`, `UpdateQuote`, `DuplicateQuote`, `ChangeQuoteStatus`, `AddKitToQuote`, `ListQuotes`, `ManageItems` (crear/editar/borrar), `ManageKits`, `ImportTariff` (aplica el mapeo de columnas ya revisado), `LoadTradePack`, `SaveBusinessProfile`, `CheckQuota`, `ExportQuotePDF` (usa el puerto `QuotePDFRenderer`).
