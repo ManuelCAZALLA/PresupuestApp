@@ -38,3 +38,10 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
 - **Decisión**: M0 no añade ninguna dependencia de terceros; solo el paquete local `Packages/QuoteCore`.
 - **Motivo**: `AGENTS.md` prohíbe dependencias al empezar; la primera admitida (lector `.xlsx`) llega en M4.
 - **Consecuencia**: si aparece una dependencia nueva, requiere aprobación y una decisión aquí.
+
+## D-006 — Configuración del paquete QuoteCore
+- **Fecha**: 2026-10-10
+- **Estado**: aceptada
+- **Decisión**: `Packages/QuoteCore` usa `swift-tools-version: 6.0`, plataformas mínimas iOS 17 y macOS 14, un target `QuoteCore` (solo Foundation) y un `testTarget` `QuoteCoreTests` con Swift Testing. Sin dependencias externas.
+- **Motivo**: iOS 17 es el mínimo exigido por SwiftData y macOS 14 permite compilar y probar el dominio con `swift test` en el Mac; fijar tools-version 6.0 garantiza el modo lenguaje Swift 6 sin sorpresas entre agentes.
+- **Consecuencia**: el dominio se verifica con `swift test --package-path Packages/QuoteCore`; cualquier dependencia o cambio de plataforma requiere una decisión nueva.
