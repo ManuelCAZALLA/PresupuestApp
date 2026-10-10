@@ -1,0 +1,16 @@
+{
+  "sourceLanguage" : "es",
+  "strings" : {
+    "home.placeholder.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pantalla inicial"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
