@@ -2,9 +2,11 @@ import SwiftUI
 
 @main
 struct PresupuestApp: App {
+    private let container = AppContainer()
+
     var body: some Scene {
         WindowGroup {
-            AppRootView(container: AppContainer())
+            AppRootView(router: container.router)
         }
     }
 }

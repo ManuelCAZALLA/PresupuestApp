@@ -20,3 +20,14 @@ Pasos para dejar el proyecto listo para desarrollar. El repo ya trae `Packages/Q
 swift test --package-path Packages/QuoteCore
 ```
 Y en Xcode: selecciona un simulador iOS 17+ y **Run** (⌘R). Debe arrancar una pantalla vacía.
+
+## 4. Nota de entorno (Desktop en iCloud)
+Si `~/Desktop` está gestionado por iCloud, `swift test` puede fallar al firmar el `.xctest` con `resource fork, Finder information, or similar detritus not allowed`. Solución local: apuntar `.build` a una carpeta fuera de iCloud (ya aplicado en este checkout):
+
+```
+rm -rf Packages/QuoteCore/.build
+ln -s "$HOME/Library/Caches/PresupuestApp/QuoteCore-build" Packages/QuoteCore/.build
+```
+
+`.build` está en `.gitignore`, así que hay que recrear el enlace tras clonar el repo en una carpeta de iCloud. Alternativa equivalente sin tocar el repo: `swift test --package-path Packages/QuoteCore --scratch-path "$HOME/Library/Caches/PresupuestApp/QuoteCore-build"`.
+

@@ -1,9 +1,8 @@
 import SwiftUI
 
-/// App root: hosts the NavigationStack bound to the injected router.
+/// App root: hosts the NavigationStack bound to the router created in Composition.
 struct AppRootView: View {
-    let container: AppContainer
-    @State private var router = AppRouter()
+    @Bindable var router: AppRouter
 
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -14,5 +13,5 @@ struct AppRootView: View {
 }
 
 #Preview {
-    AppRootView(container: AppContainer())
+    AppRootView(router: AppRouter())
 }

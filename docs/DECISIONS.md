@@ -21,7 +21,7 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
 ## D-003 — Tests de QuoteCore con Swift Testing
 - **Fecha**: 2026-10-10
 - **Estado**: aceptada
-- **Decisión**: los tests de `Packages/QuoteCore` usan **Swift Testing** (`import Testing`, `@Test`, `#expect`), disponibles en Swift 6.4.
+- **Decisión**: los tests de `Packages/QuoteCore` usan **Swift Testing** (`import Testing`, `@Test`, `#expect`), incluidos en el toolchain (Swift 6.4). El modo lenguaje es Swift 6 tanto en el paquete (`swift-tools-version: 6.0`) como en el target de la app (`SWIFT_VERSION = 6.0`).
 - **Motivo**: es el marco moderno de Apple y viene con el toolchain; evita dependencias externas.
 - **Consecuencia**: el test de humo de M0 y, desde M1, los vectores de `DOMAIN.md` se escriben con Swift Testing.
 

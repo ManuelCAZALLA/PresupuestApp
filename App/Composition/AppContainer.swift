@@ -1,6 +1,7 @@
 /// Composition root. Manual dependency injection.
 ///
-/// Empty in M0: concrete repositories, use cases and services are wired here
-/// from later milestones. Nothing imports this except `App/Composition`.
+/// The router is created here and injected into the view tree. Repositories,
+/// use cases and services are wired here from later milestones.
 final class AppContainer {
+    let router = AppRouter()
 }

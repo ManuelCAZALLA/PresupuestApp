@@ -3,7 +3,7 @@
 Un hito = una rama. Al terminar un hito: tests en verde, `reviewer` aprueba, se marca como hecho aquí.
 Estado: [ ] pendiente · [~] en curso · [x] hecho.
 
-## [~] M0 — Arranque
+## [x] M0 — Arranque
 **Dueños**: architect (esqueleto) + ui_engineer (composición).
 - Proyecto Xcode creado, paquete local `Packages/QuoteCore` enlazado.
 - Carpetas según `docs/ARCHITECTURE.md`, vacías pero compilando.
