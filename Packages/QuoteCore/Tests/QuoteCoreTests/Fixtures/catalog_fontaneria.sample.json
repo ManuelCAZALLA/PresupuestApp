@@ -1,0 +1,29 @@
+{
+  "_comment": "DATOS DE PRUEBA. Los precios NO son reales. No usar en producción.",
+  "trade": "plumber",
+  "synonyms": [
+    ["termo", "calentador", "termo electrico", "calentador electrico"],
+    ["plato de ducha", "base de ducha"],
+    ["inodoro", "wc", "taza", "water"],
+    ["grifo", "grifería"],
+    ["mano de obra", "hora de trabajo"]
+  ],
+  "items": [
+    { "id": "urinario",        "name": "Urinario",                    "aliases": [],                         "unit": "ud", "price": 100.00, "kind": "material", "category": "Sanitarios" },
+    { "id": "inodoro",         "name": "Inodoro",                     "aliases": [],                         "unit": "ud", "price": 110.00, "kind": "material", "category": "Sanitarios" },
+    { "id": "plato-ducha-90",  "name": "Plato de ducha 90 cm",        "aliases": [],                         "unit": "ud", "price": 120.00, "kind": "material", "category": "Ducha" },
+    { "id": "plato-ducha-120", "name": "Plato de ducha 120 cm",       "aliases": [],                         "unit": "ud", "price": 150.00, "kind": "material", "category": "Ducha" },
+    { "id": "mampara-ducha",   "name": "Mampara de ducha",            "aliases": [],                         "unit": "ud", "price": 200.00, "kind": "material", "category": "Ducha" },
+    { "id": "termo-50l",       "name": "Termo eléctrico 50 litros",   "aliases": [],                         "unit": "ud", "price": 180.00, "kind": "material", "category": "Agua caliente" },
+    { "id": "termo-80l",       "name": "Termo eléctrico 80 litros",   "aliases": [],                         "unit": "ud", "price": 220.00, "kind": "material", "category": "Agua caliente" },
+    { "id": "termo-100l",      "name": "Termo eléctrico 100 litros",  "aliases": [],                         "unit": "ud", "price": 260.00, "kind": "material", "category": "Agua caliente" },
+    { "id": "grifo-lavabo",    "name": "Grifo de lavabo",             "aliases": [],                         "unit": "ud", "price": 40.00,  "kind": "material", "category": "Grifería" },
+    { "id": "grifo-ducha",     "name": "Grifo de ducha",              "aliases": ["monomando ducha"],        "unit": "ud", "price": 55.00,  "kind": "material", "category": "Grifería" },
+    { "id": "sifon",           "name": "Sifón de lavabo",             "aliases": [],                         "unit": "ud", "price": 12.00,  "kind": "material", "category": "Desagües" },
+    { "id": "desatasco",       "name": "Desatasco",                   "aliases": [],                         "unit": "ud", "price": 90.00,  "kind": "labor",    "category": "Servicios" },
+    { "id": "tubo-pex-20",     "name": "Tubo multicapa 20 mm",        "aliases": [],                         "unit": "m",  "price": 2.50,   "kind": "material", "category": "Tuberías" },
+    { "id": "tubo-pex-25",     "name": "Tubo multicapa 25 mm",        "aliases": [],                         "unit": "m",  "price": 3.50,   "kind": "material", "category": "Tuberías" },
+    { "id": "mano-obra-hora",  "name": "Mano de obra (hora)",         "aliases": [],                         "unit": "h",  "price": 30.00,  "kind": "labor",    "category": "Mano de obra" },
+    { "id": "desplazamiento",  "name": "Desplazamiento",              "aliases": [],                         "unit": "ud", "price": 20.00,  "kind": "travel",   "category": "Servicios" }
+  ]
+}
