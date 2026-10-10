@@ -6,13 +6,12 @@ enum AppRoute: Hashable {
 }
 
 /// Owns the navigation state. Created at the composition root and injected into the view tree.
+///
+/// `push(_:)` is added together with the first `AppRoute` cases; with an empty
+/// enum the compiler would flag the route append as unreachable code.
 @Observable
 final class AppRouter {
     var path = NavigationPath()
-
-    func push(_ route: AppRoute) {
-        path.append(route)
-    }
 
     func popToRoot() {
         path = NavigationPath()
