@@ -160,6 +160,24 @@ struct QuoteVectorTests {
         #expect(totals.total == d("329.63"))
     }
 
+    // Vector 9 de DOMAIN.md: orden de reparto (0,01 sobre 150,00 @10 % + 150,00 @21 %)
+    @Test func vector9() {
+        let lines = [
+            makeLine(quantity: d("1"), unitPrice: d("150.00"), vatRate: d("10")),
+            makeLine(quantity: d("1"), unitPrice: d("150.00"), vatRate: d("21"))
+        ]
+        let calculator = QuoteCalculator()
+        let totals = calculator.calculate(lines: lines, discount: .amount(d("0.01")))
+        #expect(totals.discount == d("0.01"))
+        let group10 = totals.vatBreakdown.first { $0.rate == d("10") }!
+        let group21 = totals.vatBreakdown.first { $0.rate == d("21") }!
+        #expect(group10.base == d("149.99")) // recibe 0,01
+        #expect(group21.base == d("150.00")) // recibe 0,00
+        #expect(group10.vat == d("15.00"))
+        #expect(group21.vat == d("31.50"))
+        #expect(totals.total == d("346.49"))
+    }
+
     // Caso límite: cantidad 0 (la línea suma 0,00 y no rompe el resto)
     @Test func zeroQuantityLine() {
         let zero = makeLine(quantity: d("0"), unitPrice: d("10.00"))
