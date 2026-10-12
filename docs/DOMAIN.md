@@ -24,7 +24,7 @@ Todo este documento vive en `Packages/QuoteCore`. Sin SwiftUI, SwiftData ni UIKi
 1. `lineTotal = round2(quantity × unitPrice)`.
 2. `subtotal = Σ lineTotal`.
 3. Descuento: `percent(p)` → `round2(subtotal × p/100)`; `amount(a)` → `min(a, subtotal)`; `none` → 0.
-4. Agrupar `lineTotal` por tipo de IVA. Repartir el descuento entre grupos proporcionalmente a su base (el último grupo absorbe el resto de céntimos para que la suma sea exacta).
+4. Agrupar `lineTotal` por tipo de IVA, ordenando los grupos por tipo de IVA ascendente. Repartir el descuento: cada grupo recibe `round2(descuento × baseDelGrupo / subtotal)`; el último grupo (el de mayor tipo de IVA) recibe el resto para que la suma sea exacta.
 5. Por grupo: `base = baseSinDescuento − descuentoDelGrupo`; `iva = round2(base × rate)`.
 6. `total = Σ (base + iva)`.
 Devuelve `QuoteTotals`: subtotal, descuento, desglose por tipo de IVA (base, cuota) y total.
@@ -38,16 +38,18 @@ Devuelve `QuoteTotals`: subtotal, descuento, desglose por tipo de IVA (base, cuo
 | 4 | Vector 2 con descuento 10 % | descuento 30,00; bases 90,00 y 180,00; IVA21 18,90; IVA10 18,00; total 306,90 |
 | 5 | Descuento fijo 500,00 sobre subtotal 300,00 | descuento 300,00 (nunca mayor que el subtotal); total 0,00 |
 | 6 | Presupuesto sin líneas | `DomainError.emptyQuote` al intentar guardarlo como enviado |
+| 7 | Vector 2 con descuento fijo 5,00 | descuento 5,00 repartido 3,33 (10 %) y 1,67 (21 %); bases 196,67 (10 %) y 98,33 (21 %); IVA10 19,67; IVA21 20,65; total 335,32 |
+| 8 | Vector 2 con descuento fijo 10,00 | descuento 10,00 repartido 6,67 (10 %) y 3,33 (21 %); bases 193,33 (10 %) y 96,67 (21 %); IVA10 19,33; IVA21 20,30; total 329,63 |
 
 ### Precios con IVA incluido (importación)
 `netPrice = round4(priceWithVAT / (1 + rate))`. Ejemplo: 121,00 con IVA 21 % → 100,0000. 25,00 → 20,6612.
 
 ## Reglas
-- Cambiar el precio de una partida NO modifica presupuestos existentes (las líneas son copias).
-- Duplicar un presupuesto copia las líneas tal cual (precios del momento), con número nuevo, fecha de hoy y estado `draft`. Una acción aparte "actualizar precios" puede recalcular desde el catálogo.
-- Numeración: `<prefijo>-<año>-<secuencia de 4 dígitos>`, p. ej. `P-2026-0001`. La secuencia reinicia cada año.
-- Estados: `draft → sent → accepted | rejected`. Un presupuesto `sent` se puede volver a editar, pero pasa otra vez a `draft`.
-- Límite gratuito: 5 presupuestos creados por mes natural (`QuotaPolicy`, con `Clock` inyectado). El plan lo decide `EntitlementProvider` (puerto).
+1. Cambiar el precio de una partida NO modifica presupuestos existentes (las líneas son copias).
+2. Duplicar un presupuesto copia las líneas tal cual (precios del momento), el descuento, las notas, el tipo de IVA por defecto y los datos del cliente; asigna número nuevo, fecha de hoy y estado `draft`. Una acción aparte "actualizar precios" puede recalcular desde el catálogo.
+3. Numeración: `<prefijo>-<año>-<secuencia de 4 dígitos>`, p. ej. `P-2026-0001`. La secuencia reinicia cada año.
+4. Estados: `draft → sent`; `sent → accepted`, `sent → rejected`, `sent → draft`. `accepted` y `rejected` son estados terminales en el MVP: cualquier otra transición lanza `DomainError.invalidTransition(from:to:)`.
+5. Plan Pro: sin límite de presupuestos (límite nulo). Plan gratuito: 5 presupuestos creados por mes natural (`QuotaPolicy`, con `Clock` inyectado); el contador se reinicia al cambiar de mes. El plan lo decide `EntitlementProvider` (puerto).
 
 ## Alias aprendidos
 Cuando el usuario resuelve una línea ambigua o sin coincidencia, `LearnAlias` guarda la frase normalizada (sin cantidad ni unidad) como alias de la partida elegida. Reglas: único por partida, máximo 20 por partida, nunca duplica el nombre ni otro alias existente de la misma partida.
