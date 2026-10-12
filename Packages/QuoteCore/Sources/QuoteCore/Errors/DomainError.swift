@@ -5,4 +5,5 @@ public enum DomainError: Error, Equatable, Sendable {
     case emptyQuote
     case quotaExceeded
     case invalidTransition(from: QuoteStatus, to: QuoteStatus)
+    case packNotFound(Trade)
 }
