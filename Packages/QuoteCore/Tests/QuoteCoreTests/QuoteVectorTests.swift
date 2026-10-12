@@ -99,12 +99,11 @@ struct QuoteVectorTests {
     }
 
     // Vector 6 de DOMAIN.md: presupuesto sin líneas → DomainError.emptyQuote al enviarlo
-    @Test func vector6() {
+    @Test func vector6() throws {
         let clock = FixedClock(date: makeUTCDate(2026, 3, 15))
         let quotes = FakeQuoteRepository()
         let profile = FakeProfileRepository()
         profile.profile = BusinessProfile(name: "Test", taxID: "1", phone: "1", email: "1", defaultVATRate: d("21"), terms: "", validityDays: 30, numberPrefix: "P")
-        let entitlements = FixedEntitlements(plan: .free)
         let changeStatus = ChangeQuoteStatus(quotes: quotes)
         let quote = Quote(
             id: UUID(),
@@ -118,7 +117,7 @@ struct QuoteVectorTests {
             notes: "",
             defaultVATRate: d("21")
         )
-        quotes.save(quote)
+        try quotes.save(quote)
         #expect(throws: DomainError.emptyQuote) {
             _ = try changeStatus.execute(quote, to: .sent)
         }

@@ -141,7 +141,7 @@ struct UseCaseTests {
             notes: "note",
             defaultVATRate: d("21")
         )
-        quotesRepo.save(original)
+        try quotesRepo.save(original)
 
         let dup = try duplicate.execute(original)
         #expect(dup.id != original.id)
@@ -168,7 +168,7 @@ struct UseCaseTests {
         let changeStatus = ChangeQuoteStatus(quotes: quotesRepo)
 
         let withLines = makeQuote(lines: [makeLine()])
-        quotesRepo.save(withLines)
+        try quotesRepo.save(withLines)
 
         // draft → sent ok
         _ = try changeStatus.execute(withLines, to: .sent)
