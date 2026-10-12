@@ -40,6 +40,7 @@ Devuelve `QuoteTotals`: subtotal, descuento, desglose por tipo de IVA (base, cuo
 | 6 | Presupuesto sin líneas | `DomainError.emptyQuote` al intentar guardarlo como enviado |
 | 7 | Vector 2 con descuento fijo 5,00 | descuento 5,00 repartido 3,33 (10 %) y 1,67 (21 %); bases 196,67 (10 %) y 98,33 (21 %); IVA10 19,67; IVA21 20,65; total 335,32 |
 | 8 | Vector 2 con descuento fijo 10,00 | descuento 10,00 repartido 6,67 (10 %) y 3,33 (21 %); bases 193,33 (10 %) y 96,67 (21 %); IVA10 19,33; IVA21 20,30; total 329,63 |
+| 9 | 1 × 150,00 @10 % + 1 × 150,00 @21 % con descuento fijo 0,01 | descuento 0,01 repartido 0,01 (10 %) y 0,00 (21 %); bases 149,99 (10 %) y 150,00 (21 %); IVA10 15,00; IVA21 31,50; total 346,49 |
 
 ### Precios con IVA incluido (importación)
 `netPrice = round4(priceWithVAT / (1 + rate))`. Ejemplo: 121,00 con IVA 21 % → 100,0000. 25,00 → 20,6612.
