@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "es",
   "strings" : {
-    "%lld" : {
-
-    },
     "action.delete" : {
       "localizations" : {
         "es" : {
@@ -159,6 +156,7 @@
       }
     },
     "error.importFailed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -381,16 +379,6 @@
         }
       }
     },
-    "importTariff.title" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importar tarifa"
-          }
-        }
-      }
-    },
     "importTariff.done.close" : {
       "localizations" : {
         "es" : {
@@ -442,6 +430,7 @@
       }
     },
     "importTariff.error.emptyFile" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -801,6 +790,16 @@
         }
       }
     },
+    "importTariff.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar tarifa"
+          }
+        }
+      }
+    },
     "importTariff.vat.rate" : {
       "localizations" : {
         "es" : {
@@ -832,6 +831,7 @@
       }
     },
     "importTariff.warning.duplicado" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -842,6 +842,7 @@
       }
     },
     "importTariff.warning.generic" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -852,6 +853,7 @@
       }
     },
     "importTariff.warning.precioAmbiguo" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -862,6 +864,7 @@
       }
     },
     "importTariff.warning.precioInvalido" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -872,6 +875,7 @@
       }
     },
     "importTariff.warning.precioSinMoneda" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -882,6 +886,7 @@
       }
     },
     "importTariff.warning.sinPrecio" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -892,6 +897,7 @@
       }
     },
     "importTariff.warning.unidadDesconocida" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
