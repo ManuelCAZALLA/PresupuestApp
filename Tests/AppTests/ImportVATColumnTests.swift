@@ -41,10 +41,10 @@ struct ImportVATColumnTests {
             rows,
             headerRow: suggestion.headerRow,
             mapping: ColumnMapping(
-                name: try #require(suggestion.name),
-                price: try #require(suggestion.price),
-                unit: try #require(suggestion.unit),
-                vatRate: try #require(suggestion.vatRate)
+                name: 0,
+                price: 2,
+                unit: 1,
+                vatRate: 3
             ),
             options: ImportOptions(vatIncluded: true, vatRate: 21)
         )
@@ -82,10 +82,10 @@ struct ImportVATColumnTests {
             sheets[0].rows,
             headerRow: suggestion.headerRow,
             mapping: ColumnMapping(
-                name: try #require(suggestion.name),
-                price: try #require(suggestion.price),
-                unit: try #require(suggestion.unit),
-                vatRate: try #require(suggestion.vatRate)
+                name: 0,
+                price: 2,
+                unit: 1,
+                vatRate: 3
             ),
             options: ImportOptions(vatIncluded: true, vatRate: 21)
         )

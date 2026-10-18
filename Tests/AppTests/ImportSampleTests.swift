@@ -67,13 +67,16 @@ struct ImportSampleTests {
         #expect(ColumnMapper.suggestedVATIncluded(in: rows))
 
         let suggestion = ColumnMapper.suggestHeader(in: rows)
+        #expect(suggestion.name == 0)
+        #expect(suggestion.unit == 1)
+        #expect(suggestion.price == 2)
         let result = ColumnMapper.map(
             rows,
             headerRow: suggestion.headerRow,
             mapping: ColumnMapping(
-                name: try #require(suggestion.name),
-                price: try #require(suggestion.price),
-                unit: try #require(suggestion.unit)
+                name: 0,
+                price: 2,
+                unit: 1
             ),
             options: ImportOptions(vatIncluded: true, vatRate: 21)
         )
