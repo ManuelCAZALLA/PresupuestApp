@@ -106,3 +106,17 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
 - **Decisión**: la app usa un `TabView` con tres pestañas —**Presupuestos**, **Precios** y **Ajustes**— en lugar de la `HomeView` de botones. Cada pestaña lleva su propio `NavigationStack`. Si no hay perfil de negocio guardado, se abre `Onboarding` (S1) a pantalla completa y las pestañas aparecen al completarlo; S8 (`ImportTariff`) se presenta como hoja desde Precios y también por "Abrir con".
 - **Motivo**: PRODUCT.md exige que el recorrido onboarding → tarifa → presupuesto → PDF se haga en menos de 3 minutos con una mano. Una pantalla intermedia de botones añade un paso inútil y esconde el estado real de la app (catálogo vacío, presupuestos pendientes).
 - **Consecuencia**: `HomeView` se retira; `AppRoute` pasa a ser el camino empujado dentro de cada pestaña. La marca de agua del plan gratuito se implementa ya en `QuotePDFRenderer` con el `EntitlementProvider` actual (stub), y M7 solo conecta el plan real.
+
+## D-014 — Esquema SwiftData v2 con migración en ligero (M4b)
+- **Fecha**: 2026-10-18
+- **Estado**: aceptada
+- **Decisión**: el esquema actual pasa a ser `PresupuestAppSchema` (**v2.0.0**), que añade `ItemRecord.vatRate`, y se declara `PresupuestAppSchemaV1` (**v1.0.0**) describiendo el modelo anterior: la misma entidad `ItemRecord` (mismo nombre de entidad, para que la migración altere la tabla en el sitio) sin ese atributo. `PresupuestAppMigrationPlan` los une con una única etapa `.lightweight(fromVersion:toVersion:)` y es el plan con el que se crea el `ModelContainer`.
+- **Motivo**: la app ya se ha ejecutado en dispositivos y simuladores con el esquema v1 (M4); añadir un atributo sin plan de migración puede impedir abrir el almacén existente o dejar los datos atrás. El cambio es un atributo **opcional**, así que la migración en ligero basta y no hace falta una etapa personalizada.
+- **Consecuencia**: `PersistenceSetup.makeModelContainer(at:)` abre un almacén en una ruta concreta y lo usan las pruebas de migración (`Tests/AppTests/SchemaMigrationTests.swift`), que crean un almacén v1 real, lo reabren con el esquema actual y comprueban que las partidas siguen ahí con `vatRate` nulo. A partir de aquí el esquema se versiona antes de publicar: cualquier cambio añade una versión nueva y su etapa.
+
+## D-015 — Errores de dominio explícitos para presupuesto, línea y partida (M4b)
+- **Fecha**: 2026-10-18
+- **Estado**: aceptada
+- **Decisión**: `DomainError.lineNotFound` se parte en tres casos: `quoteNotFound`, `lineNotFound` e `itemNotFound`. Los casos de uso lanzan el que corresponde (presupuesto que no existe ≠ línea que no existe ≠ partida que no existe) y `AppErrorMapper` traduce cada uno a su clave de texto.
+- **Motivo**: los casos de uso de líneas nuevos (M4b) y `LoadQuote` compartían un único error para situaciones distintas; el usuario habría visto "No se encontró esa línea en el presupuesto" cuando el problema era otro. Ante la duda, la app pregunta o dice la verdad; nunca elige en silencio.
+- **Consecuencia**: los tests de `QuoteCore` fijan ahora el error concreto de cada caso (incluido `itemNotFound` al añadir una partida que ya no está en el catálogo); `AppErrorMapper` gana `error.quoteNotFound` y `error.itemNotFound` en `Localizable.xcstrings`.
