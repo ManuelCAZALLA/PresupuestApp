@@ -196,6 +196,20 @@ final class ImportTariffViewModel {
         tables = []
         rows = []
         summary = nil
+        errorMessage = nil
+        state = .idle
+    }
+
+    /// Vuelve al estado inicial para reutilizar el mismo ViewModel en una hoja.
+    func reset() {
+        pastedText = ""
+        selectedTableIndex = 0
+        suggestion = ColumnSuggestion()
+        mapping = ColumnMapping(name: 0)
+        vatIncluded = false
+        vatRate = Decimal(21)
+        mode = .updateExisting
+        backToOrigin()
     }
 
     // MARK: - Revisión
@@ -269,7 +283,8 @@ final class ImportTariffViewModel {
             name: min(suggestion.name ?? 0, max(columns - 1, 0)),
             price: suggestion.price,
             unit: suggestion.unit,
-            category: suggestion.category
+            category: suggestion.category,
+            vatRate: suggestion.vatRate
         )
         vatIncluded = ColumnMapper.suggestedVATIncluded(in: table.rows)
     }

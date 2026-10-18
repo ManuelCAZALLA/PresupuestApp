@@ -30,13 +30,13 @@
 		1A0000000000000000000013 /* Exceptions for "App" folder in "PresupuestApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Data/Import/.gitkeep",
-				"Data/PDF/.gitkeep",
-				"Data/Packs/.gitkeep",
-				"Data/Persistence/.gitkeep",
-				"Data/Repositories/.gitkeep",
-				"Data/Speech/.gitkeep",
-				"Resources/Packs/.gitkeep",
+				Data/Import/.gitkeep,
+				Data/Packs/.gitkeep,
+				Data/PDF/.gitkeep,
+				Data/Persistence/.gitkeep,
+				Data/Repositories/.gitkeep,
+				Data/Speech/.gitkeep,
+				Resources/Packs/.gitkeep,
 			);
 			target = 1A0000000000000000000005 /* PresupuestApp */;
 		};
@@ -51,7 +51,7 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		1A0000000000000000000021 /* AppTests */ = {
+		1A0000000000000000000021 /* Tests/AppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Tests/AppTests;
 			sourceTree = "<group>";
@@ -82,7 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				1A0000000000000000000004 /* App */,
-				1A0000000000000000000021 /* AppTests */,
+				1A0000000000000000000021 /* Tests/AppTests */,
 				1A0000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -137,7 +137,7 @@
 				1A0000000000000000000026 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				1A0000000000000000000021 /* AppTests */,
+				1A0000000000000000000021 /* Tests/AppTests */,
 			);
 			name = AppTests;
 			packageProductDependencies = (
@@ -369,6 +369,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.manuelcazalla.PresupuestApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -393,6 +396,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.manuelcazalla.PresupuestApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

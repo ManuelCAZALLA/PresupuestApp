@@ -6,7 +6,7 @@ import SwiftUI
 /// confirmar. Nada se guarda sin pasar por la revisión. Ver docs/PRODUCT.md (S8).
 struct ImportTariffView: View {
     @Bindable var viewModel: ImportTariffViewModel
-    @Environment(AppRouter.self) private var router
+    @Environment(\.dismiss) private var dismiss
 
     @State private var isChoosingFile = false
     @State private var templateURL: URL?
@@ -14,6 +14,12 @@ struct ImportTariffView: View {
     var body: some View {
         content
             .navigationTitle("importTariff.title")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("action.cancel") { dismiss() }
+                }
+            }
             .task { templateURL = try? viewModel.templateURL() }
             .fileImporter(
                 isPresented: $isChoosingFile,
@@ -143,6 +149,7 @@ struct ImportTariffView: View {
                 optionalColumnPicker("importTariff.mapping.price", selection: $viewModel.mapping.price)
                 optionalColumnPicker("importTariff.mapping.unit", selection: $viewModel.mapping.unit)
                 optionalColumnPicker("importTariff.mapping.category", selection: $viewModel.mapping.category)
+                optionalColumnPicker("importTariff.mapping.vat", selection: $viewModel.mapping.vatRate)
             }
 
             Section("importTariff.vat.title") {
@@ -275,7 +282,7 @@ struct ImportTariffView: View {
             }
         } actions: {
             Button {
-                router.popToRoot()
+                dismiss()
             } label: {
                 Text("importTariff.done.close")
                     .frame(maxWidth: .infinity, minHeight: 56)
@@ -374,5 +381,4 @@ private struct ImportRowEditor: View {
             )
         )
     }
-    .environment(AppRouter())
 }
