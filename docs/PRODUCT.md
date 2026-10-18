@@ -32,6 +32,18 @@ Cada pantalla es una carpeta en `App/Presentation/Features/`.
 
 Los clientes NO tienen pantalla propia: se guardan dentro del presupuesto.
 
+## Recorrido principal (sin dictado)
+Tras el onboarding la app tiene tres pestañas: **Presupuestos**, **Precios** y **Ajustes**.
+1. Primera apertura → `Onboarding` (S1): oficio, datos de empresa e IVA por defecto.
+2. **Precios** (`Catalog` S7): el catálogo vacío ofrece importar archivo (Excel/CSV), pegar una lista o añadir a mano; el botón de importar (S8) está siempre accesible.
+3. **Presupuestos** (`QuoteList` S2): "Nuevo presupuesto" → datos del cliente + añadir partidas del catálogo; las líneas se ajustan con +/−, se borran, se aplica descuento y el total se recalcula al instante.
+4. Presupuesto terminado: desglose de IVA, "Ver PDF" (S6) y "Enviar" con la hoja de compartir del sistema (WhatsApp, correo, Archivos).
+
+El dictado (S3) y la revisión de lo entendido (S4) llegan en M5: el recorrido de arriba funciona escribiendo y tocando, sin voz.
+
+## IVA por partida
+El IVA de una línea es el de la partida (`Item.vatRate`) si la tiene; si no, el del presupuesto, que a su vez viene del IVA por defecto del negocio. La importación admite una columna opcional `IVA` por fila. Ver `docs/DOMAIN.md`.
+
 ## Funcionalidades
 - Catálogo 100 % del usuario: la app no trae partidas. El catálogo vacío ofrece importar Excel/CSV, pegar una lista o añadir a mano.
 - Importación de tarifa (Excel, CSV, texto pegado, alta manual, compartir archivo desde otra app) y plantilla Excel descargable con columnas Nombre, Unidad y Precio. Foto/PDF con OCR: después del MVP.

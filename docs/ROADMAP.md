@@ -44,6 +44,16 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 **Hecho cuando**: una tarifa real de ejemplo (Excel y CSV) se importa y revisa en menos de 2 minutos.
 **Estado (2026-10-18)**: implementado. Dominio en `Packages/QuoteCore/Sources/QuoteCore/Import` (39 tests con `swift test`), lectores en `App/Data/Import` y verificación de los 5 archivos de `Tests/ImportSamples` contra `expected_imports.json` en el target `AppTests` (9 tests con `xcodebuild test`). Queda la comprobación manual del flujo en el simulador (ver "Hecho cuando", menos de 2 minutos).
 
+## [~] M4b — Flujo completo sin dictado
+**Dueños**: architect + qa_engineer + domain_engineer + data_engineer + ui_engineer.
+- Recorrido de punta a punta sin voz: onboarding → importar tarifa → catálogo → presupuesto a mano → PDF → compartir.
+- Navegación: `TabView` con pestañas **Presupuestos**, **Precios** y **Ajustes**, que aparecen tras completar el onboarding; sin perfil guardado se abre `Onboarding` (S1) a pantalla completa.
+- IVA por partida: `Item.vatRate` opcional; el IVA de una línea es el de la partida o, si no la tiene, el del presupuesto. La importación acepta una columna `IVA` opcional.
+- Casos de uso de líneas: `AddLine`, `UpdateLineQuantity`, `RemoveLine`, `UpdateQuote`. El cálculo sigue siendo `QuoteCalculator` (no se duplica).
+- Features nuevas: `QuoteList` (S2), presupuesto a mano (cliente, buscador de partidas, líneas con +/−, descuento, total fijo), presupuesto terminado con desglose de IVA y envío (S6) con `QuotePDFRenderer`.
+- Sin dictado: `NewQuote` con voz (S3) y `MatchReview` (S4) quedan para M5.
+**Hecho cuando**: desde una instalación limpia, onboarding → importar `Tests/ImportSamples/tarifa_desordenada.xlsx` → ver las partidas en Precios → crear un presupuesto con 3 partidas → el total coincide con el de `QuoteCalculator` → generar el PDF → se abre la hoja de compartir. Sin dictado y en menos de 3 minutos.
+
 ## [ ] M5 — Flujo de presupuesto
 **Dueños**: ui_engineer + data_engineer + domain_engineer.
 - `SpeechDictationService` (dictado nativo).

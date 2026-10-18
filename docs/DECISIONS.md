@@ -85,3 +85,24 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
   - `MeasureUnit` pasa a ser `CaseIterable` para poblar el selector de unidad.
 - **Motivo**: la verificación de los lectores (CSV/CP1252/XLSX) y del oráculo necesita ejecutarse contra el código real de `App/Data`, que no es un paquete Swift; un target de tests del proyecto es la forma estándar de hacerlo con `xcodebuild test`. Los puertos evitan que Presentation dependa de Data.
 - **Consecuencia**: los tests de Data/lectores se ejecutan con `xcodebuild test` (esquema `PresupuestApp`); los del dominio, con `swift test --package-path Packages/QuoteCore`. `Tests/AppTests/.gitkeep` se elimina porque el grupo sincronizado ya contiene fuentes.
+
+## D-011 — IVA por partida (M4b)
+- **Fecha**: 2026-10-18
+- **Estado**: aceptada
+- **Decisión**: `Item` gana un campo opcional `vatRate: Decimal?`. El IVA de una línea de presupuesto es el de la partida si la tiene; si es `nil`, el `Quote.defaultVATRate` (procedente del `BusinessProfile.defaultVATRate`). El tipo se copia a la línea al añadirla: al igual que nombre, unidad y precio, es un snapshot inmutable de la línea.
+- **Motivo**: en oficios reales conviven tipos distintos en la misma tarifa (mano de obra al 21 %, libros o determinados servicios a otro tipo, exentos). Exigir que el usuario corrija el IVA línea a línea en cada presupuesto sería lento y propenso a errores; heredarlo del presupuesto por defecto mantiene el caso común en un toque.
+- **Consecuencia**: `ItemRecord` necesita el campo y una migración de esquema ligera (v1 → v2). `QuoteCalculator` no cambia: ya agrupa por `line.vatRate`. Los casos de uso de líneas (`AddLine`, `UpdateLineQuantity`, `RemoveLine`) son los que resuelven `item.vatRate ?? quote.defaultVATRate`; las vistas no deciden IVA.
+
+## D-012 — Columna `IVA` opcional en la importación (M4b)
+- **Fecha**: 2026-10-18
+- **Estado**: aceptada
+- **Decisión**: `ColumnMapping` y `ColumnSuggestion` ganan una columna opcional `vatRate` además del interruptor global "los precios incluyen IVA". Formato aceptado en la celda: `21`, `21%`, `0,21`, `10` → 21, 21, 21 y 10 (porcentaje normalizado a `Decimal`). La columna manda sobre el interruptor para decidir el tipo con el que se convierte el precio de esa fila; fila vacía o ilegible → tipo del interruptor y, en el segundo caso, aviso de revisión.
+- **Motivo**: una tarifa real trae filas con tipos distintos (y a veces precios ya con IVA solo en algunas). El interruptor global es suficiente para el caso simple, pero no puede ser la única vía sin forzar al usuario a partir el archivo.
+- **Consecuencia**: el parser de IVA vive en `QuoteCore/Import` (probado con `swift test`); `Tests/ImportSamples` recibe un archivo nuevo con columna `IVA` y su resultado esperado, sin tocar los existentes.
+
+## D-013 — Navegación M4b: pestañas tras el onboarding (M4b)
+- **Fecha**: 2026-10-18
+- **Estado**: aceptada
+- **Decisión**: la app usa un `TabView` con tres pestañas —**Presupuestos**, **Precios** y **Ajustes**— en lugar de la `HomeView` de botones. Cada pestaña lleva su propio `NavigationStack`. Si no hay perfil de negocio guardado, se abre `Onboarding` (S1) a pantalla completa y las pestañas aparecen al completarlo; S8 (`ImportTariff`) se presenta como hoja desde Precios y también por "Abrir con".
+- **Motivo**: PRODUCT.md exige que el recorrido onboarding → tarifa → presupuesto → PDF se haga en menos de 3 minutos con una mano. Una pantalla intermedia de botones añade un paso inútil y esconde el estado real de la app (catálogo vacío, presupuestos pendientes).
+- **Consecuencia**: `HomeView` se retira; `AppRoute` pasa a ser el camino empujado dentro de cada pestaña. La marca de agua del plan gratuito se implementa ya en `QuotePDFRenderer` con el `EntitlementProvider` actual (stub), y M7 solo conecta el plan real.

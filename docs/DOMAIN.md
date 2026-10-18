@@ -6,7 +6,7 @@ Todo este documento vive en `Packages/QuoteCore`. Sin SwiftUI, SwiftData ni UIKi
 - **Trade**: `plumber`, `mason`, `electrician`, `other`.
 - **MeasureUnit**: `unit` (ud), `meter` (m), `squareMeter` (m2), `cubicMeter` (m3), `hour` (h), `lumpSum` (global).
 - **ItemKind**: `material`, `labor`, `travel`, `other`.
-- **Item** (partida): `id`, `name`, `aliases: [String]`, `unit`, `unitPrice: Decimal` (sin IVA), `kind`, `category: String?`, `trade`.
+- **Item** (partida): `id`, `name`, `aliases: [String]`, `unit`, `unitPrice: Decimal` (sin IVA), `vatRate: Decimal?` (tipo propio; `nil` = el del presupuesto), `kind`, `category: String?`, `trade`.
 - **Kit**: `id`, `name`, `entries: [(itemID, quantity)]`.
 - **Client**: `name`, `phone`, `address`, `workAddress?` (todo texto libre).
 - **QuoteLine**: `id`, `itemID?`, `name` (copia), `unit` (copia), `quantity: Decimal`, `unitPrice: Decimal` (copia, sin IVA), `vatRate: Decimal`, `origin` (`parser`, `manual`, `kit`).
@@ -45,6 +45,17 @@ Devuelve `QuoteTotals`: subtotal, descuento, desglose por tipo de IVA (base, cuo
 ### Precios con IVA incluido (importación)
 `netPrice = round4(priceWithVAT / (1 + rate))`. Ejemplo: 121,00 con IVA 21 % → 100,0000. 25,00 → 20,6612.
 
+La importación admite una **columna opcional `IVA`** por fila, con el tipo de esa partida. Formato aceptado: `21`, `21%`, `0,21`, `10` → 21, 21, 21 y 10 (se guarda como porcentaje). Reglas:
+- Si la fila trae IVA y el interruptor "los precios incluyen IVA" está activo, el tipo de la fila es el que se usa para convertir el precio (`round4(precio / (1 + tipo))`).
+- Si la fila trae IVA y el interruptor está inactivo, el precio se copia tal cual y la partida queda con ese tipo.
+- Si la fila no trae IVA (o la columna no está asignada), se usa el tipo del interruptor global de la importación.
+- Un valor ilegible no corta la importación: la partida se crea con el tipo por defecto y la revisión muestra un aviso.
+
+### IVA por partida
+- El IVA de una línea es `Item.vatRate` si la partida lo tiene; si es `nil`, el `Quote.defaultVATRate` del presupuesto (que copia el `BusinessProfile.defaultVATRate` al crearlo).
+- El tipo se copia a la línea en el momento de añadirla: es un snapshot, como el nombre, la unidad y el precio. Cambiar el IVA de una partida no altera presupuestos ya hechos; tampoco cambiar el IVA por defecto del negocio.
+- Un presupuesto puede tener líneas con tipos distintos: `QuoteCalculator` ya agrupa por `line.vatRate`.
+
 ## Reglas
 1. Cambiar el precio de una partida NO modifica presupuestos existentes (las líneas son copias).
 2. Duplicar un presupuesto copia las líneas tal cual (precios del momento), el descuento, las notas, el tipo de IVA por defecto y los datos del cliente; asigna número nuevo, fecha de hoy y estado `draft`. Una acción aparte "actualizar precios" puede recalcular desde el catálogo.
@@ -56,4 +67,4 @@ Devuelve `QuoteTotals`: subtotal, descuento, desglose por tipo de IVA (base, cuo
 Cuando el usuario resuelve una línea ambigua o sin coincidencia, `LearnAlias` guarda la frase normalizada (sin cantidad ni unidad) como alias de la partida elegida. Reglas: único por partida, máximo 20 por partida, nunca duplica el nombre ni otro alias existente de la misma partida.
 
 ## Casos de uso (nombres)
-`InterpretRequest`, `ResolveAmbiguousLine`, `LearnAlias`, `CalculateQuote`, `CreateQuote`, `UpdateQuote`, `DuplicateQuote`, `ChangeQuoteStatus`, `AddKitToQuote`, `ListQuotes`, `ManageItems` (crear/editar/borrar), `ManageKits`, `ImportTariff` (aplica el mapeo de columnas ya revisado), `LoadTradePack`, `SaveBusinessProfile`, `CheckQuota`, `ExportQuotePDF` (usa el puerto `QuotePDFRenderer`).
+`InterpretRequest`, `ResolveAmbiguousLine`, `LearnAlias`, `CalculateQuote`, `CreateQuote`, `UpdateQuote` (guarda cliente, descuento, notas y líneas ya construidas), `AddLine`, `UpdateLineQuantity`, `RemoveLine`, `DuplicateQuote`, `ChangeQuoteStatus`, `AddKitToQuote`, `ListQuotes`, `ManageItems` (crear/editar/borrar), `ManageKits`, `ImportTariff` (aplica el mapeo de columnas ya revisado), `LoadTradePack`, `SaveBusinessProfile`, `CheckQuota`, `ExportQuotePDF` (usa el puerto `QuotePDFRenderer`).
