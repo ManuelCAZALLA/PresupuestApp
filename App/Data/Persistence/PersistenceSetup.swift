@@ -77,19 +77,21 @@ enum PresupuestAppMigrationPlan: SchemaMigrationPlan {
 enum PersistenceSetup {
     /// Contenedor persistente de la app (SQL en disco).
     static func makeModelContainer() throws -> ModelContainer {
-        try ModelContainer(
-            for: ItemRecord.self,
-            KitRecord.self,
-            KitEntryRecord.self,
-            QuoteRecord.self,
-            QuoteLineRecord.self,
-            BusinessProfileRecord.self,
-            migrationPlan: PresupuestAppMigrationPlan.self
-        )
+        try makeModelContainer(configurations: ModelConfiguration())
+    }
+
+    /// Contenedor persistente en una ruta concreta. Las pruebas de migración lo
+    /// usan para abrir dos veces el mismo archivo, con el esquema viejo y el actual.
+    static func makeModelContainer(at url: URL) throws -> ModelContainer {
+        try makeModelContainer(configurations: ModelConfiguration(url: url))
     }
 
     /// Contenedor en memoria, solo para pruebas.
     static func makeInMemoryModelContainer() throws -> ModelContainer {
+        try makeModelContainer(configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+    }
+
+    private static func makeModelContainer(configurations: ModelConfiguration) throws -> ModelContainer {
         try ModelContainer(
             for: ItemRecord.self,
             KitRecord.self,
@@ -98,7 +100,7 @@ enum PersistenceSetup {
             QuoteLineRecord.self,
             BusinessProfileRecord.self,
             migrationPlan: PresupuestAppMigrationPlan.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            configurations: configurations
         )
     }
 }
