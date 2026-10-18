@@ -31,3 +31,22 @@ public struct Item: Identifiable, Equatable, Sendable {
         self.trade = trade
     }
 }
+
+public extension Item {
+    /// Clave de emparejamiento por nombre: minúsculas, sin tildes y con los
+    /// espacios colapsados. Es la que usa el catálogo para no duplicar
+    /// partidas al importar la tarifa del usuario (ver DECISIONS.md, D-007).
+    static func nameKey(_ name: String) -> String {
+        name
+            .folding(
+                options: [.diacriticInsensitive, .caseInsensitive],
+                locale: Locale(identifier: "es_ES")
+            )
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .lowercased()
+    }
+
+    /// Clave de emparejamiento de esta partida (ver `nameKey(_:)`).
+    var nameKey: String { Item.nameKey(name) }
+}

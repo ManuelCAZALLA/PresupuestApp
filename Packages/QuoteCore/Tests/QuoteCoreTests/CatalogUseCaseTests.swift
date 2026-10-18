@@ -58,6 +58,29 @@ struct CatalogUseCaseTests {
         #expect(try list.execute().isEmpty)
     }
 
+    // Guardar dos veces la misma partida (mismo nombre normalizado) no duplica:
+    // la segunda creación actualiza la existente.
+    @Test func creatingSameItemTwiceDoesNotDuplicate() throws {
+        let repo = FakeItemRepository()
+        let manage = ManageItems(items: repo)
+        let list = ListItems(items: repo)
+
+        try manage.execute(.create(makeItem(name: "Urinario")))
+        try manage.execute(.create(makeItem(name: "  urinario ")))
+
+        let all = try list.execute()
+        #expect(all.count == 1)
+        #expect(all.first?.name == "  urinario ")
+    }
+
+    // La clave de emparejamiento ignora mayúsculas y tildes (y colapsa espacios).
+    @Test func nameKeyIgnoresCaseAndAccents() {
+        #expect(Item.nameKey("Sifón  de Lavabo") == Item.nameKey("sifon de lavabo"))
+        #expect(Item.nameKey("Instalación") == "instalacion")
+        #expect(Item.nameKey("  Tubo   de   Cobre ") == "tubo de cobre")
+        #expect(Item.nameKey("Termo Eléctrico") == "termo electrico")
+    }
+
     // LoadTradePack: crea partidas SIN precio (el usuario los pone)
     @Test func loadTradePackCreatesItemsWithoutPrices() throws {
         struct FakePackLoader: TradePackLoading {

@@ -32,6 +32,11 @@ final class FakeItemRepository: ItemRepository {
         items[id]
     }
 
+    func item(named name: String) throws -> Item? {
+        let key = Item.nameKey(name)
+        return items.values.first { $0.nameKey == key }
+    }
+
     func save(_ item: Item) throws {
         items[item.id] = item
     }
