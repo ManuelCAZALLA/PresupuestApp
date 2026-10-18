@@ -20,12 +20,21 @@ public struct ColumnMapping: Equatable, Sendable {
     public var price: Int?
     public var unit: Int?
     public var category: Int?
+    /// Columna opcional con el tipo de IVA de cada fila (ver D-012).
+    public var vatRate: Int?
 
-    public init(name: Int, price: Int? = nil, unit: Int? = nil, category: Int? = nil) {
+    public init(
+        name: Int,
+        price: Int? = nil,
+        unit: Int? = nil,
+        category: Int? = nil,
+        vatRate: Int? = nil
+    ) {
         self.name = name
         self.price = price
         self.unit = unit
         self.category = category
+        self.vatRate = vatRate
     }
 }
 
@@ -37,19 +46,22 @@ public struct ColumnSuggestion: Equatable, Sendable {
     public var price: Int?
     public var unit: Int?
     public var category: Int?
+    public var vatRate: Int?
 
     public init(
         headerRow: Int? = nil,
         name: Int? = nil,
         price: Int? = nil,
         unit: Int? = nil,
-        category: Int? = nil
+        category: Int? = nil,
+        vatRate: Int? = nil
     ) {
         self.headerRow = headerRow
         self.name = name
         self.price = price
         self.unit = unit
         self.category = category
+        self.vatRate = vatRate
     }
 }
 
@@ -68,6 +80,8 @@ public enum ImportWarning: Equatable, Sendable {
     case precioAmbiguo(name: String, raw: String)
     /// Precio en texto libre sin símbolo de moneda: se acepta con aviso suave.
     case precioSinMoneda(name: String)
+    /// La celda de la columna IVA no se pudo interpretar como tipo.
+    case vatInvalido(name: String, raw: String)
 
     /// Nombre de la fila a la que se refiere el aviso.
     public var rowName: String {
@@ -78,6 +92,7 @@ public enum ImportWarning: Equatable, Sendable {
         case .duplicado(let name): return name
         case .precioAmbiguo(let name, _): return name
         case .precioSinMoneda(let name): return name
+        case .vatInvalido(let name, _): return name
         }
     }
 
@@ -90,6 +105,7 @@ public enum ImportWarning: Equatable, Sendable {
         case .duplicado: return "duplicado"
         case .precioAmbiguo: return "precioAmbiguo"
         case .precioSinMoneda: return "precioSinMoneda"
+        case .vatInvalido: return "vatInvalido"
         }
     }
 }
@@ -101,7 +117,10 @@ public struct ImportedRow: Identifiable, Equatable, Sendable {
     public var name: String
     public var unit: MeasureUnit
     public var netPrice: Decimal
-    public var vatRate: Decimal
+    /// Tipo de IVA propio de la fila, en por ciento. `nil` cuando el archivo
+    /// no traía columna IVA o la celda estaba vacía: la partida hereda el IVA
+    /// por defecto (docs/DOMAIN.md, "IVA por partida").
+    public var vatRate: Decimal?
     public var kind: ItemKind
     public var category: String?
     public var warnings: [ImportWarning]
@@ -111,7 +130,7 @@ public struct ImportedRow: Identifiable, Equatable, Sendable {
         name: String,
         unit: MeasureUnit = .unit,
         netPrice: Decimal = Decimal(0),
-        vatRate: Decimal = Decimal(0),
+        vatRate: Decimal? = nil,
         kind: ItemKind = .other,
         category: String? = nil,
         warnings: [ImportWarning] = []
@@ -132,6 +151,7 @@ public struct ImportedRow: Identifiable, Equatable, Sendable {
             name: name,
             unit: unit,
             unitPrice: netPrice,
+            vatRate: vatRate,
             kind: kind,
             category: category,
             trade: trade

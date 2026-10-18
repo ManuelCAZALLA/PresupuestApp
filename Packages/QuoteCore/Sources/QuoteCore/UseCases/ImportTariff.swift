@@ -48,6 +48,7 @@ public final class ImportTariff {
                 updated.name = row.name
                 updated.unit = row.unit
                 updated.unitPrice = row.netPrice
+                updated.vatRate = row.vatRate ?? existing.vatRate
                 updated.kind = row.kind
                 updated.category = row.category ?? existing.category
                 try items.save(updated)

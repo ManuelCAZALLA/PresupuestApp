@@ -143,8 +143,10 @@ struct QuoteLineUseCaseTests {
         try items.save(makeItem(name: "Urinario"))
         try items.save(makeItem(name: "Inodoro", price: d("110")))
         let useCase = AddLine(quotes: quotes, items: items)
-        let first = try useCase.execute(itemID: items.all()[0].id, quantity: d("1"), in: quote.id)
-        _ = try useCase.execute(itemID: items.all()[1].id, quantity: d("1"), in: quote.id)
+        let urinario = try #require(try items.item(named: "Urinario"))
+        let inodoro = try #require(try items.item(named: "Inodoro"))
+        let first = try useCase.execute(itemID: urinario.id, quantity: d("1"), in: quote.id)
+        _ = try useCase.execute(itemID: inodoro.id, quantity: d("1"), in: quote.id)
 
         try RemoveLine(quotes: quotes).execute(quoteID: quote.id, lineID: first.id)
 

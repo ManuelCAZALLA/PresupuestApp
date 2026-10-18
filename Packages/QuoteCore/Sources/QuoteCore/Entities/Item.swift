@@ -7,6 +7,9 @@ public struct Item: Identifiable, Equatable, Sendable {
     public var aliases: [String]
     public var unit: MeasureUnit
     public var unitPrice: Decimal
+    /// Tipo de IVA propio de la partida, en por ciento. `nil` = usar el del
+    /// presupuesto (ver docs/DOMAIN.md, "IVA por partida").
+    public var vatRate: Decimal?
     public var kind: ItemKind
     public var category: String?
     public var trade: Trade
@@ -17,6 +20,7 @@ public struct Item: Identifiable, Equatable, Sendable {
         aliases: [String] = [],
         unit: MeasureUnit = .unit,
         unitPrice: Decimal = Decimal(0),
+        vatRate: Decimal? = nil,
         kind: ItemKind = .other,
         category: String? = nil,
         trade: Trade = .other
@@ -26,6 +30,7 @@ public struct Item: Identifiable, Equatable, Sendable {
         self.aliases = aliases
         self.unit = unit
         self.unitPrice = unitPrice
+        self.vatRate = vatRate
         self.kind = kind
         self.category = category
         self.trade = trade

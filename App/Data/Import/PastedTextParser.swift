@@ -58,7 +58,7 @@ enum PastedTextParser {
                     name: name,
                     unit: unit,
                     netPrice: net,
-                    vatRate: options.vatRate,
+                    vatRate: nil,
                     warnings: warnings
                 )
             )

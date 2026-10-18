@@ -29,6 +29,7 @@ public enum ColumnMapper {
     private static let categoryKeywords = [
         "categoria", "categorias", "category", "familia", "grupo", "seccion"
     ]
+    private static let vatKeywords = ["iva"]
 
     // MARK: - Cabecera
 
@@ -59,6 +60,8 @@ public enum ColumnMapper {
                 suggestion.price = index
             } else if suggestion.category == nil && matches(cell, categoryKeywords) {
                 suggestion.category = index
+            } else if suggestion.vatRate == nil && matches(cell, vatKeywords) {
+                suggestion.vatRate = index
             }
         }
         return suggestion
@@ -110,14 +113,26 @@ public enum ColumnMapper {
             var warnings: [ImportWarning] = []
             var net: Decimal = 0
 
+            // Columna IVA: el tipo de ESTA fila. Vacío o ilegible → sin tipo
+            // propio (la partida hereda el del presupuesto). D-012.
+            var rowVAT: Decimal? = nil
+            let vatRaw = value(row, mapping.vatRate)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !vatRaw.isEmpty {
+                if let parsed = VATParser.parse(vatRaw) {
+                    rowVAT = parsed
+                } else {
+                    warnings.append(.vatInvalido(name: name, raw: vatRaw))
+                }
+            }
+
             if priceRaw.isEmpty {
                 warnings.append(.sinPrecio(name: name))
             } else {
                 switch PriceParser.parse(priceRaw) {
                 case .value(let gross, _):
-                    net = netPrice(gross, options: options)
+                    net = netPrice(gross, options: options, rowVAT: rowVAT)
                 case .ambiguous(let gross, let raw):
-                    net = netPrice(gross, options: options)
+                    net = netPrice(gross, options: options, rowVAT: rowVAT)
                     warnings.append(.precioAmbiguo(name: name, raw: raw))
                 case .invalid(let raw):
                     warnings.append(.precioInvalido(name: name, raw: raw))
@@ -146,7 +161,7 @@ public enum ColumnMapper {
                     name: name,
                     unit: unit,
                     netPrice: net,
-                    vatRate: options.vatRate,
+                    vatRate: rowVAT,
                     kind: .other,
                     category: category,
                     warnings: warnings
@@ -159,10 +174,13 @@ public enum ColumnMapper {
 
     // MARK: - Apoyo
 
-    private static func netPrice(_ gross: Decimal, options: ImportOptions) -> Decimal {
-        options.vatIncluded
-            ? RoundingPolicy.netPrice(fromGross: gross, vatRate: options.vatRate)
-            : gross
+    /// El tipo de la fila manda sobre el interruptor global al convertir (D-012):
+    /// con "IVA incluido" activo se divide por el tipo de esa fila; si la fila
+    /// no trae IVA, por el del interruptor. Con el interruptor apagado el precio
+    /// se copia tal cual y la fila sigue guardando su tipo.
+    private static func netPrice(_ gross: Decimal, options: ImportOptions, rowVAT: Decimal?) -> Decimal {
+        guard options.vatIncluded else { return gross }
+        return RoundingPolicy.netPrice(fromGross: gross, vatRate: rowVAT ?? options.vatRate)
     }
 
     private static func value(_ row: [String], _ index: Int?) -> String? {
