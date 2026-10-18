@@ -19,8 +19,12 @@ enum AppErrorMapper {
             return "error.packNotFound"
         case .importFailed:
             return "error.importFailed"
+        case .quoteNotFound:
+            return "error.quoteNotFound"
         case .lineNotFound:
             return "error.lineNotFound"
+        case .itemNotFound:
+            return "error.itemNotFound"
         }
     }
 }

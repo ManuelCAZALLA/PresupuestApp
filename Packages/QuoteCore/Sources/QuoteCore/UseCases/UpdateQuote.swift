@@ -12,7 +12,7 @@ public final class UpdateQuote {
 
     public func execute(_ quote: Quote) throws {
         guard var stored = try quotes.quote(id: quote.id) else {
-            throw DomainError.lineNotFound
+            throw DomainError.quoteNotFound
         }
         stored.client = quote.client
         stored.validityDays = quote.validityDays

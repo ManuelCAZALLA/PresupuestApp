@@ -8,6 +8,10 @@ public enum DomainError: Error, Equatable, Sendable {
     case packNotFound(Trade)
     /// No se pudo leer un archivo importado (formato, codificación o contenido).
     case importFailed(String)
-    /// La línea o el presupuesto pedido no existe.
+    /// No existe el presupuesto pedido.
+    case quoteNotFound
+    /// No existe la línea pedida dentro del presupuesto.
     case lineNotFound
+    /// No existe la partida pedida en el catálogo.
+    case itemNotFound
 }

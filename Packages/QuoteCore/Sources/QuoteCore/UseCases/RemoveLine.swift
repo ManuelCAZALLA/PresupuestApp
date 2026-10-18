@@ -11,7 +11,7 @@ public final class RemoveLine {
 
     public func execute(quoteID: UUID, lineID: UUID) throws {
         guard var quote = try quotes.quote(id: quoteID) else {
-            throw DomainError.lineNotFound
+            throw DomainError.quoteNotFound
         }
         guard let index = quote.lines.firstIndex(where: { $0.id == lineID }) else {
             throw DomainError.lineNotFound

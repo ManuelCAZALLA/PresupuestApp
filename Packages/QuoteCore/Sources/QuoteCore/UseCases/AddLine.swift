@@ -15,10 +15,10 @@ public final class AddLine {
     @discardableResult
     public func execute(itemID: UUID, quantity: Decimal, in quoteID: UUID) throws -> QuoteLine {
         guard var quote = try quotes.quote(id: quoteID) else {
-            throw DomainError.lineNotFound
+            throw DomainError.quoteNotFound
         }
         guard let item = try items.item(id: itemID) else {
-            throw DomainError.lineNotFound
+            throw DomainError.itemNotFound
         }
 
         let line = QuoteLine(

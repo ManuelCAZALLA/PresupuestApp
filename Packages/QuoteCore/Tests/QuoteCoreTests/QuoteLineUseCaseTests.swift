@@ -95,13 +95,25 @@ struct QuoteLineUseCaseTests {
         #expect(try quotes.quote(id: quote.id)?.lines.first?.unitPrice == d("2.50"))
     }
 
-    @Test("AddLine de un presupuesto o una partida inexistentes lanza error")
-    func addLineMissingEntities() {
+    @Test("AddLine de un presupuesto inexistente lanza quoteNotFound")
+    func addLineMissingQuote() {
         let quotes = FakeQuoteRepository()
         let items = FakeItemRepository()
-        #expect(throws: DomainError.lineNotFound) {
+        #expect(throws: DomainError.quoteNotFound) {
             try AddLine(quotes: quotes, items: items)
                 .execute(itemID: UUID(), quantity: d("1"), in: UUID())
+        }
+    }
+
+    @Test("AddLine de una partida que no existe lanza itemNotFound")
+    func addLineMissingItem() throws {
+        let quotes = FakeQuoteRepository()
+        let items = FakeItemRepository()
+        let quote = makeQuote()
+        try quotes.save(quote)
+        #expect(throws: DomainError.itemNotFound) {
+            try AddLine(quotes: quotes, items: items)
+                .execute(itemID: UUID(), quantity: d("1"), in: quote.id)
         }
     }
 
@@ -126,9 +138,20 @@ struct QuoteLineUseCaseTests {
     }
 
     @Test("UpdateLineQuantity de una línea que no existe lanza error")
-    func updateMissingLine() {
+    func updateMissingLine() throws {
         let quotes = FakeQuoteRepository()
+        let quote = makeQuote()
+        try quotes.save(quote)
         #expect(throws: DomainError.lineNotFound) {
+            try UpdateLineQuantity(quotes: quotes)
+                .execute(quoteID: quote.id, lineID: UUID(), quantity: d("1"))
+        }
+    }
+
+    @Test("UpdateLineQuantity de un presupuesto que no existe lanza quoteNotFound")
+    func updateLineMissingQuote() {
+        let quotes = FakeQuoteRepository()
+        #expect(throws: DomainError.quoteNotFound) {
             try UpdateLineQuantity(quotes: quotes)
                 .execute(quoteID: UUID(), lineID: UUID(), quantity: d("1"))
         }
@@ -155,9 +178,19 @@ struct QuoteLineUseCaseTests {
     }
 
     @Test("RemoveLine de una línea que no existe lanza error")
-    func removeMissingLine() {
+    func removeMissingLine() throws {
         let quotes = FakeQuoteRepository()
+        let quote = makeQuote()
+        try quotes.save(quote)
         #expect(throws: DomainError.lineNotFound) {
+            try RemoveLine(quotes: quotes).execute(quoteID: quote.id, lineID: UUID())
+        }
+    }
+
+    @Test("RemoveLine de un presupuesto que no existe lanza quoteNotFound")
+    func removeLineMissingQuote() {
+        let quotes = FakeQuoteRepository()
+        #expect(throws: DomainError.quoteNotFound) {
             try RemoveLine(quotes: quotes).execute(quoteID: UUID(), lineID: UUID())
         }
     }
@@ -199,7 +232,7 @@ struct QuoteLineUseCaseTests {
     @Test("UpdateQuote de un presupuesto que no existe lanza error")
     func updateMissingQuote() {
         let quotes = FakeQuoteRepository()
-        #expect(throws: DomainError.lineNotFound) {
+        #expect(throws: DomainError.quoteNotFound) {
             try UpdateQuote(quotes: quotes).execute(makeQuote())
         }
     }
