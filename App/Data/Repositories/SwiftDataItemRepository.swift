@@ -23,10 +23,20 @@ public struct SwiftDataItemRepository: ItemRepository {
         return record.toDomain()
     }
 
+    public func item(named name: String) throws -> Item? {
+        let context = ModelContext(container)
+        guard let record = try fetchRecord(named: name, in: context) else { return nil }
+        return record.toDomain()
+    }
+
+    /// Upsert: por `id` y, si no lo encuentra, por nombre normalizado
+    /// (`Item.nameKey`). Así una importación no crea partidas duplicadas.
     public func save(_ item: Item) throws {
         let context = ModelContext(container)
         if let existing = try fetchRecord(id: item.id, in: context) {
             existing.apply(domain: item)
+        } else if let sameName = try fetchRecord(named: item.name, in: context) {
+            sameName.apply(domain: item)
         } else {
             context.insert(ItemRecord(domain: item))
         }
@@ -43,5 +53,11 @@ public struct SwiftDataItemRepository: ItemRepository {
     private func fetchRecord(id: UUID, in context: ModelContext) throws -> ItemRecord? {
         let descriptor = FetchDescriptor<ItemRecord>(predicate: #Predicate { $0.id == id })
         return try context.fetch(descriptor).first
+    }
+
+    private func fetchRecord(named name: String, in context: ModelContext) throws -> ItemRecord? {
+        let key = Item.nameKey(name)
+        let records = try context.fetch(FetchDescriptor<ItemRecord>())
+        return records.first { Item.nameKey($0.name) == key }
     }
 }

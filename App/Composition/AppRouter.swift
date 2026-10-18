@@ -1,17 +1,23 @@
 import Observation
 import SwiftUI
 
-/// Typed navigation routes. Empty in M0; one case per screen as features are added.
+/// Rutas tipadas de la app: una por pantalla (ver docs/PRODUCT.md).
 enum AppRoute: Hashable {
+    case onboarding
+    case catalog
+    case importTariff
+    case settings
 }
 
-/// Owns the navigation state. Created at the composition root and injected into the view tree.
-///
-/// `push(_:)` is added together with the first `AppRoute` cases; with an empty
-/// enum the compiler would flag the route append as unreachable code.
+/// Dueña del estado de navegación. Se crea en la raíz de composición
+/// y se inyecta en el árbol de vistas.
 @Observable
 final class AppRouter {
     var path = NavigationPath()
+
+    func push(_ route: AppRoute) {
+        path.append(route)
+    }
 
     func popToRoot() {
         path = NavigationPath()

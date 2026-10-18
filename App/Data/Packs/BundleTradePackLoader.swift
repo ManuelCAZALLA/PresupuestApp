@@ -2,6 +2,11 @@ import Foundation
 import QuoteCore
 
 /// Carga los packs de oficio desde el bundle (JSON, SIN precios).
+///
+/// NOTA (ver DECISIONS.md, D-007): en el MVP la app NO siembra partidas.
+/// Este loader se conserva sin conectar. No se usa para el catálogo; queda
+/// como candidato a vocabulario de sinónimos por oficio (JSON que alimenta
+/// el motor de interpretación), a decidir en M4/M5.
 public final class BundleTradePackLoader: TradePackLoading {
     private let bundle: Bundle
 
