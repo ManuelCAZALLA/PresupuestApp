@@ -108,6 +108,34 @@ struct QuotePDFRendererTests {
         #expect(pages.last?.contains("968,00") == true)
     }
 
+    @Test("El bloque de totales no queda solo en una página nueva")
+    func totalsSharePageWithLines() throws {
+        // La skill quote-pdf-export pide que el total nunca quede solo en una
+        // página nueva. Con tres tipos de IVA el bloque de totales (128 pt) es
+        // más alto que el hueco que reserva la tabla (120 pt).
+        let rates: [Decimal] = [21, 10, 4]
+        for count in 18...36 {
+            let lines = (1...count).map { index in
+                makeLine(
+                    name: "Partida \(index) PRUEBA",
+                    quantity: 1,
+                    unitPrice: 10,
+                    vatRate: rates[index % rates.count]
+                )
+            }
+            let quote = makeQuote(number: "P-2026-1\(String(format: "%03d", count))", lines: lines)
+            let totals = QuoteCalculator().calculate(lines: quote.lines, discount: .none)
+
+            let url = try render(quote, totals: totals, watermark: false)
+            let document = try #require(PDFDocument(url: url))
+            let pages = (0..<document.pageCount).map { document.page(at: $0)?.string ?? "" }
+            let totalsPage = try #require(pages.first { $0.contains("Total:") })
+
+            #expect(totalsPage.contains("Concepto"), "con \(count) líneas el total quedó solo")
+            #expect(totalsPage.contains("Subtotal"), "con \(count) líneas falta el subtotal")
+        }
+    }
+
     @Test("Sin marca de agua y con logo: el texto no lleva la marca")
     func watermarkAndLogo() throws {
         let quote = makeQuote(

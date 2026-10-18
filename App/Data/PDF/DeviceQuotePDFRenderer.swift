@@ -28,6 +28,7 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
                 quote: quote,
                 context: context,
                 startY: cursor,
+                reserveForTotals: Self.totalsBlockHeight(totals),
                 watermark: watermark
             )
             cursor = drawTotals(totals, at: cursor, context: context, watermark: watermark)
@@ -91,6 +92,7 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         quote: Quote,
         context: UIGraphicsPDFRendererContext,
         startY: CGFloat,
+        reserveForTotals: CGFloat,
         watermark: Bool
     ) -> CGFloat {
         let columns: [(String, CGFloat)] = [
@@ -104,7 +106,9 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         let calculator = QuoteCalculator()
         for line in quote.lines {
             let needed: CGFloat = 18
-            if y + needed > Self.pageRect.height - Self.margin - 120 {
+            // Se reserva el alto real del bloque de totales: si no cabe con esta
+            // línea, la línea y el total viajan juntos a la página siguiente.
+            if y + needed + reserveForTotals > Self.pageRect.height - Self.margin {
                 context.beginPage()
                 if watermark { drawWatermark(in: context) }
                 y = Self.margin
@@ -129,6 +133,12 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         return y + 10
     }
 
+    /// Alto del bloque de totales (subtotal, descuento, desglose de IVA y total).
+    /// La tabla lo reserva al paginar para que el total nunca quede solo.
+    private static func totalsBlockHeight(_ totals: QuoteTotals) -> CGFloat {
+        80 + CGFloat(totals.vatBreakdown.count) * 16
+    }
+
     private func drawTableHeader(_ columns: [(String, CGFloat)], at y: CGFloat) -> CGFloat {
         var x = Self.margin
         for column in columns {
@@ -145,7 +155,7 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         watermark: Bool
     ) -> CGFloat {
         var y = y
-        let blockHeight = CGFloat(80 + totals.vatBreakdown.count * 16)
+        let blockHeight = Self.totalsBlockHeight(totals)
         if y + blockHeight > Self.pageRect.height - Self.margin {
             context.beginPage()
             if watermark { drawWatermark(in: context) }
