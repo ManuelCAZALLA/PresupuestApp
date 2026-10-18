@@ -45,3 +45,10 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
 - **Decisión**: `Packages/QuoteCore` usa `swift-tools-version: 6.0`, plataformas mínimas iOS 17 y macOS 14, un target `QuoteCore` (solo Foundation) y un `testTarget` `QuoteCoreTests` con Swift Testing. Sin dependencias externas.
 - **Motivo**: iOS 17 es el mínimo exigido por SwiftData y macOS 14 permite compilar y probar el dominio con `swift test` en el Mac; fijar tools-version 6.0 garantiza el modo lenguaje Swift 6 sin sorpresas entre agentes.
 - **Consecuencia**: el dominio se verifica con `swift test --package-path Packages/QuoteCore`; cualquier dependencia o cambio de plataforma requiere una decisión nueva.
+
+## D-007 — Sin packs de partidas en el MVP
+- **Fecha**: 2026-10-18
+- **Estado**: aceptada
+- **Decisión**: la app NO incorpora partidas precargadas. El usuario carga su propia tarifa (Excel/CSV, lista pegada o alta manual) y el catálogo arranca vacío. Se elimina la siembra de datos en el arranque y en el onboarding. `BundleTradePackLoader`/`LoadTradePack` se conservan pero quedan sin usar en el MVP. Los sinónimos por oficio se mantienen como un JSON de vocabulario que alimenta el motor de interpretación, no como partidas.
+- **Motivo**: los precios y las partidas son del usuario (principio del producto). Un pack precargado introduce partidas sin precio, se duplica al reabrir la app y da una falsa sensación de catálogo listo. La importación de la tarifa real (M4) cubre el caso de uso desde el primer minuto.
+- **Consecuencia**: M3 no incluye packs; M4 se ejecuta justo después de M3 y antes de M5. Los packs por oficio pasan a mejora opcional futura. El repositorio de partidas hace upsert por nombre normalizado (`Item.nameKey`) para que importar no duplique.

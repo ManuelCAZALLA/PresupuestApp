@@ -29,15 +29,18 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 ## [ ] M3 — Persistencia, catálogo y onboarding
 **Dueños**: data_engineer + ui_engineer.
 - Modelos SwiftData, mappers, repositorios, `AppContainer` real.
-- Packs por oficio (JSON sin precios) + `LoadTradePack`.
+- Catálogo 100 % del usuario: sin packs ni siembra de datos al arrancar.
+- Repositorio de partidas con upsert por nombre normalizado; catálogo vacío con importar / pegar / añadir a mano.
 - Features `Onboarding` (S1), `Catalog` (S7), `Settings` (S10).
-**Hecho cuando**: se puede elegir oficio, cargar el pack, poner precios y cerrar/abrir la app sin perder nada.
+**Hecho cuando**: se puede elegir oficio, añadir partidas a mano, poner precios y cerrar/abrir la app sin perder nada, sin datos precargados.
 **Paralelismo**: puede ir a la vez que M2 (carpetas distintas).
 
 ## [ ] M4 — Importar tarifa
 **Dueños**: data_engineer + ui_engineer.
 - Lectores CSV y XLSX, pegar texto, asignación de columnas, IVA incluido/no incluido.
 - Feature `ImportTariff` (S8) con pantalla de revisión.
+- Plantilla Excel descargable (columnas Nombre, Unidad, Precio) para compartir.
+**Orden**: M4 se ejecuta justo después de M3 y antes de M5: sin la tarifa del usuario no hay nada que presupuestar.
 **Hecho cuando**: una tarifa real de ejemplo (Excel y CSV) se importa y revisa en menos de 2 minutos.
 
 ## [ ] M5 — Flujo de presupuesto
@@ -59,4 +62,4 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 **Hecho cuando**: TestFlight listo para enseñar a fontaneros reales.
 
 ## Después del MVP (no tocar antes)
-OCR de fotos y PDF, Android, IA opcional como función Pro, facturación.
+OCR de fotos y PDF, Android, IA opcional como función Pro, facturación, packs de partidas por oficio como mejora opcional (los sinónimos de oficio se mantienen como vocabulario del motor).
