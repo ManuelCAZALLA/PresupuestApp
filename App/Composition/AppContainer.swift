@@ -11,6 +11,7 @@ final class AppContainer {
 
     let onboardingViewModel: OnboardingViewModel
     let catalogViewModel: CatalogViewModel
+    let importTariffViewModel: ImportTariffViewModel
     let settingsViewModel: SettingsViewModel
 
     /// Casos de uso de presupuestos: M5 los consume desde las pantallas.
@@ -57,6 +58,11 @@ final class AppContainer {
         self.catalogViewModel = CatalogViewModel(
             listItems: listItems,
             manageItems: manageItems
+        )
+        self.importTariffViewModel = ImportTariffViewModel(
+            source: LocalTariffSource(),
+            template: FileTariffTemplateProvider(),
+            importTariff: ImportTariff(items: itemRepository)
         )
         self.settingsViewModel = SettingsViewModel(
             loadBusinessProfile: loadBusinessProfile,

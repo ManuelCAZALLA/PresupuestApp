@@ -20,12 +20,17 @@ struct AppRootView: View {
                     case .catalog:
                         CatalogView(viewModel: container.catalogViewModel)
                     case .importTariff:
-                        ImportTariffView()
+                        ImportTariffView(viewModel: container.importTariffViewModel)
                     case .settings:
                         SettingsView(viewModel: container.settingsViewModel)
                     }
                 }
         }
         .environment(router)
+        .onOpenURL { url in
+            // "Abrir con" desde Archivos, Mail o WhatsApp.
+            container.importTariffViewModel.openExternalFile(at: url)
+            router.push(.importTariff)
+        }
     }
 }

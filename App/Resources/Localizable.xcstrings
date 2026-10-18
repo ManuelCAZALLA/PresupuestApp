@@ -158,6 +158,16 @@
         }
       }
     },
+    "error.importFailed" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer el archivo. Comprueba que sea un Excel o CSV válido."
+          }
+        }
+      }
+    },
     "error.invalidTransition" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -371,32 +381,522 @@
         }
       }
     },
-    "importTariff.pending.message" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes importar tu Excel o CSV en el paso M4. Mientras tanto, añade partidas a mano o pega una lista."
-          }
-        }
-      }
-    },
-    "importTariff.pending.title" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importar tarifa"
-          }
-        }
-      }
-    },
     "importTariff.title" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Importar tarifa"
+          }
+        }
+      }
+    },
+    "importTariff.done.close" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo"
+          }
+        }
+      }
+    },
+    "importTariff.done.created" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partidas nuevas"
+          }
+        }
+      }
+    },
+    "importTariff.done.skipped" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitidas (ya existían)"
+          }
+        }
+      }
+    },
+    "importTariff.done.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarifa importada"
+          }
+        }
+      }
+    },
+    "importTariff.done.updated" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partidas actualizadas"
+          }
+        }
+      }
+    },
+    "importTariff.error.emptyFile" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El archivo no tiene filas que se puedan leer."
+          }
+        }
+      }
+    },
+    "importTariff.error.retry" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir otro archivo"
+          }
+        }
+      }
+    },
+    "importTariff.error.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo importar"
+          }
+        }
+      }
+    },
+    "importTariff.loading" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo el archivo…"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.category" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categoría"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.columns" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué columna es cada cosa?"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.continue" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisar partidas"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.name" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.none" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.preview" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Así se ve tu archivo"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.preview.accessibility" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeras filas del archivo"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.price" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precio"
+          }
+        }
+      }
+    },
+    "importTariff.mapping.unit" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidad"
+          }
+        }
+      }
+    },
+    "importTariff.origin.file.button" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir archivo"
+          }
+        }
+      }
+    },
+    "importTariff.origin.file.hint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excel (.xlsx) o CSV, con una fila por partida."
+          }
+        }
+      }
+    },
+    "importTariff.origin.file.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desde un archivo"
+          }
+        }
+      }
+    },
+    "importTariff.origin.paste.button" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interpretar lista"
+          }
+        }
+      }
+    },
+    "importTariff.origin.paste.hint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una partida por línea. Ejemplo: «Inodoro 110 €» o «tubo 20mm 2,5€/m»."
+          }
+        }
+      }
+    },
+    "importTariff.origin.paste.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pegando una lista"
+          }
+        }
+      }
+    },
+    "importTariff.review.back" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a las columnas"
+          }
+        }
+      }
+    },
+    "importTariff.review.confirm" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmar importación"
+          }
+        }
+      }
+    },
+    "importTariff.review.mode" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo aplicar"
+          }
+        }
+      }
+    },
+    "importTariff.review.mode.addNew" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir solo las nuevas"
+          }
+        }
+      }
+    },
+    "importTariff.review.mode.hint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada se guarda hasta que confirmes."
+          }
+        }
+      }
+    },
+    "importTariff.review.mode.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partidas con el mismo nombre"
+          }
+        }
+      }
+    },
+    "importTariff.review.mode.update" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar las que ya existen"
+          }
+        }
+      }
+    },
+    "importTariff.review.name" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre"
+          }
+        }
+      }
+    },
+    "importTariff.review.price" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precio"
+          }
+        }
+      }
+    },
+    "importTariff.review.rows" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partidas detectadas (desliza para quitar)"
+          }
+        }
+      }
+    },
+    "importTariff.review.unit" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidad"
+          }
+        }
+      }
+    },
+    "importTariff.review.warningCount" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avisos"
+          }
+        }
+      }
+    },
+    "importTariff.sheet.picker" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoja"
+          }
+        }
+      }
+    },
+    "importTariff.sheet.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿De qué hoja?"
+          }
+        }
+      }
+    },
+    "importTariff.template.button" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargar plantilla"
+          }
+        }
+      }
+    },
+    "importTariff.template.hint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CSV vacío con las columnas Nombre; Unidad; Precio para rellenar con Excel."
+          }
+        }
+      }
+    },
+    "importTariff.template.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿No tienes archivo?"
+          }
+        }
+      }
+    },
+    "importTariff.vat.rate" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo de IVA"
+          }
+        }
+      }
+    },
+    "importTariff.vat.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IVA"
+          }
+        }
+      }
+    },
+    "importTariff.vat.toggle" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los precios ya incluyen IVA"
+          }
+        }
+      }
+    },
+    "importTariff.warning.duplicado" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre repetido en el archivo"
+          }
+        }
+      }
+    },
+    "importTariff.warning.generic" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisa esta partida"
+          }
+        }
+      }
+    },
+    "importTariff.warning.precioAmbiguo" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precio ambiguo: confírmalo"
+          }
+        }
+      }
+    },
+    "importTariff.warning.precioInvalido" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se entiende el precio"
+          }
+        }
+      }
+    },
+    "importTariff.warning.precioSinMoneda" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precio sin símbolo de moneda"
+          }
+        }
+      }
+    },
+    "importTariff.warning.sinPrecio" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin precio en el archivo"
+          }
+        }
+      }
+    },
+    "importTariff.warning.unidadDesconocida" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidad no reconocida: se usa ud"
           }
         }
       }

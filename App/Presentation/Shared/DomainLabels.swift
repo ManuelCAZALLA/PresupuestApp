@@ -32,4 +32,17 @@ enum DomainLabels {
         case .other: return "kind.other"
         }
     }
+
+    /// Etiqueta de un aviso de importación (S8), por su tipo.
+    static func importWarning(_ warning: ImportWarning) -> String {
+        switch warning.type {
+        case "sinPrecio": return "importTariff.warning.sinPrecio"
+        case "precioInvalido": return "importTariff.warning.precioInvalido"
+        case "unidadDesconocida": return "importTariff.warning.unidadDesconocida"
+        case "duplicado": return "importTariff.warning.duplicado"
+        case "precioAmbiguo": return "importTariff.warning.precioAmbiguo"
+        case "precioSinMoneda": return "importTariff.warning.precioSinMoneda"
+        default: return "importTariff.warning.generic"
+        }
+    }
 }

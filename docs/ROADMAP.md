@@ -42,6 +42,7 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 - Plantilla Excel descargable (columnas Nombre, Unidad, Precio) para compartir.
 **Orden**: M4 se ejecuta justo después de M3 y antes de M5: sin la tarifa del usuario no hay nada que presupuestar.
 **Hecho cuando**: una tarifa real de ejemplo (Excel y CSV) se importa y revisa en menos de 2 minutos.
+**Estado (2026-10-18)**: implementado. Dominio en `Packages/QuoteCore/Sources/QuoteCore/Import` (39 tests con `swift test`), lectores en `App/Data/Import` y verificación de los 5 archivos de `Tests/ImportSamples` contra `expected_imports.json` en el target `AppTests` (9 tests con `xcodebuild test`). Queda la comprobación manual del flujo en el simulador (ver "Hecho cuando", menos de 2 minutos).
 
 ## [ ] M5 — Flujo de presupuesto
 **Dueños**: ui_engineer + data_engineer + domain_engineer.

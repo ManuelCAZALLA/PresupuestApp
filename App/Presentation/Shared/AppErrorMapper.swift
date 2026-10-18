@@ -17,6 +17,8 @@ enum AppErrorMapper {
             return "error.invalidTransition"
         case .packNotFound:
             return "error.packNotFound"
+        case .importFailed:
+            return "error.importFailed"
         }
     }
 }

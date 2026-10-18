@@ -25,7 +25,8 @@ PresupuestApp/
 │  │  ├─ Entities/        Item, Kit, Quote, QuoteLine, Client, BusinessProfile, Trade, MeasureUnit, VATRate
 │  │  ├─ Calculation/     QuoteCalculator, RoundingPolicy, QuoteTotals
 │  │  ├─ Engine/          Normalizer, NumberWords, Segmenter, QuantityExtractor, Scorer, Matcher, RequestInterpreter, SynonymTable
-│  │  ├─ Ports/           protocolos externos: DictationService, QuotePDFRenderer, Clock, EntitlementProvider
+│  │  ├─ Import/          ColumnMapper, PriceParser, UnitParser, entidades de importación
+│  │  ├─ Ports/           protocolos externos: DictationService, QuotePDFRenderer, Clock, EntitlementProvider, TariffImportSource, TariffTemplateProviding
 │  │  ├─ Repositories/    protocolos: ItemRepository, KitRepository, QuoteRepository, ProfileRepository, AliasRepository
 │  │  ├─ UseCases/        un tipo por caso de uso
 │  │  └─ Errors/          DomainError
@@ -36,7 +37,7 @@ PresupuestApp/
 │  ├─ Data/
 │  │  ├─ Persistence/     modelos @Model, ModelContainer, mappers
 │  │  ├─ Repositories/    SwiftData*Repository
-│  │  ├─ Import/          CSVReader, XLSXReader, PastedTextParser, ColumnMapper
+│  │  ├─ Import/          CSVReader, XLSXReader, PastedTextParser, LocalTariffSource, FileTariffTemplateProvider, ImportFileTypes
 │  │  ├─ Speech/          SpeechDictationService
 │  │  ├─ PDF/             QuotePDFRenderer
 │  │  └─ Packs/           TradePackLoader
@@ -44,7 +45,7 @@ PresupuestApp/
 │  │  ├─ Shared/          componentes, tema, formateadores (moneda es-ES)
 │  │  └─ Features/<Feature>/  <Feature>View.swift, <Feature>ViewModel.swift
 │  └─ Resources/          Localizable.xcstrings, Assets, Packs/*.json
-└─ Tests/                 AppTests, UITests
+└─ Tests/                 AppTests (target de tests unitarios, `xcodebuild test`), UITests, ImportSamples/ (archivos de ejemplo y `expected_imports.json`, no se editan)
 ```
 
 ## MVVM en este proyecto
@@ -67,7 +68,7 @@ PresupuestApp/
 | Capa | Qué se prueba | Cómo |
 |---|---|---|
 | QuoteCore | Cálculo, motor, casos de uso | `swift test`; vectores de `DOMAIN.md`; fixtures del parser; repositorios falsos en memoria |
-| Data | Mappers, repositorios, importadores | Tests con `ModelContainer` en memoria; archivos de ejemplo en `Tests/` |
+| Data | Mappers, repositorios, importadores | Tests con `ModelContainer` en memoria y archivos de ejemplo de `Tests/ImportSamples`, en el target `AppTests` (`xcodebuild test`) |
 | Presentation | ViewModels | Casos de uso falsos; sin SwiftUI |
 | UI | Flujo principal | UITests mínimos: onboarding → presupuesto → PDF |
 
