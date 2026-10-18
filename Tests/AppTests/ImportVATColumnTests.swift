@@ -92,8 +92,8 @@ struct ImportVATColumnTests {
 
         let summary = try useCase.execute(rows: result.rows)
         #expect(summary.created == 7)
-        #expect(try repository.item(named: "Mano de obra")?.vatRate == decimal("10"))
         #expect(try repository.item(named: "Urinario")?.vatRate == decimal("21"))
+        #expect(try repository.item(named: "Tubo multicapa 20 mm")?.vatRate == decimal("10"))
         // Sin valor en la fila la partida no fija tipo propio: hereda el del presupuesto.
         #expect(try repository.item(named: "Desplazamiento")?.vatRate == nil)
     }
@@ -127,7 +127,7 @@ struct ImportVATColumnViewModelTests {
 
         viewModel.confirm()
         #expect(viewModel.summary?.created == 7)
-        #expect(try repository.item(named: "Mano de obra")?.vatRate == decimal("10"))
+        #expect(try repository.item(named: "Tubo multicapa 20 mm")?.vatRate == decimal("10"))
         #expect(try repository.item(named: "Desplazamiento")?.vatRate == nil)
     }
 }
