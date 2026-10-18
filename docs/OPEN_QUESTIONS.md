@@ -21,3 +21,8 @@ Cosas que el producto o la técnica no definen y que **no se inventan**. Cada un
 - **Bloquea**: no, con el enlace funciona.
 - **Propuesta**: mover el repo a una carpeta fuera de iCloud (p. ej. `~/Developer`) cuando se pueda; entonces `.build` normal ya sirve.
 
+## Q-005 — Pie de aceptación del PDF
+- **Contexto**: la skill `quote-pdf-export` pide, como punto 7 del contenido obligatorio, un pie con el texto de aceptación "si se define en ajustes". Hoy no está definido en ninguna parte: `PRODUCT.md` (criterio de S6) pide "logo, datos, líneas, IVA, condiciones y validez", y `Ajustes` (S10) solo tiene `BusinessProfile.terms` ("Condiciones"), que el PDF ya imprime bajo ese título. El footer no se dibuja, siguiendo la regla de no inventar contenido.
+- **Bloquea**: no a M4b: el PDF cumple el criterio de `PRODUCT.md` y el resto de la skill.
+- **Propuesta**: decidir si el texto de aceptación reutiliza `terms` o es un campo nuevo en Ajustes (`BusinessProfile.acceptanceText`); la segunda opción añade esquema v3 y su etapa de migración. Encaja en M6 (PDF y envío).
+
