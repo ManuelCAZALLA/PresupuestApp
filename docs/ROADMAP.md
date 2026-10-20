@@ -32,7 +32,8 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 - Catálogo 100 % del usuario: sin packs ni siembra de datos al arrancar.
 - Repositorio de partidas con upsert por nombre normalizado; catálogo vacío con importar / pegar / añadir a mano.
 - Features `Onboarding` (S1), `Catalog` (S7), `Settings` (S10).
-**Hecho cuando**: se puede elegir oficio, añadir partidas a mano, poner precios y cerrar/abrir la app sin perder nada, sin datos precargados.
+**Hecho cuando**: se puede completar el onboarding, añadir partidas a mano, poner precios y cerrar/abrir la app sin perder nada, sin datos precargados.
+**Estado (2026-10-20)**: S1 rehecho como recorrido de cinco pasos (carrusel, negocio con IVA por defecto y catálogo vacío) con la bandera `hasCompletedOnboarding` y "Cómo funciona" en Ajustes (D-016). El resto del hito (catálogo, Ajustes) ya venía de M4b.
 **Paralelismo**: puede ir a la vez que M2 (carpetas distintas).
 
 ## [ ] M4 — Importar tarifa
@@ -47,7 +48,7 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 ## [~] M4b — Flujo completo sin dictado
 **Dueños**: architect + qa_engineer + domain_engineer + data_engineer + ui_engineer.
 - Recorrido de punta a punta sin voz: onboarding → importar tarifa → catálogo → presupuesto a mano → PDF → compartir.
-- Navegación: `TabView` con pestañas **Presupuestos**, **Precios** y **Ajustes**, que aparecen tras completar el onboarding; sin perfil guardado se abre `Onboarding` (S1) a pantalla completa.
+- Navegación: `TabView` con pestañas **Presupuestos**, **Precios** y **Ajustes**, que aparecen tras completar el onboarding; mientras no esté puesta la bandera `hasCompletedOnboarding` (D-016) se abre `Onboarding` (S1) a pantalla completa.
 - IVA por partida: `Item.vatRate` opcional; el IVA de una línea es el de la partida o, si no la tiene, el del presupuesto. La importación acepta una columna `IVA` opcional.
 - Casos de uso de líneas: `AddLine`, `UpdateLineQuantity`, `RemoveLine`, `UpdateQuote`. El cálculo sigue siendo `QuoteCalculator` (no se duplica).
 - Features nuevas: `QuoteList` (S2), presupuesto a mano (cliente, buscador de partidas, líneas con +/−, descuento, total fijo), presupuesto terminado con desglose de IVA y envío (S6) con `QuotePDFRenderer`.
