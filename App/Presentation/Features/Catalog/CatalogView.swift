@@ -6,19 +6,7 @@ struct CatalogView: View {
     @Bindable var viewModel: CatalogViewModel
     @Environment(AppRouter.self) private var router
 
-    @State private var editorTarget: EditorTarget?
-
-    private enum EditorTarget: Identifiable {
-        case new
-        case edit(Item)
-
-        var id: String {
-            switch self {
-            case .new: return "new"
-            case .edit(let item): return "edit-\(item.id)"
-            }
-        }
-    }
+    @State private var editingItem: Item?
 
     private var isEmptyCatalog: Bool {
         viewModel.state == .loaded && viewModel.items.isEmpty && viewModel.searchText.isEmpty
@@ -31,7 +19,7 @@ struct CatalogView: View {
                     ForEach(section.items) { item in
                         ItemRow(
                             item: item,
-                            onEdit: { editorTarget = .edit(item) },
+                            onEdit: { editingItem = item },
                             onDelete: { viewModel.deleteItem(item) }
                         )
                     }
@@ -47,7 +35,7 @@ struct CatalogView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    editorTarget = .new
+                    router.presentNewItem()
                 } label: {
                     Label("catalog.addItem", systemImage: "plus")
                 }
@@ -61,9 +49,11 @@ struct CatalogView: View {
             }
         }
         .overlay { emptyOverlay }
-        .sheet(item: $editorTarget) { target in
+        .sheet(item: $editingItem) { item in
             NavigationStack {
-                editor(for: target)
+                ItemEditorView(item: item) { updated in
+                    viewModel.saveItem(updated, isNew: false)
+                }
             }
             .presentationDetents([.large])
         }
@@ -71,19 +61,8 @@ struct CatalogView: View {
         .onChange(of: router.isImportPresented) { _, presented in
             if !presented { viewModel.load() }
         }
-    }
-
-    @ViewBuilder
-    private func editor(for target: EditorTarget) -> some View {
-        switch target {
-        case .new:
-            ItemEditorView { created in
-                viewModel.saveItem(created, isNew: true)
-            }
-        case .edit(let item):
-            ItemEditorView(item: item) { updated in
-                viewModel.saveItem(updated, isNew: false)
-            }
+        .onChange(of: router.isItemEditorPresented) { _, presented in
+            if !presented { viewModel.load() }
         }
     }
 
@@ -95,29 +74,11 @@ struct CatalogView: View {
             } description: {
                 Text("catalog.empty.message")
             } actions: {
-                Button {
-                    router.presentImport()
-                } label: {
-                    Label("catalog.empty.import", systemImage: "square.and.arrow.down")
-                        .frame(maxWidth: .infinity, minHeight: 56)
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button {
-                    router.presentImport()
-                } label: {
-                    Label("catalog.empty.paste", systemImage: "doc.on.clipboard")
-                        .frame(maxWidth: .infinity, minHeight: 56)
-                }
-                .buttonStyle(.bordered)
-
-                Button {
-                    editorTarget = .new
-                } label: {
-                    Label("catalog.empty.addManual", systemImage: "plus")
-                        .frame(maxWidth: .infinity, minHeight: 56)
-                }
-                .buttonStyle(.bordered)
+                TariffStartActions(
+                    onImport: { router.presentImport() },
+                    onPaste: { router.presentImport() },
+                    onAddManually: { router.presentNewItem() }
+                )
             }
             .padding(.horizontal, 24)
         }

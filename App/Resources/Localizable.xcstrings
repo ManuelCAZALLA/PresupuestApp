@@ -11,6 +11,16 @@
         }
       }
     },
+    "action.close" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar"
+          }
+        }
+      }
+    },
     "action.delete" : {
       "localizations" : {
         "es" : {
@@ -1143,32 +1153,162 @@
         }
       }
     },
-    "onboarding.businessSection" : {
+    "onboarding.business.subtitle" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datos de la empresa"
+            "value" : "Saldrá en tus presupuestos."
           }
         }
       }
     },
-    "onboarding.defaultsSection" : {
+    "onboarding.continue" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "IVA, validez y numeración"
+            "value" : "Continuar"
           }
         }
       }
     },
-    "onboarding.selectTrade" : {
+    "onboarding.later" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oficio"
+            "value" : "Lo haré luego"
+          }
+        }
+      }
+    },
+    "onboarding.logo.add" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir logo"
+          }
+        }
+      }
+    },
+    "onboarding.logo.change" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar logo"
+          }
+        }
+      }
+    },
+    "onboarding.logo.remove" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar"
+          }
+        }
+      }
+    },
+    "onboarding.next" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente"
+          }
+        }
+      }
+    },
+    "onboarding.page.indicator" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Página"
+          }
+        }
+      }
+    },
+    "onboarding.page1.body" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importa tus precios desde Excel, CSV o una lista de WhatsApp. Solo una vez."
+          }
+        }
+      }
+    },
+    "onboarding.page1.note" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus datos se quedan en tu móvil."
+          }
+        }
+      }
+    },
+    "onboarding.page1.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu tarifa, siempre a mano"
+          }
+        }
+      }
+    },
+    "onboarding.page2.body" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade los trabajos que pide el cliente y el total se calcula solo, con tus precios y tu IVA."
+          }
+        }
+      }
+    },
+    "onboarding.page2.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presupuesta en minutos"
+          }
+        }
+      }
+    },
+    "onboarding.page3.body" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genera un PDF con tu nombre y tus condiciones y mándalo por WhatsApp o por correo."
+          }
+        }
+      }
+    },
+    "onboarding.page3.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envíalo como un profesional"
+          }
+        }
+      }
+    },
+    "onboarding.skip" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltar"
           }
         }
       }
@@ -1193,42 +1333,62 @@
         }
       }
     },
-    "onboarding.tradeFooter" : {
+    "onboarding.vat.invalid" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El oficio solo ayuda a entender lo que dictas. Los precios salen de tu tarifa."
+            "value" : "Escribe un número, por ejemplo 5."
           }
         }
       }
     },
-    "onboarding.tradeSection" : {
+    "onboarding.vat.note" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige tu oficio"
+            "value" : "Puedes cambiarlo en cada presupuesto."
           }
         }
       }
     },
-    "onboarding.welcome" : {
+    "onboarding.vat.other" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Presupuestos con tus precios"
+            "value" : "Otro"
           }
         }
       }
     },
-    "onboarding.welcome.message" : {
+    "onboarding.vat.reduced" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carga tu tarifa y saca un PDF listo para WhatsApp. Sin conexión y sin inventar importes."
+            "value" : "10 %"
+          }
+        }
+      }
+    },
+    "onboarding.vat.standard" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "21 %"
+          }
+        }
+      }
+    },
+    "onboarding.vat.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IVA por defecto"
           }
         }
       }
@@ -1647,6 +1807,16 @@
         }
       }
     },
+    "settings.howItWorks" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo funciona"
+          }
+        }
+      }
+    },
     "settings.saved" : {
       "localizations" : {
         "es" : {
@@ -1693,47 +1863,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajustes"
-          }
-        }
-      }
-    },
-    "trade.electrician" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Electricidad"
-          }
-        }
-      }
-    },
-    "trade.mason" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Albañilería"
-          }
-        }
-      }
-    },
-    "trade.other" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otro"
-          }
-        }
-      }
-    },
-    "trade.plumber" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fontanería"
           }
         }
       }

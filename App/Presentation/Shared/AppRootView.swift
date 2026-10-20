@@ -19,7 +19,6 @@ struct AppRootView: View {
             } else {
                 OnboardingView(
                     viewModel: container.onboardingViewModel,
-                    session: session,
                     router: router
                 )
             }
@@ -30,6 +29,14 @@ struct AppRootView: View {
             NavigationStack {
                 ImportTariffView(viewModel: container.importTariffViewModel)
             }
+        }
+        .sheet(isPresented: $router.isItemEditorPresented) {
+            NavigationStack {
+                ItemEditorView { created in
+                    container.catalogViewModel.saveItem(created, isNew: true)
+                }
+            }
+            .presentationDetents([.large])
         }
         .onChange(of: router.isImportPresented) { _, presented in
             if !presented {
@@ -69,7 +76,10 @@ struct AppRootView: View {
             .tag(AppTab.prices)
 
             NavigationStack {
-                SettingsView(viewModel: container.settingsViewModel)
+                SettingsView(
+                    viewModel: container.settingsViewModel,
+                    makeWalkthroughViewModel: container.makeWalkthroughViewModel
+                )
             }
             .tabItem {
                 Label("tab.settings", systemImage: "gearshape")

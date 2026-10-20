@@ -24,6 +24,7 @@ final class AppContainer {
     private let listItems: ListItems
     private let exportQuotePDF: ExportQuotePDF
     private let changeQuoteStatus: ChangeQuoteStatus
+    private let saveBusinessProfile: SaveBusinessProfile
 
     init() throws {
         let modelContainer = try PersistenceSetup.makeModelContainer()
@@ -58,6 +59,7 @@ final class AppContainer {
         self.updateLineQuantity = UpdateLineQuantity(quotes: quoteRepository)
         self.removeLine = RemoveLine(quotes: quoteRepository)
         self.listItems = listItems
+        self.saveBusinessProfile = saveBusinessProfile
         self.changeQuoteStatus = ChangeQuoteStatus(quotes: quoteRepository)
         self.exportQuotePDF = ExportQuotePDF(
             renderer: DeviceQuotePDFRenderer(),
@@ -65,9 +67,15 @@ final class AppContainer {
             entitlements: entitlements
         )
 
-        self.session = AppSession(loadBusinessProfile: loadBusinessProfile)
+        let session = AppSession(
+            loadBusinessProfile: loadBusinessProfile,
+            defaults: .standard
+        )
+        self.session = session
         self.onboardingViewModel = OnboardingViewModel(
-            saveBusinessProfile: saveBusinessProfile
+            mode: .onboarding,
+            saveBusinessProfile: saveBusinessProfile,
+            onComplete: { session.completeOnboarding() }
         )
         self.catalogViewModel = CatalogViewModel(
             listItems: listItems,
@@ -86,6 +94,15 @@ final class AppContainer {
             listQuotes: ListQuotes(quotes: quoteRepository),
             createQuote: createQuote,
             duplicateQuote: duplicateQuote
+        )
+    }
+
+    /// Paseo de Ajustes → "Cómo funciona": solo el carrusel, y sin
+    /// bandera que marcar (D-016).
+    func makeWalkthroughViewModel() -> OnboardingViewModel {
+        OnboardingViewModel(
+            mode: .walkthrough,
+            saveBusinessProfile: saveBusinessProfile
         )
     }
 

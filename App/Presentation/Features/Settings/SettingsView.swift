@@ -3,6 +3,11 @@ import SwiftUI
 /// S10 Ajustes: datos de empresa, IVA por defecto, condiciones y numeración.
 struct SettingsView: View {
     @Bindable var viewModel: SettingsViewModel
+    let makeWalkthroughViewModel: () -> OnboardingViewModel
+
+    @Environment(AppRouter.self) private var router
+    @State private var walkthroughViewModel: OnboardingViewModel?
+    @State private var isWalkthroughPresented = false
 
     @State private var name = ""
     @State private var taxID = ""
@@ -63,10 +68,23 @@ struct SettingsView: View {
                         .foregroundStyle(.red)
                 }
             }
+
+            Section {
+                Button {
+                    presentWalkthrough()
+                } label: {
+                    Label("settings.howItWorks", systemImage: "questionmark.circle")
+                }
+            }
         }
         .listStyle(.insetGrouped)
         .navigationTitle("settings.title")
         .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $isWalkthroughPresented) {
+            if let walkthroughViewModel {
+                OnboardingView(viewModel: walkthroughViewModel, router: router)
+            }
+        }
         .task { viewModel.load() }
         .onChange(of: viewModel.state) { _, newState in
             if case .loaded = newState, !viewModel.saved {
@@ -82,6 +100,11 @@ struct SettingsView: View {
                 )
             }
         }
+    }
+
+    private func presentWalkthrough() {
+        walkthroughViewModel = makeWalkthroughViewModel()
+        isWalkthroughPresented = true
     }
 
     private func save() {

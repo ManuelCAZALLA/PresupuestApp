@@ -1,128 +1,151 @@
 import SwiftUI
-import QuoteCore
 
-/// S1 Onboarding: oficio, datos de empresa e IVA por defecto.
+/// S1 Onboarding: carrusel de tres pasos, datos del negocio y el catálogo
+/// vacío. La misma vista sirve para el paseo de Ajustes → "Cómo funciona",
+/// que solo muestra los pasos 1–3 y no marca la bandera (D-016).
 struct OnboardingView: View {
     @Bindable var viewModel: OnboardingViewModel
-    let session: AppSession
     let router: AppRouter
 
-    @State private var name = ""
-    @State private var taxID = ""
-    @State private var phone = ""
-    @State private var email = ""
-    @State private var defaultVATRate = "21"
-    @State private var terms = ""
-    @State private var validityDays = "30"
-    @State private var numberPrefix = "P"
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Image(systemName: "doc.text.fill")
-                            .font(.system(size: 36, weight: .semibold))
-                            .foregroundStyle(.tint)
-                            .accessibilityHidden(true)
-                        Text("onboarding.welcome")
-                            .font(.title2.weight(.semibold))
-                        Text("onboarding.welcome.message")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 8)
-                    .accessibilityElement(children: .combine)
-                }
+        VStack(spacing: 0) {
+            topBar
+            content
+            footer
+        }
+        .background(BrandPalette.background.ignoresSafeArea())
+    }
 
-                Section {
-                    Picker("onboarding.selectTrade", selection: Binding(
-                        get: { viewModel.trade },
-                        set: { viewModel.selectTrade($0) }
-                    )) {
-                        Text("trade.plumber").tag(Trade.plumber)
-                        Text("trade.mason").tag(Trade.mason)
-                        Text("trade.electrician").tag(Trade.electrician)
-                    }
-                    .pickerStyle(.segmented)
-                    .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
-                } header: {
-                    Text("onboarding.tradeSection")
-                } footer: {
-                    Text("onboarding.tradeFooter")
-                }
+    // MARK: - Barra superior
 
-                Section {
-                    TextField("field.name", text: $name)
-                        .textContentType(.organizationName)
-                    TextField("field.taxID", text: $taxID)
-                    TextField("field.phone", text: $phone)
-                        .keyboardType(.phonePad)
-                        .textContentType(.telephoneNumber)
-                    TextField("field.email", text: $email)
-                        .keyboardType(.emailAddress)
-                        .textContentType(.emailAddress)
-                        .textInputAutocapitalization(.never)
-                } header: {
-                    Text("onboarding.businessSection")
+    private var topBar: some View {
+        HStack {
+            Spacer(minLength: 0)
+            if viewModel.showsSkip {
+                Button("onboarding.skip") {
+                    animate { viewModel.skip() }
                 }
-
-                Section {
-                    TextField("field.defaultVAT", text: $defaultVATRate)
-                        .keyboardType(.decimalPad)
-                    TextField("field.validityDays", text: $validityDays)
-                        .keyboardType(.numberPad)
-                    TextField("field.numberPrefix", text: $numberPrefix)
-                    TextField("field.terms", text: $terms, axis: .vertical)
-                        .lineLimit(3...6)
-                } header: {
-                    Text("onboarding.defaultsSection")
-                }
-
-                if case .failed(let message) = viewModel.state {
-                    Section {
-                        Text(LocalizedStringKey(message))
-                            .foregroundStyle(.red)
-                    }
-                }
+                .font(.body.weight(.semibold))
+                .foregroundStyle(BrandPalette.accent)
+                .frame(minHeight: 44)
             }
-            .navigationTitle("onboarding.title")
-            .navigationBarTitleDisplayMode(.large)
-            .safeAreaInset(edge: .bottom) {
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .frame(minHeight: 44)
+    }
+
+    // MARK: - Contenido
+
+    private var content: some View {
+        ZStack {
+            switch viewModel.step {
+            case .tariff:
+                OnboardingCarouselPage(
+                    illustration: .tariff,
+                    titleKey: "onboarding.page1.title",
+                    bodyKey: "onboarding.page1.body",
+                    noteKey: "onboarding.page1.note"
+                )
+            case .estimate:
+                OnboardingCarouselPage(
+                    illustration: .estimate,
+                    titleKey: "onboarding.page2.title",
+                    bodyKey: "onboarding.page2.body"
+                )
+            case .send:
+                OnboardingCarouselPage(
+                    illustration: .send,
+                    titleKey: "onboarding.page3.title",
+                    bodyKey: "onboarding.page3.body"
+                )
+            case .business:
+                OnboardingBusinessView(viewModel: viewModel)
+            case .loadTariff:
+                OnboardingLoadTariffView(onChoose: choose)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .id(viewModel.step)
+        .transition(.opacity)
+    }
+
+    // MARK: - Pie
+
+    @ViewBuilder
+    private var footer: some View {
+        VStack(spacing: 12) {
+            if viewModel.showsPageIndicator {
+                OnboardingPageIndicator(
+                    pageCount: viewModel.pageCount,
+                    currentIndex: viewModel.pageIndex
+                )
+            }
+
+            if let titleKey = viewModel.primaryTitleKey {
                 Button {
-                    save()
+                    primaryAction()
                 } label: {
-                    Text("onboarding.start")
+                    Text(LocalizedStringKey(titleKey))
+                        .font(.headline)
                         .frame(maxWidth: .infinity, minHeight: 56)
                 }
                 .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(.bar)
-                .accessibilityLabel("onboarding.start")
+                .disabled(!viewModel.isPrimaryEnabled)
             }
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 12)
+    }
+
+    // MARK: - Acciones
+
+    private func primaryAction() {
+        if viewModel.mode == .walkthrough, viewModel.isLastVisibleStep {
+            dismiss()
+            return
+        }
+        animate { viewModel.primaryAction() }
+    }
+
+    private func choose(_ option: OnboardingViewModel.StartOption) {
+        viewModel.start(with: option)
+        switch option {
+        case .importTariff, .pasteList:
+            router.presentImport()
+        case .addManually:
+            router.presentNewItem()
+        case .later:
+            router.selectedTab = .prices
         }
     }
 
-    private func save() {
-        viewModel.updateProfile(
-            name: name,
-            taxID: taxID,
-            phone: phone,
-            email: email,
-            defaultVATRate: Decimal(
-                string: defaultVATRate.replacingOccurrences(of: ",", with: ".")
-            ) ?? Decimal(21),
-            terms: terms,
-            validityDays: Int(validityDays) ?? 30,
-            numberPrefix: numberPrefix
-        )
-        viewModel.save()
-        if viewModel.state == .loaded {
-            router.selectedTab = .prices
-            session.completeOnboarding()
+    private func animate(_ change: () -> Void) {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) {
+            change()
         }
+    }
+}
+
+/// Indicador de página del carrusel (tres puntos).
+private struct OnboardingPageIndicator: View {
+    let pageCount: Int
+    let currentIndex: Int
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<pageCount, id: \.self) { index in
+                Capsule()
+                    .fill(index == currentIndex ? BrandPalette.accent : BrandPalette.border)
+                    .frame(width: index == currentIndex ? 22 : 8, height: 8)
+            }
+        }
+        .frame(minHeight: 20)
+        .accessibilityElement()
+        .accessibilityLabel(Text("onboarding.page.indicator"))
+        .accessibilityValue(Text(verbatim: "\(currentIndex + 1)/\(pageCount)"))
     }
 }

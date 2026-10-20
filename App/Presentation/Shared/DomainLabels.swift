@@ -4,15 +4,6 @@ import QuoteCore
 /// Etiquetas visibles de los tipos del dominio.
 /// Devuelve claves de Localizable.xcstrings.
 enum DomainLabels {
-    static func trade(_ trade: Trade) -> String {
-        switch trade {
-        case .plumber: return "trade.plumber"
-        case .mason: return "trade.mason"
-        case .electrician: return "trade.electrician"
-        case .other: return "trade.other"
-        }
-    }
-
     static func measureUnit(_ unit: MeasureUnit) -> String {
         switch unit {
         case .unit: return "measure.unit"

@@ -20,6 +20,7 @@ final class AppRouter {
     var selectedTab: AppTab = .quotes
     var quotesPath = NavigationPath()
     var isImportPresented = false
+    var isItemEditorPresented = false
 
     func openQuote(_ id: UUID) {
         selectedTab = .quotes
@@ -33,6 +34,13 @@ final class AppRouter {
     func presentImport() {
         selectedTab = .prices
         isImportPresented = true
+    }
+
+    /// Abre el editor de una partida nueva. Lo presenta la raíz para que
+    /// funcione igual desde el catálogo y desde el onboarding.
+    func presentNewItem() {
+        selectedTab = .prices
+        isItemEditorPresented = true
     }
 
     func popQuotesToRoot() {
