@@ -33,7 +33,7 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 - Repositorio de partidas con upsert por nombre normalizado; catálogo vacío con importar / pegar / añadir a mano.
 - Features `Onboarding` (S1), `Catalog` (S7), `Settings` (S10).
 **Hecho cuando**: se puede completar el onboarding, añadir partidas a mano, poner precios y cerrar/abrir la app sin perder nada, sin datos precargados.
-**Estado (2026-10-20)**: S1 rehecho como recorrido de cinco pasos (carrusel, negocio con IVA por defecto y catálogo vacío) con la bandera `hasCompletedOnboarding` y "Cómo funciona" en Ajustes (D-016). El resto del hito (catálogo, Ajustes) ya venía de M4b.
+**Estado (2026-10-20)**: S1 rehecho como recorrido de cinco pasos (carrusel, negocio con IVA por defecto y catálogo vacío) con la bandera `hasCompletedOnboarding` y "Cómo funciona" en Ajustes (D-016); 36 tests en `AppTests` y 63 en `QuoteCore`, en verde. El resto del hito (catálogo, Ajustes) ya venía de M4b.
 **Paralelismo**: puede ir a la vez que M2 (carpetas distintas).
 
 ## [ ] M4 — Importar tarifa
