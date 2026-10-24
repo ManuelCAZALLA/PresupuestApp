@@ -45,7 +45,7 @@ struct SchemaMigrationTests {
                 unitPrice: Decimal(100),
                 kindRaw: ItemKind.other.rawValue,
                 category: nil,
-                tradeRaw: Trade.other.rawValue
+                tradeRaw: "other"
             )
         )
         try context.save()

@@ -4,11 +4,13 @@ import QuoteCore
 
 /// Registro de presupuesto. Las líneas guardan COPIA de nombre,
 /// unidad y precio del momento (snapshot, nunca referencia viva).
+/// Esquema v3: campos profesionales, textos por defecto y override de importes.
 @Model
 final class QuoteRecord {
     @Attribute(.unique) var id: UUID
     var number: String
     var date: Date
+    var issueDate: Date
     var validityDays: Int
     var clientName: String
     var clientPhone: String
@@ -19,12 +21,20 @@ final class QuoteRecord {
     var discountValue: Decimal
     var notes: String
     var defaultVATRate: Decimal
+    var title: String
+    var workDescription: String
+    var scopeOfWork: String
+    var exclusions: String
+    var paymentTerms: String
+    var showLineAmounts: Bool?
+    var shareMessage: String
     @Relationship(deleteRule: .cascade) var lines: [QuoteLineRecord]
 
     init(
         id: UUID,
         number: String,
         date: Date,
+        issueDate: Date = Date(),
         validityDays: Int,
         clientName: String,
         clientPhone: String,
@@ -35,11 +45,19 @@ final class QuoteRecord {
         discountValue: Decimal,
         notes: String,
         defaultVATRate: Decimal,
+        title: String = "",
+        workDescription: String = "",
+        scopeOfWork: String = "",
+        exclusions: String = "",
+        paymentTerms: String = "",
+        showLineAmounts: Bool? = nil,
+        shareMessage: String = Quote.defaultShareMessage,
         lines: [QuoteLineRecord]
     ) {
         self.id = id
         self.number = number
         self.date = date
+        self.issueDate = issueDate
         self.validityDays = validityDays
         self.clientName = clientName
         self.clientPhone = clientPhone
@@ -50,6 +68,13 @@ final class QuoteRecord {
         self.discountValue = discountValue
         self.notes = notes
         self.defaultVATRate = defaultVATRate
+        self.title = title
+        self.workDescription = workDescription
+        self.scopeOfWork = scopeOfWork
+        self.exclusions = exclusions
+        self.paymentTerms = paymentTerms
+        self.showLineAmounts = showLineAmounts
+        self.shareMessage = shareMessage
         self.lines = lines
     }
 
@@ -64,6 +89,7 @@ final class QuoteRecord {
             id: id,
             number: number,
             date: date,
+            issueDate: issueDate,
             validityDays: validityDays,
             client: Client(
                 name: clientName,
@@ -75,7 +101,14 @@ final class QuoteRecord {
             lines: lines.map { $0.toDomain() },
             discount: discount,
             notes: notes,
-            defaultVATRate: defaultVATRate
+            defaultVATRate: defaultVATRate,
+            title: title,
+            workDescription: workDescription,
+            scopeOfWork: scopeOfWork,
+            exclusions: exclusions,
+            paymentTerms: paymentTerms,
+            showLineAmounts: showLineAmounts,
+            shareMessage: shareMessage
         )
     }
 }
@@ -99,6 +132,7 @@ extension QuoteRecord {
             id: domain.id,
             number: domain.number,
             date: domain.date,
+            issueDate: domain.issueDate,
             validityDays: domain.validityDays,
             clientName: domain.client.name,
             clientPhone: domain.client.phone,
@@ -109,6 +143,13 @@ extension QuoteRecord {
             discountValue: discountValue,
             notes: domain.notes,
             defaultVATRate: domain.defaultVATRate,
+            title: domain.title,
+            workDescription: domain.workDescription,
+            scopeOfWork: domain.scopeOfWork,
+            exclusions: domain.exclusions,
+            paymentTerms: domain.paymentTerms,
+            showLineAmounts: domain.showLineAmounts,
+            shareMessage: domain.shareMessage,
             lines: domain.lines.map { QuoteLineRecord(domain: $0) }
         )
     }

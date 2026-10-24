@@ -4,7 +4,7 @@ import QuoteCore
 
 /// Registro de partida. `unitPrice` es `Decimal`: nunca `Double`.
 /// `vatRate` es el tipo de IVA propio de la partida (M4b, D-011); `nil` = usar
-/// el del presupuesto. El esquema v2 migra en ligero los datos de v1.
+/// el del presupuesto. Esquema v3: app multisector, sin `tradeRaw`.
 @Model
 final class ItemRecord {
     @Attribute(.unique) var id: UUID
@@ -15,7 +15,6 @@ final class ItemRecord {
     var vatRate: Decimal?
     var kindRaw: String
     var category: String?
-    var tradeRaw: String
 
     init(
         id: UUID,
@@ -25,8 +24,7 @@ final class ItemRecord {
         unitPrice: Decimal,
         vatRate: Decimal? = nil,
         kindRaw: String,
-        category: String?,
-        tradeRaw: String
+        category: String?
     ) {
         self.id = id
         self.name = name
@@ -36,7 +34,6 @@ final class ItemRecord {
         self.vatRate = vatRate
         self.kindRaw = kindRaw
         self.category = category
-        self.tradeRaw = tradeRaw
     }
 
     func toDomain() -> Item {
@@ -48,8 +45,7 @@ final class ItemRecord {
             unitPrice: unitPrice,
             vatRate: vatRate,
             kind: ItemKind(rawValue: kindRaw) ?? .other,
-            category: category,
-            trade: Trade(rawValue: tradeRaw) ?? .other
+            category: category
         )
     }
 
@@ -61,7 +57,6 @@ final class ItemRecord {
         vatRate = domain.vatRate
         kindRaw = domain.kind.rawValue
         category = domain.category
-        tradeRaw = domain.trade.rawValue
     }
 }
 
@@ -75,8 +70,7 @@ extension ItemRecord {
             unitPrice: domain.unitPrice,
             vatRate: domain.vatRate,
             kindRaw: domain.kind.rawValue,
-            category: domain.category,
-            tradeRaw: domain.trade.rawValue
+            category: domain.category
         )
     }
 }

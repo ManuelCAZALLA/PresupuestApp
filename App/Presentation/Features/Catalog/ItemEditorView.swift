@@ -91,8 +91,7 @@ struct ItemEditorView: View {
                 unitPrice: priceDecimal,
                 vatRate: vatRate.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : vat,
                 kind: kind,
-                category: category.isEmpty ? nil : category,
-                trade: item?.trade ?? .other
+                category: category.isEmpty ? nil : category
             )
         )
         dismiss()

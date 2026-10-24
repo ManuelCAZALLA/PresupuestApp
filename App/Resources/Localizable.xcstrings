@@ -12,6 +12,7 @@
       }
     },
     "action.close" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1164,6 +1165,7 @@
       }
     },
     "onboarding.continue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1184,6 +1186,7 @@
       }
     },
     "onboarding.logo.add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1194,6 +1197,7 @@
       }
     },
     "onboarding.logo.change" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1214,6 +1218,7 @@
       }
     },
     "onboarding.next" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1314,6 +1319,7 @@
       }
     },
     "onboarding.start" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

@@ -15,6 +15,7 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         watermark: Bool
     ) throws -> URL {
         let renderer = UIGraphicsPDFRenderer(bounds: Self.pageRect)
+        let showLineAmounts = quote.showLineAmounts ?? profile.showLineAmountsInPDF
         let data = renderer.pdfData { context in
             var cursor = Self.margin
             context.beginPage()
@@ -24,15 +25,17 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
             cursor = drawHeader(profile: profile, at: cursor)
             cursor = drawTitle(quote: quote, at: cursor)
             cursor = drawClient(quote.client, at: cursor)
+            cursor = drawQuoteDetails(quote: quote, at: cursor)
             cursor = drawLines(
                 quote: quote,
                 context: context,
                 startY: cursor,
                 reserveForTotals: Self.totalsBlockHeight(totals),
-                watermark: watermark
+                watermark: watermark,
+                showLineAmounts: showLineAmounts
             )
             cursor = drawTotals(totals, at: cursor, context: context, watermark: watermark)
-            _ = drawTerms(profile.terms, notes: quote.notes, at: cursor, context: context, watermark: watermark)
+            _ = drawTerms(profile: profile, quote: quote, at: cursor, context: context, watermark: watermark)
         }
 
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(fileName(for: quote))
@@ -61,20 +64,45 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
             y += size.height + 8
         }
         y = draw(profile.name.isEmpty ? "—" : profile.name, font: .boldSystemFont(ofSize: 14), at: y)
+        if !profile.address.isEmpty { y = draw(profile.address, font: .systemFont(ofSize: 10), at: y) }
         if !profile.taxID.isEmpty { y = draw(profile.taxID, font: .systemFont(ofSize: 10), at: y) }
         if !profile.phone.isEmpty { y = draw(profile.phone, font: .systemFont(ofSize: 10), at: y) }
         if !profile.email.isEmpty { y = draw(profile.email, font: .systemFont(ofSize: 10), at: y) }
+        if let iban = profile.iban, !iban.isEmpty { y = draw("IBAN: \(iban)", font: .systemFont(ofSize: 9), at: y) }
         return y + 10
     }
 
     private func drawTitle(quote: Quote, at y: CGFloat) -> CGFloat {
         var y = draw("Presupuesto", font: .boldSystemFont(ofSize: 18), at: y)
         y = draw("N.º \(quote.number)", font: .systemFont(ofSize: 11), at: y)
-        y = draw("Fecha: \(Self.dateFormatter.string(from: quote.date))", font: .systemFont(ofSize: 10), at: y)
-        if let until = Calendar.current.date(byAdding: .day, value: quote.validityDays, to: quote.date) {
+        if !quote.title.isEmpty {
+            y = draw("Obra: \(quote.title)", font: .systemFont(ofSize: 11), at: y)
+        }
+        y = draw("Fecha: \(Self.dateFormatter.string(from: quote.issueDate))", font: .systemFont(ofSize: 10), at: y)
+        if let until = Calendar.current.date(byAdding: .day, value: quote.validityDays, to: quote.issueDate) {
             y = draw("Válido hasta \(Self.dateFormatter.string(from: until))", font: .systemFont(ofSize: 10), at: y)
         }
         return y + 12
+    }
+
+    private func drawQuoteDetails(quote: Quote, at y: CGFloat) -> CGFloat {
+        var y = y
+        if !quote.workDescription.isEmpty {
+            y = draw("Descripción de los trabajos", font: .boldSystemFont(ofSize: 11), at: y)
+            y = draw(quote.workDescription, font: .systemFont(ofSize: 9), at: y)
+            y += 6
+        }
+        if !quote.scopeOfWork.isEmpty {
+            y = draw("Alcance", font: .boldSystemFont(ofSize: 11), at: y)
+            y = draw(quote.scopeOfWork, font: .systemFont(ofSize: 9), at: y)
+            y += 6
+        }
+        if !quote.exclusions.isEmpty {
+            y = draw("Exclusiones", font: .boldSystemFont(ofSize: 11), at: y)
+            y = draw(quote.exclusions, font: .systemFont(ofSize: 9), at: y)
+            y += 6
+        }
+        return y
     }
 
     private func drawClient(_ client: Client, at y: CGFloat) -> CGFloat {
@@ -93,21 +121,21 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         context: UIGraphicsPDFRendererContext,
         startY: CGFloat,
         reserveForTotals: CGFloat,
-        watermark: Bool
+        watermark: Bool,
+        showLineAmounts: Bool
     ) -> CGFloat {
-        let columns: [(String, CGFloat)] = [
-            ("Concepto", 220),
+        var columns: [(String, CGFloat)] = [
+            ("Concepto", 280),
             ("Ud", 36),
-            ("Cant.", 50),
-            ("Precio", 70),
-            ("Total", 70)
+            ("Cant.", 60)
         ]
+        if showLineAmounts {
+            columns.append(contentsOf: [("Precio", 70), ("Total", 70)])
+        }
         var y = drawTableHeader(columns, at: startY)
         let calculator = QuoteCalculator()
         for line in quote.lines {
             let needed: CGFloat = 18
-            // Se reserva el alto real del bloque de totales: si no cabe con esta
-            // línea, la línea y el total viajan juntos a la página siguiente.
             if y + needed + reserveForTotals > Self.pageRect.height - Self.margin {
                 context.beginPage()
                 if watermark { drawWatermark(in: context) }
@@ -115,13 +143,14 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
                 y = drawTableHeader(columns, at: y)
             }
             let total = calculator.lineTotal(line)
-            let values = [
+            var values = [
                 line.name,
                 unitLabel(line.unit),
-                formatAmount(line.quantity),
-                formatMoney(line.unitPrice),
-                formatMoney(total)
+                formatAmount(line.quantity)
             ]
+            if showLineAmounts {
+                values.append(contentsOf: [formatMoney(line.unitPrice), formatMoney(total)])
+            }
             var x = Self.margin
             for (index, column) in columns.enumerated() {
                 let align: NSTextAlignment = index == 0 ? .left : .right
@@ -177,28 +206,37 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
     }
 
     private func drawTerms(
-        _ terms: String,
-        notes: String,
+        profile: BusinessProfile,
+        quote: Quote,
         at y: CGFloat,
         context: UIGraphicsPDFRendererContext,
         watermark: Bool
     ) -> CGFloat {
         var y = y
-        if y > Self.pageRect.height - Self.margin - 80 {
+        if y > Self.pageRect.height - Self.margin - 120 {
             context.beginPage()
             if watermark { drawWatermark(in: context) }
             y = Self.margin
         }
-        if !notes.isEmpty {
-            y = draw("Notas", font: .boldSystemFont(ofSize: 11), at: y)
-            y = draw(notes, font: .systemFont(ofSize: 9), at: y)
+        if !quote.paymentTerms.isEmpty {
+            y = draw("Condiciones de pago", font: .boldSystemFont(ofSize: 11), at: y)
+            y = draw(quote.paymentTerms, font: .systemFont(ofSize: 9), at: y)
+            y += 8
+        } else if !profile.terms.isEmpty {
+            y = draw("Condiciones", font: .boldSystemFont(ofSize: 11), at: y)
+            y = draw(profile.terms, font: .systemFont(ofSize: 9), at: y)
             y += 8
         }
-        if !terms.isEmpty {
-            y = draw("Condiciones", font: .boldSystemFont(ofSize: 11), at: y)
-            y = draw(terms, font: .systemFont(ofSize: 9), at: y)
+        if !notesText(quote).isEmpty {
+            y = draw("Notas", font: .boldSystemFont(ofSize: 11), at: y)
+            y = draw(notesText(quote), font: .systemFont(ofSize: 9), at: y)
+            y += 8
         }
         return y
+    }
+
+    private func notesText(_ quote: Quote) -> String {
+        quote.notes
     }
 
     private func drawWatermark(in context: UIGraphicsPDFRendererContext) {
