@@ -127,3 +127,31 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
 - **Decisión**: S1 pasa a ser un recorrido de cinco pasos: un carrusel de tres (con "Saltar" que lleva al paso 4 y un indicador de página), los datos del negocio con el IVA por defecto (21 % preseleccionado, 10 % y "Otro") y el catálogo vacío como último paso. El carrusel se reutiliza tal cual desde Ajustes con "Cómo funciona". El onboarding no vuelve a mostrarse: `AppSession` guarda la bandera `hasCompletedOnboarding` en el `UserDefaults` que le inyecta la raíz de composición, y también da por terminado el onboarding a quien ya tiene perfil de negocio.
 - **Motivo**: con los packs retirados (D-007) el oficio no aportaba nada y era el único motivo de un formulario largo en la primera pantalla. El carrusel explica en veinte segundos para qué sirve la app y qué no hace (no inventa precios, no usa la red) antes de pedir un solo dato; terminar en el catálogo vacío convierte la explicación en la primera acción real. La bandera separa "ya lo ha visto" de "tiene perfil", que hasta ahora era lo mismo.
 - **Consecuencia**: `OnboardingViewModel` tiene dos modos, `onboarding` y `walkthrough`, y el segundo nunca marca la bandera. El guardado sigue usando `SaveBusinessProfile`: el onboarding no toca el dominio ni el esquema de datos (el logo se guarda en el campo `logo` que ya existía). Las ilustraciones del carrusel son formas de SwiftUI (sin imágenes externas, sin librerías) y respetan "Reducir movimiento"; los textos viven en `Localizable.xcstrings`. Con "Otro" elegido y un tipo ilegible se avisa en ámbar y se guarda el 21 %: el aviso es visible, no una elección en silencio.
+
+## D-017 — App multisector (sin Trade)
+- **Fecha**: 2026-10-24
+- **Estado**: aceptada
+- **Decisión**: se elimina `Trade` del dominio (`Item`, `Quote`, `BusinessProfile`) y de la UI. No hay selección de sector en ninguna pantalla. Los sinónimos del parser pasan a una base común más los alias del usuario. Las fixtures de fontanería se mantienen solo para tests.
+- **Motivo**: la app debe servir a cualquier profesional; preguntar el oficio era superfluo tras retirar los packs y forzaba una clasificación que el usuario no necesita.
+- **Consecuencia**: migración ligera de SwiftData para quitar la columna/atributo `trade`. `DomainLabels` pierde la etiqueta de oficio. El onboarding ya no pregunta por él (D-016).
+
+## D-018 — PDF profesional sin importes por línea
+- **Fecha**: 2026-10-24
+- **Estado**: aceptada
+- **Decisión**: por defecto el PDF solo muestra **descripción y cantidad (con unidad)** por línea. Debajo aparecen subtotal, descuento (si lo hay), desglose de IVA y total. Ajuste global en Ajustes `showLineAmountsInPDF` (apagado por defecto) y override por presupuesto `Quote.showLineAmounts` (prevalece si no es `nil`). Dentro de la app los precios siguen visibles. `QuoteCalculator` no se modifica.
+- **Motivo**: parecer más profesional (presupuesto, no albarán con precios unitarios) y dar control al usuario.
+- **Consecuencia**: `QuotePDFRenderer` cambia el formato. Se añaden los campos de control al perfil y al presupuesto. Los tests que comprueben el PDF deben validar el texto por defecto sin precios unitarios/importes de línea.
+
+## D-019 — Datos del presupuesto y del negocio para un presupuesto profesional
+- **Fecha**: 2026-10-24
+- **Estado**: aceptada
+- **Decisión**: `Quote` gana `title`, `workDescription`, `scopeOfWork`, `exclusions`, `paymentTerms`, `issueDate`, `showLineAmounts`, `shareMessage`. `BusinessProfile` gana `address`, `iban` (opcional), `paymentTermsDefault`, `scopeOfWorkDefault`, `exclusionsDefault`, `showLineAmountsInPDF`. Al crear un presupuesto se copian los textos por defecto del perfil. Al compartir se usa un mensaje editable con plantilla `"Hola {cliente}, te paso el presupuesto de {título} (ref. {número}). Cualquier duda, me dices."`.
+- **Motivo**: cubrir los datos habituales de un presupuesto (obra, alcance, exclusiones, condiciones de pago, fechas) sin salir del MVP.
+- **Consecuencia**: migración ligera. Ajustes amplía negocio, textos por defecto e interruptor. La ficha del presupuesto añade los nuevos campos y el override. **El IBAN es dato sensible**: solo local, nunca en logs ni en tests y solo aparece en el PDF si se rellena.
+
+## D-020 — Migración ligera de SwiftData multisector
+- **Fecha**: 2026-10-24
+- **Estado**: aceptada
+- **Decisión**: se sube el esquema a una nueva versión con migración ligera: quitar `trade` de `ItemRecord` y de `QuoteRecord` (o equivalente), añadir los nuevos campos a `QuoteRecord` y a `BusinessProfileRecord` con valores por defecto razonables. No se borran datos del usuario.
+- **Motivo**: pasar de v2 a la siguiente versión sin perder la tarifa ni los presupuestos.
+- **Consecuencia**: `VersionedSchema` + `MigrationStage.lightweight` (o el mecanismo ya usado) en `PersistenceSetup`. Los tests de migración deben seguir verdes o actualizarse con cuidado, sin tocar las muestras ni los oráculos existentes salvo lo imprescindible.

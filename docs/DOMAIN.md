@@ -3,17 +3,16 @@
 Todo este documento vive en `Packages/QuoteCore`. Sin SwiftUI, SwiftData ni UIKit.
 
 ## Entidades
-- **Trade**: `plumber`, `mason`, `electrician`, `other`.
 - **MeasureUnit**: `unit` (ud), `meter` (m), `squareMeter` (m2), `cubicMeter` (m3), `hour` (h), `lumpSum` (global).
 - **ItemKind**: `material`, `labor`, `travel`, `other`.
-- **Item** (partida): `id`, `name`, `aliases: [String]`, `unit`, `unitPrice: Decimal` (sin IVA), `vatRate: Decimal?` (tipo propio; `nil` = el del presupuesto), `kind`, `category: String?`, `trade`.
+- **Item** (partida): `id`, `name`, `aliases: [String]`, `unit`, `unitPrice: Decimal` (sin IVA), `vatRate: Decimal?` (tipo propio; `nil` = el del presupuesto), `kind`, `category: String?`. **Sin `trade`** (app multisector).
 - **Kit**: `id`, `name`, `entries: [(itemID, quantity)]`.
 - **Client**: `name`, `phone`, `address`, `workAddress?` (todo texto libre).
 - **QuoteLine**: `id`, `itemID?`, `name` (copia), `unit` (copia), `quantity: Decimal`, `unitPrice: Decimal` (copia, sin IVA), `vatRate: Decimal`, `origin` (`parser`, `manual`, `kit`).
 - **Discount**: `none`, `percent(Decimal)`, `amount(Decimal)`.
 - **QuoteStatus**: `draft`, `sent`, `accepted`, `rejected`.
-- **Quote**: `id`, `number`, `date`, `validityDays`, `client`, `status`, `lines`, `discount`, `notes`, `defaultVATRate`.
-- **BusinessProfile**: `name`, `taxID`, `phone`, `email`, `logo: Data?`, `defaultVATRate`, `terms`, `validityDays`, `numberPrefix`.
+- **Quote**: `id`, `number`, `date`, `issueDate?`, `validityDays`, `client`, `status`, `lines`, `discount`, `notes`, `defaultVATRate`, `title`, `workDescription`, `scopeOfWork`, `exclusions`, `paymentTerms`, `showLineAmounts: Bool?` (override por presupuesto; `nil` = usar el ajuste global), `shareMessage`. **Sin `trade`**.
+- **BusinessProfile**: `name`, `address`, `taxID`, `phone`, `email`, `iban: String?`, `logo: Data?`, `defaultVATRate`, `terms`, `paymentTermsDefault`, `scopeOfWorkDefault`, `exclusionsDefault`, `validityDays`, `numberPrefix`, `showLineAmountsInPDF: Bool`. **Sin `trade`**. El **IBAN** es opcional, solo local, nunca en logs ni en tests y solo aparece en el PDF si se rellena.
 
 ## Precios y redondeo (regla única)
 - Todo con `Decimal`. Los precios unitarios se guardan con hasta 4 decimales (por la conversión desde precios con IVA) y se muestran con 2.
@@ -58,13 +57,16 @@ La importación admite una **columna opcional `IVA`** por fila, con el tipo de e
 
 ## Reglas
 1. Cambiar el precio de una partida NO modifica presupuestos existentes (las líneas son copias).
-2. Duplicar un presupuesto copia las líneas tal cual (precios del momento), el descuento, las notas, el tipo de IVA por defecto y los datos del cliente; asigna número nuevo, fecha de hoy y estado `draft`. Una acción aparte "actualizar precios" puede recalcular desde el catálogo.
+2. Duplicar un presupuesto copia las líneas tal cual (precios del momento), el descuento, las notas, el tipo de IVA por defecto, los datos del cliente, el título, la descripción, el alcance, las exclusiones, las condiciones de pago, el `showLineAmounts` y el mensaje de compartir; asigna número nuevo, fecha de hoy y estado `draft`. Una acción aparte "actualizar precios" puede recalcular desde el catálogo.
 3. Numeración: `<prefijo>-<año>-<secuencia de 4 dígitos>`, p. ej. `P-2026-0001`. La secuencia reinicia cada año.
 4. Estados: `draft → sent`; `sent → accepted`, `sent → rejected`, `sent → draft`. `accepted` y `rejected` son estados terminales en el MVP: cualquier otra transición lanza `DomainError.invalidTransition(from:to:)`.
 5. Plan Pro: sin límite de presupuestos (límite nulo). Plan gratuito: 5 presupuestos creados por mes natural (`QuotaPolicy`, con `Clock` inyectado); el contador se reinicia al cambiar de mes. El plan lo decide `EntitlementProvider` (puerto).
+6. **PDF profesional**: por defecto **no** muestra precios unitarios ni importes de línea, solo descripción y cantidad con unidad. Debajo van subtotal, descuento (si lo hay), desglose de IVA y total. El ajuste global `BusinessProfile.showLineAmountsInPDF` (apagado por defecto) y el override `Quote.showLineAmounts` (prevalece si no es `nil`) controlan si se muestran. El **IBAN** solo se añade al PDF si `BusinessProfile.iban` no está vacío. `QuoteCalculator` **no** se modifica.
+7. **Compartir**: el mensaje por defecto es `"Hola {cliente}, te paso el presupuesto de {título} (ref. {número}). Cualquier duda, me dices."` y es editable por el usuario. Se interpolan cliente, título y número de forma segura.
+8. **Textos por defecto**: al crear un presupuesto nuevo se copian `paymentTermsDefault`, `scopeOfWorkDefault` y `exclusionsDefault` del perfil; son editables en el presupuesto.
 
 ## Alias aprendidos
 Cuando el usuario resuelve una línea ambigua o sin coincidencia, `LearnAlias` guarda la frase normalizada (sin cantidad ni unidad) como alias de la partida elegida. Reglas: único por partida, máximo 20 por partida, nunca duplica el nombre ni otro alias existente de la misma partida.
 
 ## Casos de uso (nombres)
-`InterpretRequest`, `ResolveAmbiguousLine`, `LearnAlias`, `CalculateQuote`, `CreateQuote`, `UpdateQuote` (guarda cliente, descuento, notas y líneas ya construidas), `AddLine`, `UpdateLineQuantity`, `RemoveLine`, `DuplicateQuote`, `ChangeQuoteStatus`, `AddKitToQuote`, `ListQuotes`, `ManageItems` (crear/editar/borrar), `ManageKits`, `ImportTariff` (aplica el mapeo de columnas ya revisado), `LoadTradePack`, `SaveBusinessProfile`, `CheckQuota`, `ExportQuotePDF` (usa el puerto `QuotePDFRenderer`).
+`InterpretRequest`, `ResolveAmbiguousLine`, `LearnAlias`, `CalculateQuote`, `CreateQuote` (copia los textos por defecto del perfil y el mensaje de compartir), `UpdateQuote` (guarda cliente, título, descripción, alcance, exclusiones, condiciones de pago, descuento, notas, líneas ya construidas, override de importes y mensaje), `AddLine`, `UpdateLineQuantity`, `RemoveLine`, `DuplicateQuote` (preserva textos, override y mensaje), `ChangeQuoteStatus`, `AddKitToQuote`, `ListQuotes`, `ManageItems` (crear/editar/borrar), `ManageKits`, `ImportTariff` (aplica el mapeo de columnas ya revisado), `SaveBusinessProfile`, `CheckQuota`, `ExportQuotePDF` (usa el puerto `QuotePDFRenderer`).
