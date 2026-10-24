@@ -33,8 +33,7 @@ struct QuoteLineUseCaseTests {
             unitPrice: price,
             vatRate: vatRate,
             kind: .material,
-            category: "Sanitarios",
-            trade: .plumber
+            category: "Sanitarios"
         )
     }
 

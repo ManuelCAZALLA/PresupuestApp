@@ -146,15 +146,14 @@ public struct ImportedRow: Identifiable, Equatable, Sendable {
     }
 
     /// La partida de catálogo que representa esta fila.
-    public func item(trade: Trade = .other) -> Item {
+    public func item() -> Item {
         Item(
             name: name,
             unit: unit,
             unitPrice: netPrice,
             vatRate: vatRate,
             kind: kind,
-            category: category,
-            trade: trade
+            category: category
         )
     }
 }

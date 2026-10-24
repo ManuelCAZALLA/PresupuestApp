@@ -40,9 +40,9 @@ public final class ManageItems {
                 aliases: item.aliases,
                 unit: item.unit,
                 unitPrice: item.unitPrice,
+                vatRate: item.vatRate,
                 kind: item.kind,
-                category: item.category,
-                trade: item.trade
+                category: item.category
             )
         )
     }

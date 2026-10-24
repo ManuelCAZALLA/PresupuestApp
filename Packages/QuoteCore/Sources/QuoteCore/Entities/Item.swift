@@ -1,6 +1,7 @@
 import Foundation
 
 /// Partida del catálogo del usuario. Los precios los pone siempre el usuario.
+/// App multisector: no hay `trade` (ver docs/DECISIONS.md, D-017).
 public struct Item: Identifiable, Equatable, Sendable {
     public let id: UUID
     public var name: String
@@ -12,7 +13,6 @@ public struct Item: Identifiable, Equatable, Sendable {
     public var vatRate: Decimal?
     public var kind: ItemKind
     public var category: String?
-    public var trade: Trade
 
     public init(
         id: UUID = UUID(),
@@ -22,8 +22,7 @@ public struct Item: Identifiable, Equatable, Sendable {
         unitPrice: Decimal = Decimal(0),
         vatRate: Decimal? = nil,
         kind: ItemKind = .other,
-        category: String? = nil,
-        trade: Trade = .other
+        category: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -33,7 +32,6 @@ public struct Item: Identifiable, Equatable, Sendable {
         self.vatRate = vatRate
         self.kind = kind
         self.category = category
-        self.trade = trade
     }
 }
 

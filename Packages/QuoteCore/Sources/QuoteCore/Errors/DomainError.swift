@@ -5,7 +5,6 @@ public enum DomainError: Error, Equatable, Sendable {
     case emptyQuote
     case quotaExceeded
     case invalidTransition(from: QuoteStatus, to: QuoteStatus)
-    case packNotFound(Trade)
     /// No se pudo leer un archivo importado (formato, codificación o contenido).
     case importFailed(String)
     /// No existe el presupuesto pedido.

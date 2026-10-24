@@ -12,8 +12,7 @@ struct CatalogUseCaseTests {
             unit: .unit,
             unitPrice: d("10.00"),
             kind: .material,
-            category: "Categoría",
-            trade: .plumber
+            category: "Categoría"
         )
     }
 
@@ -26,13 +25,19 @@ struct CatalogUseCaseTests {
 
         let profile = BusinessProfile(
             name: "Taller",
+            address: "Calle PRUEBA",
             taxID: "T",
             phone: "1",
             email: "e",
+            iban: "ES00PRUEBA",
             defaultVATRate: d("21"),
             terms: "condiciones",
+            paymentTermsDefault: "50% anticipo",
+            scopeOfWorkDefault: "Suministro e instalación",
+            exclusionsDefault: "Albañilería",
             validityDays: 30,
-            numberPrefix: "P"
+            numberPrefix: "P",
+            showLineAmountsInPDF: false
         )
         try save.execute(profile)
         #expect(try load.execute() == profile)
@@ -81,34 +86,8 @@ struct CatalogUseCaseTests {
         #expect(Item.nameKey("Termo Eléctrico") == "termo electrico")
     }
 
-    // LoadTradePack: crea partidas SIN precio (el usuario los pone)
-    @Test func loadTradePackCreatesItemsWithoutPrices() throws {
-        struct FakePackLoader: TradePackLoading {
-            let pack: TradePackData
-            func load(trade: Trade) throws -> TradePackData { pack }
-        }
-        let pack = TradePackData(
-            trade: .plumber,
-            entries: [
-                TradePackEntry(
-                    name: "Urinario",
-                    unit: .unit,
-                    kind: .material,
-                    category: "Sanitarios",
-                    aliases: ["urinarios"]
-                )
-            ]
-        )
-        let load = LoadTradePack(loader: FakePackLoader(pack: pack))
-
-        let items = try load.execute(trade: .plumber)
-        #expect(items.count == 1)
-        #expect(items[0].name == "Urinario")
-        #expect(items[0].trade == .plumber)
-        #expect(items[0].unit == .unit)
-        #expect(items[0].kind == .material)
-        #expect(items[0].category == "Sanitarios")
-        #expect(items[0].aliases == ["urinarios"])
-        #expect(items[0].unitPrice == d("0")) // sin precio: lo pone el usuario
+    @Test func itemHasNoTrade() {
+        let item = Item(name: "Urinario", unit: .unit, unitPrice: d("10"), kind: .material)
+        #expect(item.name == "Urinario")
     }
 }
