@@ -1,0 +1,11 @@
+{
+  "items": [
+    { "name": "Enchufe", "unit": "unit", "kind": "material", "category": "Instalación", "aliases": ["enchufes", "toma de corriente"] },
+    { "name": "Interruptor", "unit": "unit", "kind": "material", "category": "Instalación", "aliases": ["interruptores", "pulsador"] },
+    { "name": "Cable", "unit": "meter", "kind": "material", "category": "Instalación", "aliases": ["cables", "cableado"] },
+    { "name": "Tubería eléctrica", "unit": "meter", "kind": "material", "category": "Instalación", "aliases": ["tubería", "conducto"] },
+    { "name": "Lámpara", "unit": "unit", "kind": "material", "category": "Iluminación", "aliases": ["lámparas", "bombilla", "plafón"] },
+    { "name": "Electricista", "unit": "hour", "kind": "labor", "category": "Mano de obra", "aliases": ["mano de obra eléctrica"] },
+    { "name": "Desplazamiento", "unit": "lumpSum", "kind": "travel", "category": "Desplazamiento", "aliases": ["desplazamiento a obra"] }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "items": [
+    { "name": "Urinario", "unit": "unit", "kind": "material", "category": "Sanitarios", "aliases": ["urinarios"] },
+    { "name": "Plato de ducha", "unit": "unit", "kind": "material", "category": "Sanitarios", "aliases": ["platos de ducha"] },
+    { "name": "Termo eléctrico", "unit": "unit", "kind": "material", "category": "Calefacción", "aliases": ["termo", "termos", "calentador de agua"] },
+    { "name": "Tubo de cobre", "unit": "meter", "kind": "material", "category": "Tubería", "aliases": ["tubo de cobre", "tubos de cobre"] },
+    { "name": "Manguera", "unit": "meter", "kind": "material", "category": "Tubería", "aliases": ["mangueras"] },
+    { "name": "Junta tórica", "unit": "unit", "kind": "material", "category": "Fijaciones", "aliases": ["juntas tóricas", "goma"] },
+    { "name": "Instalación de fontanería", "unit": "hour", "kind": "labor", "category": "Mano de obra", "aliases": ["mano de obra de fontanería", "instalación"] },
+    { "name": "Desplazamiento", "unit": "lumpSum", "kind": "travel", "category": "Desplazamiento", "aliases": ["desplazamiento a obra"] }
+  ]
+}

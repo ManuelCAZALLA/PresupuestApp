@@ -1,0 +1,11 @@
+{
+  "items": [
+    { "name": "Ladrillo", "unit": "unit", "kind": "material", "category": "Mampostería", "aliases": ["ladrillos"] },
+    { "name": "Bloque de hormigón", "unit": "unit", "kind": "material", "category": "Mampostería", "aliases": ["bloque", "bloques", "bloque de hormigón"] },
+    { "name": "Cemento", "unit": "unit", "kind": "material", "category": "Morteros", "aliases": ["sacos de cemento"] },
+    { "name": "Arena", "unit": "cubicMeter", "kind": "material", "category": "Morteros", "aliases": ["arena de río"] },
+    { "name": "Yeso", "unit": "squareMeter", "kind": "material", "category": "Acabados", "aliases": ["enlucido"] },
+    { "name": "Albañil", "unit": "hour", "kind": "labor", "category": "Mano de obra", "aliases": ["mano de obra de albañilería", "peón"] },
+    { "name": "Desplazamiento", "unit": "lumpSum", "kind": "travel", "category": "Desplazamiento", "aliases": ["desplazamiento a obra"] }
+  ]
+}
