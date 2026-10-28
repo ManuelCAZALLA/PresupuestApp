@@ -3,6 +3,8 @@ import SwiftData
 import QuoteCore
 
 /// Registro de partida. `unitPrice` es `Decimal`: nunca `Double`.
+/// `vatRate` es el tipo de IVA propio de la partida (M4b, D-011); `nil` = usar
+/// el del presupuesto. Esquema v3: app multisector, sin `tradeRaw`.
 @Model
 final class ItemRecord {
     @Attribute(.unique) var id: UUID
@@ -10,9 +12,9 @@ final class ItemRecord {
     var aliases: [String]
     var unitRaw: String
     var unitPrice: Decimal
+    var vatRate: Decimal?
     var kindRaw: String
     var category: String?
-    var tradeRaw: String
 
     init(
         id: UUID,
@@ -20,18 +22,18 @@ final class ItemRecord {
         aliases: [String],
         unitRaw: String,
         unitPrice: Decimal,
+        vatRate: Decimal? = nil,
         kindRaw: String,
-        category: String?,
-        tradeRaw: String
+        category: String?
     ) {
         self.id = id
         self.name = name
         self.aliases = aliases
         self.unitRaw = unitRaw
         self.unitPrice = unitPrice
+        self.vatRate = vatRate
         self.kindRaw = kindRaw
         self.category = category
-        self.tradeRaw = tradeRaw
     }
 
     func toDomain() -> Item {
@@ -41,9 +43,9 @@ final class ItemRecord {
             aliases: aliases,
             unit: MeasureUnit(rawValue: unitRaw) ?? .unit,
             unitPrice: unitPrice,
+            vatRate: vatRate,
             kind: ItemKind(rawValue: kindRaw) ?? .other,
-            category: category,
-            trade: Trade(rawValue: tradeRaw) ?? .other
+            category: category
         )
     }
 
@@ -52,9 +54,9 @@ final class ItemRecord {
         aliases = domain.aliases
         unitRaw = domain.unit.rawValue
         unitPrice = domain.unitPrice
+        vatRate = domain.vatRate
         kindRaw = domain.kind.rawValue
         category = domain.category
-        tradeRaw = domain.trade.rawValue
     }
 }
 
@@ -66,9 +68,9 @@ extension ItemRecord {
             aliases: domain.aliases,
             unitRaw: domain.unit.rawValue,
             unitPrice: domain.unitPrice,
+            vatRate: domain.vatRate,
             kindRaw: domain.kind.rawValue,
-            category: domain.category,
-            tradeRaw: domain.trade.rawValue
+            category: domain.category
         )
     }
 }

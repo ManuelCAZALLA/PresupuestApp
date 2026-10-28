@@ -1,15 +1,18 @@
 import Foundation
 
 /// Partida del catálogo del usuario. Los precios los pone siempre el usuario.
+/// App multisector: no hay `trade` (ver docs/DECISIONS.md, D-017).
 public struct Item: Identifiable, Equatable, Sendable {
     public let id: UUID
     public var name: String
     public var aliases: [String]
     public var unit: MeasureUnit
     public var unitPrice: Decimal
+    /// Tipo de IVA propio de la partida, en por ciento. `nil` = usar el del
+    /// presupuesto (ver docs/DOMAIN.md, "IVA por partida").
+    public var vatRate: Decimal?
     public var kind: ItemKind
     public var category: String?
-    public var trade: Trade
 
     public init(
         id: UUID = UUID(),
@@ -17,18 +20,18 @@ public struct Item: Identifiable, Equatable, Sendable {
         aliases: [String] = [],
         unit: MeasureUnit = .unit,
         unitPrice: Decimal = Decimal(0),
+        vatRate: Decimal? = nil,
         kind: ItemKind = .other,
-        category: String? = nil,
-        trade: Trade = .other
+        category: String? = nil
     ) {
         self.id = id
         self.name = name
         self.aliases = aliases
         self.unit = unit
         self.unitPrice = unitPrice
+        self.vatRate = vatRate
         self.kind = kind
         self.category = category
-        self.trade = trade
     }
 }
 

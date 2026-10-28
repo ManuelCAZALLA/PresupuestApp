@@ -1,0 +1,100 @@
+{
+  "_comment": "Resultados esperados de importación. Precios de PRUEBA.",
+  "tarifa_simple.xlsx": {
+    "rows": 8,
+    "warnings": []
+  },
+  "tarifa_desordenada.xlsx": {
+    "sheet": "Tarifa 2026",
+    "headerRow": 4,
+    "vatIncluded": true,
+    "vatRate": "0.21",
+    "rows": 8,
+    "skipped": [
+      "título",
+      "observación de IVA",
+      "filas de categoría",
+      "fila vacía",
+      "nota final"
+    ],
+    "warnings": [
+      {
+        "name": "Sifón de lavabo",
+        "type": "sinPrecio"
+      }
+    ],
+    "items": [
+      {
+        "name": "Urinario",
+        "unit": "ud",
+        "priceWithVAT": "121.00",
+        "net": "100.0000"
+      },
+      {
+        "name": "Inodoro",
+        "unit": "ud",
+        "priceWithVAT": "133.10",
+        "net": "110.0000"
+      },
+      {
+        "name": "Plato de ducha 90 cm",
+        "unit": "ud",
+        "priceWithVAT": "145.20",
+        "net": "120.0000"
+      },
+      {
+        "name": "Mampara de ducha",
+        "unit": "ud",
+        "priceWithVAT": "242.00",
+        "net": "200.0000"
+      },
+      {
+        "name": "Tubo multicapa 20 mm",
+        "unit": "m",
+        "priceWithVAT": "3.03",
+        "net": "2.5041"
+      },
+      {
+        "name": "Tubo multicapa 25 mm",
+        "unit": "m",
+        "priceWithVAT": "4.24",
+        "net": "3.5041"
+      },
+      {
+        "name": "Mano de obra",
+        "unit": "h",
+        "priceWithVAT": "36.30",
+        "net": "30.0000"
+      },
+      {
+        "name": "Sifón de lavabo",
+        "unit": "ud",
+        "price": null,
+        "warning": "sinPrecio"
+      }
+    ]
+  },
+  "tarifa_es_puntoycoma_cp1252.csv": {
+    "encoding": "windows-1252",
+    "separator": ";",
+    "decimal": ",",
+    "rows": 7,
+    "warnings": []
+  },
+  "tarifa_coma_utf8.csv": {
+    "encoding": "utf-8",
+    "separator": ",",
+    "decimal": ".",
+    "rows": 5,
+    "warnings": [],
+    "note": "la coma dentro de comillas no separa columnas"
+  },
+  "lista_whatsapp.txt": {
+    "rows": 7,
+    "skipped": [
+      "Buenos días, te paso los precios:",
+      "Cualquier cosa me dices"
+    ],
+    "note": "'Desplazamiento 20' no lleva símbolo de moneda: se acepta con aviso suave"
+  }
+}

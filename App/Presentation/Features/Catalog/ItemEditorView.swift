@@ -2,7 +2,7 @@ import SwiftUI
 import QuoteCore
 
 /// Editor de partida (crear o editar): nombre, unidad, tipo,
-/// categoría, precio unitario y sinónimos.
+/// categoría, precio unitario, IVA opcional y sinónimos.
 struct ItemEditorView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -11,6 +11,7 @@ struct ItemEditorView: View {
     @State private var kind: ItemKind = .material
     @State private var category = ""
     @State private var price = ""
+    @State private var vatRate = ""
     @State private var aliases = ""
 
     private let item: Item?
@@ -25,6 +26,7 @@ struct ItemEditorView: View {
             _kind = State(initialValue: item.kind)
             _category = State(initialValue: item.category ?? "")
             _price = State(initialValue: CurrencyFormatter.plainString(from: item.unitPrice))
+            _vatRate = State(initialValue: item.vatRate.map { CurrencyFormatter.plainString(from: $0) } ?? "")
             _aliases = State(initialValue: item.aliases.joined(separator: ", "))
         }
     }
@@ -50,37 +52,48 @@ struct ItemEditorView: View {
                 TextField("field.category", text: $category)
                 TextField("field.price", text: $price)
                     .keyboardType(.decimalPad)
+                TextField("field.itemVAT", text: $vatRate)
+                    .keyboardType(.decimalPad)
                 TextField("field.aliases", text: $aliases)
-            }
-
-            Section {
-                Button("action.save") {
-                    let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-                    let parsedAliases = aliases
-                        .split(separator: ",")
-                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                        .filter { !$0.isEmpty }
-                    let priceDecimal = Decimal(
-                        string: price.replacingOccurrences(of: ",", with: ".")
-                    ) ?? Decimal(0)
-                    onSave(
-                        Item(
-                            id: item?.id ?? UUID(),
-                            name: trimmed,
-                            aliases: parsedAliases,
-                            unit: unit,
-                            unitPrice: priceDecimal,
-                            kind: kind,
-                            category: category.isEmpty ? nil : category,
-                            trade: item?.trade ?? .other
-                        )
-                    )
-                    dismiss()
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            } footer: {
+                Text("field.itemVAT.footer")
             }
         }
         .navigationTitle(item == nil ? "catalog.addItem" : "catalog.editItem")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("action.cancel") { dismiss() }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("action.save") { save() }
+                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+        }
+    }
+
+    private func save() {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let parsedAliases = aliases
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        let priceDecimal = Decimal(
+            string: price.replacingOccurrences(of: ",", with: ".")
+        ) ?? Decimal(0)
+        let vat = Decimal(string: vatRate.replacingOccurrences(of: ",", with: "."))
+        onSave(
+            Item(
+                id: item?.id ?? UUID(),
+                name: trimmed,
+                aliases: parsedAliases,
+                unit: unit,
+                unitPrice: priceDecimal,
+                vatRate: vatRate.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : vat,
+                kind: kind,
+                category: category.isEmpty ? nil : category
+            )
+        )
+        dismiss()
     }
 }

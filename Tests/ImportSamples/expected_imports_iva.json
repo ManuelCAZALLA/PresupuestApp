@@ -1,0 +1,22 @@
+{
+  "_comment": "Oráculo de la columna IVA opcional por fila (M4b, D-012). Precios de PRUEBA.",
+  "tarifa_con_iva.xlsx": {
+    "sheet": "Tarifa",
+    "headerRow": 4,
+    "columns": { "name": 0, "unit": 1, "price": 2, "vatRate": 3 },
+    "vatIncluded": true,
+    "rows": 7,
+    "warnings": [
+      { "name": "Sifón de lavabo", "type": "sinPrecio" }
+    ],
+    "items": [
+      { "name": "Urinario", "unit": "ud", "priceWithVAT": "121.00", "net": "100.0000", "vatRate": "21" },
+      { "name": "Inodoro", "unit": "ud", "priceWithVAT": "110.00", "net": "100.0000", "vatRate": "10" },
+      { "name": "Plato de ducha 90 cm", "unit": "ud", "priceWithVAT": "145.20", "net": "120.0000", "vatRate": "21" },
+      { "name": "Tubo multicapa 20 mm", "unit": "ml", "priceWithVAT": "2.75", "net": "2.5000", "vatRate": "10" },
+      { "name": "Mano de obra", "unit": "h", "priceWithVAT": "36.30", "net": "30.0000", "vatRate": "21" },
+      { "name": "Desplazamiento", "unit": "ud", "priceWithVAT": "24.20", "net": "20.0000", "vatRate": null },
+      { "name": "Sifón de lavabo", "unit": "ud", "price": null, "vatRate": "21", "warning": "sinPrecio" }
+    ]
+  }
+}

@@ -1,9 +1,13 @@
 import SwiftUI
 
-/// S10 Ajustes: datos de empresa, IVA por defecto,
-/// condiciones, validez y numeración.
+/// S10 Ajustes: datos de empresa, IVA por defecto, condiciones y numeración.
 struct SettingsView: View {
     @Bindable var viewModel: SettingsViewModel
+    let makeWalkthroughViewModel: () -> OnboardingViewModel
+
+    @Environment(AppRouter.self) private var router
+    @State private var walkthroughViewModel: OnboardingViewModel?
+    @State private var isWalkthroughPresented = false
 
     @State private var name = ""
     @State private var taxID = ""
@@ -18,9 +22,15 @@ struct SettingsView: View {
         Form {
             Section {
                 TextField("field.name", text: $name)
+                    .textContentType(.organizationName)
                 TextField("field.taxID", text: $taxID)
                 TextField("field.phone", text: $phone)
+                    .keyboardType(.phonePad)
+                    .textContentType(.telephoneNumber)
                 TextField("field.email", text: $email)
+                    .keyboardType(.emailAddress)
+                    .textContentType(.emailAddress)
+                    .textInputAutocapitalization(.never)
             } header: {
                 Text("settings.businessSection")
             }
@@ -31,31 +41,25 @@ struct SettingsView: View {
                 TextField("field.validityDays", text: $validityDays)
                     .keyboardType(.numberPad)
                 TextField("field.numberPrefix", text: $numberPrefix)
-                TextField("field.terms", text: $terms)
+                TextField("field.terms", text: $terms, axis: .vertical)
+                    .lineLimit(3...8)
             } header: {
                 Text("settings.defaultsSection")
+            } footer: {
+                Text("settings.defaultsFooter")
             }
 
             Section {
-                Button("action.save") {
-                    viewModel.update(
-                        name: name,
-                        taxID: taxID,
-                        phone: phone,
-                        email: email,
-                        defaultVATRate: Decimal(
-                            string: defaultVATRate.replacingOccurrences(of: ",", with: ".")
-                        ) ?? Decimal(0),
-                        terms: terms,
-                        validityDays: Int(validityDays) ?? 30,
-                        numberPrefix: numberPrefix
-                    )
-                    viewModel.save()
+                Button {
+                    save()
+                } label: {
+                    Text("action.save")
+                        .frame(maxWidth: .infinity, minHeight: 44)
                 }
-                .buttonStyle(.borderedProminent)
+                .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
                 if viewModel.saved {
-                    Label("settings.saved", systemImage: "checkmark.circle")
+                    Label("settings.saved", systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                 }
 
@@ -64,13 +68,25 @@ struct SettingsView: View {
                         .foregroundStyle(.red)
                 }
             }
+
+            Section {
+                Button {
+                    presentWalkthrough()
+                } label: {
+                    Label("settings.howItWorks", systemImage: "questionmark.circle")
+                }
+            }
         }
+        .listStyle(.insetGrouped)
         .navigationTitle("settings.title")
-        .task {
-            viewModel.load()
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $isWalkthroughPresented) {
+            if let walkthroughViewModel {
+                OnboardingView(viewModel: walkthroughViewModel, router: router)
+            }
         }
+        .task { viewModel.load() }
         .onChange(of: viewModel.state) { _, newState in
-            // Rellena los campos con el perfil cargado.
             if case .loaded = newState, !viewModel.saved {
                 name = viewModel.profile.name
                 taxID = viewModel.profile.taxID
@@ -84,5 +100,26 @@ struct SettingsView: View {
                 )
             }
         }
+    }
+
+    private func presentWalkthrough() {
+        walkthroughViewModel = makeWalkthroughViewModel()
+        isWalkthroughPresented = true
+    }
+
+    private func save() {
+        viewModel.update(
+            name: name,
+            taxID: taxID,
+            phone: phone,
+            email: email,
+            defaultVATRate: Decimal(
+                string: defaultVATRate.replacingOccurrences(of: ",", with: ".")
+            ) ?? Decimal(0),
+            terms: terms,
+            validityDays: Int(validityDays) ?? 30,
+            numberPrefix: numberPrefix
+        )
+        viewModel.save()
     }
 }

@@ -15,8 +15,16 @@ enum AppErrorMapper {
             return "error.quotaExceeded"
         case .invalidTransition:
             return "error.invalidTransition"
-        case .packNotFound:
-            return "error.packNotFound"
+        case .importFailed:
+            return "error.importFailed"
+        case .importFailed:
+            return "error.importFailed"
+        case .quoteNotFound:
+            return "error.quoteNotFound"
+        case .lineNotFound:
+            return "error.lineNotFound"
+        case .itemNotFound:
+            return "error.itemNotFound"
         }
     }
 }
