@@ -50,13 +50,15 @@ struct QuotePreviewView: View {
             if let url = viewModel.pdfURL {
                 ShareLink(item: url) {
                     Label("quote.preview.share", systemImage: "square.and.arrow.up")
+                        .font(.headline)
                         .frame(maxWidth: .infinity, minHeight: 56)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .buttonBorderShape(.capsule)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
-                .background(.bar)
+                .background(.clear)
                 .simultaneousGesture(TapGesture().onEnded {
                     viewModel.markSent()
                 })

@@ -5,6 +5,7 @@ import QuoteCore
 /// Registro de presupuesto. Las líneas guardan COPIA de nombre,
 /// unidad y precio del momento (snapshot, nunca referencia viva).
 /// Esquema v3: campos profesionales, textos por defecto y override de importes.
+/// Esquema v4: anticipo por presupuesto.
 @Model
 final class QuoteRecord {
     @Attribute(.unique) var id: UUID
@@ -28,6 +29,7 @@ final class QuoteRecord {
     var paymentTerms: String
     var showLineAmounts: Bool?
     var shareMessage: String
+    var downPaymentPercent: Decimal?
     @Relationship(deleteRule: .cascade) var lines: [QuoteLineRecord]
 
     init(
@@ -52,6 +54,7 @@ final class QuoteRecord {
         paymentTerms: String = "",
         showLineAmounts: Bool? = nil,
         shareMessage: String = Quote.defaultShareMessage,
+        downPaymentPercent: Decimal? = nil,
         lines: [QuoteLineRecord]
     ) {
         self.id = id
@@ -75,6 +78,7 @@ final class QuoteRecord {
         self.paymentTerms = paymentTerms
         self.showLineAmounts = showLineAmounts
         self.shareMessage = shareMessage
+        self.downPaymentPercent = downPaymentPercent
         self.lines = lines
     }
 
@@ -108,7 +112,8 @@ final class QuoteRecord {
             exclusions: exclusions,
             paymentTerms: paymentTerms,
             showLineAmounts: showLineAmounts,
-            shareMessage: shareMessage
+            shareMessage: shareMessage,
+            downPaymentPercent: downPaymentPercent
         )
     }
 }
@@ -150,6 +155,7 @@ extension QuoteRecord {
             paymentTerms: domain.paymentTerms,
             showLineAmounts: domain.showLineAmounts,
             shareMessage: domain.shareMessage,
+            downPaymentPercent: domain.downPaymentPercent,
             lines: domain.lines.map { QuoteLineRecord(domain: $0) }
         )
     }

@@ -94,6 +94,7 @@ struct OnboardingView: View {
                         .frame(maxWidth: .infinity, minHeight: 56)
                 }
                 .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
                 .disabled(!viewModel.isPrimaryEnabled)
             }
         }

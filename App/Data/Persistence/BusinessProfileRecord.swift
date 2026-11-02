@@ -3,8 +3,8 @@ import SwiftData
 import QuoteCore
 
 /// Registro del perfil de empresa (configuración única).
-/// Esquema v3: dirección, IBAN opcional, textos por defecto,
-/// y ajuste global para el PDF.
+/// Esquema v3+: dirección, IBAN opcional, textos por defecto,
+/// ajuste global para el PDF, color de acento y anticipo por defecto.
 @Model
 final class BusinessProfileRecord {
     var name: String
@@ -22,6 +22,8 @@ final class BusinessProfileRecord {
     var validityDays: Int
     var numberPrefix: String
     var showLineAmountsInPDF: Bool
+    var accentColorHex: String = "#2F5BFF"
+    var defaultDownPaymentPercent: Decimal = Decimal(0)
 
     init(
         name: String,
@@ -38,7 +40,9 @@ final class BusinessProfileRecord {
         exclusionsDefault: String = "",
         validityDays: Int,
         numberPrefix: String,
-        showLineAmountsInPDF: Bool = false
+        showLineAmountsInPDF: Bool = false,
+        accentColorHex: String = "#2F5BFF",
+        defaultDownPaymentPercent: Decimal = Decimal(0)
     ) {
         self.name = name
         self.address = address
@@ -55,6 +59,8 @@ final class BusinessProfileRecord {
         self.validityDays = validityDays
         self.numberPrefix = numberPrefix
         self.showLineAmountsInPDF = showLineAmountsInPDF
+        self.accentColorHex = accentColorHex
+        self.defaultDownPaymentPercent = defaultDownPaymentPercent
     }
 
     func toDomain() -> BusinessProfile {
@@ -73,7 +79,9 @@ final class BusinessProfileRecord {
             exclusionsDefault: exclusionsDefault,
             validityDays: validityDays,
             numberPrefix: numberPrefix,
-            showLineAmountsInPDF: showLineAmountsInPDF
+            showLineAmountsInPDF: showLineAmountsInPDF,
+            accentColorHex: accentColorHex,
+            defaultDownPaymentPercent: defaultDownPaymentPercent
         )
     }
 
@@ -93,6 +101,8 @@ final class BusinessProfileRecord {
         validityDays = domain.validityDays
         numberPrefix = domain.numberPrefix
         showLineAmountsInPDF = domain.showLineAmountsInPDF
+        accentColorHex = domain.accentColorHex
+        defaultDownPaymentPercent = domain.defaultDownPaymentPercent
     }
 }
 
@@ -113,7 +123,9 @@ extension BusinessProfileRecord {
             exclusionsDefault: domain.exclusionsDefault,
             validityDays: domain.validityDays,
             numberPrefix: domain.numberPrefix,
-            showLineAmountsInPDF: domain.showLineAmountsInPDF
+            showLineAmountsInPDF: domain.showLineAmountsInPDF,
+            accentColorHex: domain.accentColorHex,
+            defaultDownPaymentPercent: domain.defaultDownPaymentPercent
         )
     }
 }

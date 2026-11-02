@@ -28,6 +28,8 @@ struct QuoteListView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(.clear)
         .overlay { emptyOverlay }
         .searchable(text: $viewModel.searchText, prompt: "quote.list.search")
         .navigationTitle("quote.list.title")
@@ -39,13 +41,15 @@ struct QuoteListView: View {
                 }
             } label: {
                 Label("quote.list.new", systemImage: "plus")
+                    .font(.headline)
                     .frame(maxWidth: .infinity, minHeight: 56)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .buttonBorderShape(.capsule)
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(.bar)
+            .background(.clear)
             .accessibilityLabel("quote.list.new")
         }
         .task { viewModel.load() }

@@ -1,11 +1,12 @@
 import Foundation
 import SwiftData
 
-/// Esquema actual (v3): app multisector (sin `trade`), datos profesionales
-/// del presupuesto, textos por defecto del perfil y ajuste global de PDF.
+/// Esquema actual (v4): app multisector (sin `trade`), datos profesionales
+/// del presupuesto, textos por defecto del perfil y ajuste global de PDF,
+/// color de acento y anticipo.
 /// Ver docs/ARCHITECTURE.md y la skill swiftdata-repositories.
 enum PresupuestAppSchema: VersionedSchema {
-    static let versionIdentifier = Schema.Version(3, 0, 0)
+    static let versionIdentifier = Schema.Version(4, 0, 0)
     static let models: [any PersistentModel.Type] = [
         ItemRecord.self,
         KitRecord.self,

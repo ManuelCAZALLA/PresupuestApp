@@ -18,6 +18,7 @@ struct PresupuestApp: App {
         WindowGroup {
             if let container {
                 AppRootView(container: container)
+                    .background(.background)
             } else {
                 ContentUnavailableView(
                     "error.persistence.title",

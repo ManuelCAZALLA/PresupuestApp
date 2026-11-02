@@ -16,6 +16,7 @@ struct AppRootView: View {
         Group {
             if session.isOnboarded {
                 tabs
+                    .toolbarBackground(.visible, for: .tabBar)
             } else {
                 OnboardingView(
                     viewModel: container.onboardingViewModel,
@@ -23,7 +24,7 @@ struct AppRootView: View {
                 )
             }
         }
-        .tint(Color.accentColor)
+        .tint(.accentColor)
         .environment(router)
         .sheet(isPresented: $router.isImportPresented) {
             NavigationStack {
@@ -86,5 +87,6 @@ struct AppRootView: View {
             }
             .tag(AppTab.settings)
         }
+        .tint(.accentColor)
     }
 }

@@ -29,6 +29,7 @@ struct CatalogView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
         .searchable(text: $viewModel.searchText, prompt: "catalog.search")
         .navigationTitle("catalog.title")
         .navigationBarTitleDisplayMode(.large)

@@ -21,6 +21,10 @@ public struct BusinessProfile: Equatable, Sendable {
     public var numberPrefix: String
     /// Ajuste global: por defecto el PDF no muestra importes por línea.
     public var showLineAmountsInPDF: Bool
+    /// Color de acento configurado en Ajustes (hex). Por defecto #2F5BFF
+    public var accentColorHex: String
+    /// Anticipo por defecto en porcentaje.
+    public var defaultDownPaymentPercent: Decimal
 
     public init(
         name: String = "",
@@ -37,7 +41,9 @@ public struct BusinessProfile: Equatable, Sendable {
         exclusionsDefault: String = "",
         validityDays: Int = 30,
         numberPrefix: String = "P",
-        showLineAmountsInPDF: Bool = false
+        showLineAmountsInPDF: Bool = false,
+        accentColorHex: String = "#2F5BFF",
+        defaultDownPaymentPercent: Decimal = Decimal(0)
     ) {
         self.name = name
         self.address = address
@@ -54,5 +60,7 @@ public struct BusinessProfile: Equatable, Sendable {
         self.validityDays = validityDays
         self.numberPrefix = numberPrefix
         self.showLineAmountsInPDF = showLineAmountsInPDF
+        self.accentColorHex = accentColorHex
+        self.defaultDownPaymentPercent = defaultDownPaymentPercent
     }
 }

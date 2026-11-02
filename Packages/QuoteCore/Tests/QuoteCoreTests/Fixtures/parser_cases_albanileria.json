@@ -1,0 +1,214 @@
+{
+ "_comment": "Casos de evaluación. Estados: auto | ambiguous | none.",
+ "catalog": "catalog_albanileria.sample.json",
+ "cases": [
+  {
+   "id": "a01",
+   "input": "20 metros cuadrados de alicatado",
+   "expect": [
+    {
+     "item": "alicatado",
+     "qty": 20,
+     "status": "auto",
+     "unit": "m2"
+    }
+   ]
+  },
+  {
+   "id": "a02",
+   "input": "veinte m2 de tabique",
+   "expect": [
+    {
+     "item": "tabique-ladrillo",
+     "qty": 20,
+     "status": "auto",
+     "unit": "m2"
+    }
+   ]
+  },
+  {
+   "id": "a03",
+   "input": "demolición de tabique",
+   "expect": [
+    {
+     "item": "demolicion-tabique",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "a04",
+   "input": "un tabique",
+   "expect": [
+    {
+     "status": "ambiguous",
+     "qty": 1,
+     "candidatesInclude": [
+      "tabique-ladrillo",
+      "demolicion-tabique"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a05",
+   "input": "solera de hormigón de 10",
+   "expect": [
+    {
+     "item": "solera-10",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "a06",
+   "input": "solera de hormigón",
+   "expect": [
+    {
+     "status": "ambiguous",
+     "qty": 1,
+     "candidatesInclude": [
+      "solera-10",
+      "solera-15"
+     ],
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "a07",
+   "input": "solera de hormigón de 12",
+   "expect": [
+    {
+     "statusIn": [
+      "ambiguous",
+      "none"
+     ],
+     "qty": 1,
+     "mustNotAuto": [
+      "solera-10",
+      "solera-15"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a08",
+   "input": "dos sacos de cemento",
+   "expect": [
+    {
+     "item": "saco-cemento",
+     "qty": 2,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "a09",
+   "input": "3 metros cúbicos de escombros",
+   "expect": [
+    {
+     "item": "retirada-escombros",
+     "qty": 3,
+     "status": "auto",
+     "unit": "m3"
+    }
+   ]
+  },
+  {
+   "id": "a10",
+   "input": "ocho horas de oficial",
+   "expect": [
+    {
+     "item": "oficial",
+     "qty": 8,
+     "status": "auto",
+     "unit": "h"
+    }
+   ]
+  },
+  {
+   "id": "a11",
+   "input": "cuatro horas de ayudante",
+   "expect": [
+    {
+     "item": "ayudante",
+     "qty": 4,
+     "status": "auto",
+     "unit": "h"
+    }
+   ]
+  },
+  {
+   "id": "a12",
+   "input": "mano de obra",
+   "expect": [
+    {
+     "status": "ambiguous",
+     "qty": 1,
+     "candidatesInclude": [
+      "oficial",
+      "ayudante"
+     ],
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "a13",
+   "input": "15 m2 de solado y 15 m2 de enfoscado",
+   "expect": [
+    {
+     "item": "solado",
+     "qty": 15,
+     "status": "auto",
+     "unit": "m2"
+    },
+    {
+     "item": "enfoscado",
+     "qty": 15,
+     "status": "auto",
+     "unit": "m2"
+    }
+   ]
+  },
+  {
+   "id": "a14",
+   "input": "cascotes",
+   "expect": [
+    {
+     "item": "retirada-escombros",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "a15",
+   "input": "azulejado de 12 metros cuadrados",
+   "expect": [
+    {
+     "item": "alicatado",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "a16",
+   "input": "una piscina",
+   "expect": [
+    {
+     "status": "none",
+     "qty": 1
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,142 @@
+{
+ "_comment": "DATOS DE PRUEBA. Los precios NO son reales.",
+ "sector": "electricidad",
+ "synonyms": [
+  [
+   "enchufe",
+   "toma de corriente"
+  ],
+  [
+   "diferencial",
+   "interruptor diferencial"
+  ],
+  [
+   "magnetotermico",
+   "automatico",
+   "pia"
+  ],
+  [
+   "boletin",
+   "certificado de instalacion"
+  ]
+ ],
+ "items": [
+  {
+   "id": "punto-luz",
+   "name": "Punto de luz",
+   "aliases": [],
+   "unit": "ud",
+   "price": 35,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "punto-luz-conmutado",
+   "name": "Punto de luz conmutado",
+   "aliases": [],
+   "unit": "ud",
+   "price": 48,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "toma-corriente",
+   "name": "Toma de corriente",
+   "aliases": [],
+   "unit": "ud",
+   "price": 30,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "cuadro",
+   "name": "Cuadro eléctrico",
+   "aliases": [],
+   "unit": "ud",
+   "price": 220,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "dif-25",
+   "name": "Interruptor diferencial 25 A",
+   "aliases": [],
+   "unit": "ud",
+   "price": 60,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "dif-40",
+   "name": "Interruptor diferencial 40 A",
+   "aliases": [],
+   "unit": "ud",
+   "price": 75,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "mt-16",
+   "name": "Magnetotérmico 16 A",
+   "aliases": [],
+   "unit": "ud",
+   "price": 14,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "mt-20",
+   "name": "Magnetotérmico 20 A",
+   "aliases": [],
+   "unit": "ud",
+   "price": 16,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "cable-4",
+   "name": "Cable 4 mm",
+   "aliases": [],
+   "unit": "m",
+   "price": 1.5,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "cable-6",
+   "name": "Cable 6 mm",
+   "aliases": [],
+   "unit": "m",
+   "price": 2.2,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "boletin",
+   "name": "Boletín eléctrico",
+   "aliases": [],
+   "unit": "ud",
+   "price": 90,
+   "kind": "other",
+   "category": "General"
+  },
+  {
+   "id": "revision",
+   "name": "Revisión de instalación",
+   "aliases": [],
+   "unit": "ud",
+   "price": 70,
+   "kind": "labor",
+   "category": "General"
+  },
+  {
+   "id": "mano-obra",
+   "name": "Mano de obra",
+   "aliases": [],
+   "unit": "h",
+   "price": 28,
+   "kind": "labor",
+   "category": "General"
+  }
+ ]
+}

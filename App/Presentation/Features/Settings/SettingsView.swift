@@ -78,6 +78,7 @@ struct SettingsView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
         .navigationTitle("settings.title")
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $isWalkthroughPresented) {

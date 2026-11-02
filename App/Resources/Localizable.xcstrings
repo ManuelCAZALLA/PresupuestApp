@@ -752,7 +752,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una partida por línea. Ejemplo: «Inodoro 110 €» o «tubo 20mm 2,5€/m»."
+            "value" : "Una partida por línea. Ejemplo: «Artículo 110 €» o «Artículo 2,5€/m»."
           }
         }
       }

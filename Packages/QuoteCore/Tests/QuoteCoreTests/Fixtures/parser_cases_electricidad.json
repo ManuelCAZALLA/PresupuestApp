@@ -1,0 +1,189 @@
+{
+ "_comment": "Casos de evaluación. Estados: auto | ambiguous | none.",
+ "catalog": "catalog_electricidad.sample.json",
+ "cases": [
+  {
+   "id": "e01",
+   "input": "tres enchufes",
+   "expect": [
+    {
+     "item": "toma-corriente",
+     "qty": 3,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "e02",
+   "input": "diez puntos de luz",
+   "expect": [
+    {
+     "item": "punto-luz",
+     "qty": 10,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "e03",
+   "input": "dos puntos de luz conmutados",
+   "expect": [
+    {
+     "item": "punto-luz-conmutado",
+     "qty": 2,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "e04",
+   "input": "un cuadro eléctrico",
+   "expect": [
+    {
+     "item": "cuadro",
+     "qty": 1,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "e05",
+   "input": "un diferencial de 40",
+   "expect": [
+    {
+     "item": "dif-40",
+     "qty": 1,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "e06",
+   "input": "un diferencial",
+   "expect": [
+    {
+     "status": "ambiguous",
+     "qty": 1,
+     "candidatesInclude": [
+      "dif-25",
+      "dif-40"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "e07",
+   "input": "un diferencial de 63",
+   "expect": [
+    {
+     "statusIn": [
+      "ambiguous",
+      "none"
+     ],
+     "qty": 1,
+     "mustNotAuto": [
+      "dif-25",
+      "dif-40"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "e08",
+   "input": "cuatro magnetotérmicos de 16",
+   "expect": [
+    {
+     "item": "mt-16",
+     "qty": 4,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "e09",
+   "input": "dos automáticos de 20",
+   "expect": [
+    {
+     "item": "mt-20",
+     "qty": 2,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "e10",
+   "input": "50 metros de cable de 4",
+   "expect": [
+    {
+     "item": "cable-4",
+     "qty": 50,
+     "status": "auto",
+     "unit": "m"
+    }
+   ]
+  },
+  {
+   "id": "e11",
+   "input": "tres horas de mano de obra",
+   "expect": [
+    {
+     "item": "mano-obra",
+     "qty": 3,
+     "status": "auto",
+     "unit": "h"
+    }
+   ]
+  },
+  {
+   "id": "e12",
+   "input": "el boletín",
+   "expect": [
+    {
+     "item": "boletin",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "e13",
+   "input": "certificado de instalación",
+   "expect": [
+    {
+     "item": "boletin",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "e14",
+   "input": "revisión de la instalación y un boletín",
+   "expect": [
+    {
+     "item": "revision",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    },
+    {
+     "item": "boletin",
+     "qty": 1,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "e15",
+   "input": "una lavadora",
+   "expect": [
+    {
+     "status": "none",
+     "qty": 1
+    }
+   ]
+  }
+ ]
+}

@@ -23,6 +23,8 @@ public struct Quote: Identifiable, Equatable, Sendable {
     /// Override por presupuesto: `nil` = usar el ajuste global del perfil.
     public var showLineAmounts: Bool?
     public var shareMessage: String
+    /// Anticipo en porcentaje (opcional). Si nil, usar el valor por defecto del perfil.
+    public var downPaymentPercent: Decimal?
 
     public init(
         id: UUID = UUID(),
@@ -42,7 +44,8 @@ public struct Quote: Identifiable, Equatable, Sendable {
         exclusions: String = "",
         paymentTerms: String = "",
         showLineAmounts: Bool? = nil,
-        shareMessage: String = Quote.defaultShareMessage
+        shareMessage: String = Quote.defaultShareMessage,
+        downPaymentPercent: Decimal? = nil
     ) {
         self.id = id
         self.number = number
@@ -62,6 +65,7 @@ public struct Quote: Identifiable, Equatable, Sendable {
         self.paymentTerms = paymentTerms
         self.showLineAmounts = showLineAmounts
         self.shareMessage = shareMessage
+        self.downPaymentPercent = downPaymentPercent
     }
 
     /// Plantilla por defecto para compartir el presupuesto.

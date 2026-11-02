@@ -31,6 +31,7 @@ struct QuoteEditorView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .navigationTitle(viewModel.quote?.number ?? "")
         .navigationBarTitleDisplayMode(.inline)
@@ -51,25 +52,29 @@ struct QuoteEditorView: View {
                     isPickingItem = true
                 } label: {
                     Label("quote.editor.addItem", systemImage: "plus")
+                        .font(.headline)
                         .frame(maxWidth: .infinity, minHeight: 56)
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
+                .buttonBorderShape(.capsule)
 
                 Button {
                     viewModel.persistDetails()
                     router.openPreview(viewModel.quoteID)
                 } label: {
                     Label("quote.editor.send", systemImage: "square.and.arrow.up")
+                        .font(.headline)
                         .frame(maxWidth: .infinity, minHeight: 56)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .buttonBorderShape(.capsule)
                 .disabled(viewModel.quote?.lines.isEmpty ?? true)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(.bar)
+            .background(.clear)
         }
         .sheet(isPresented: $isPickingItem) {
             itemPicker
