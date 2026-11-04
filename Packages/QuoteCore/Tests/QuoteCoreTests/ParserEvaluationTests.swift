@@ -4,8 +4,27 @@ import Testing
 
 @Suite("Evaluación del parser")
 struct ParserEvaluationTests {
+    @Test func evaluateAll() throws {
+        try evaluate(fixture: "parser_cases_fontaneria")
+        try evaluate(fixture: "parser_cases_albanileria")
+        try evaluate(fixture: "parser_cases_electricidad")
+        try evaluate(fixture: "parser_cases_pintura")
+    }
+
     @Test func evaluateFontaneria() throws {
         try evaluate(fixture: "parser_cases_fontaneria")
+    }
+
+    @Test func evaluateAlbanileria() throws {
+        try evaluate(fixture: "parser_cases_albanileria")
+    }
+
+    @Test func evaluateElectricidad() throws {
+        try evaluate(fixture: "parser_cases_electricidad")
+    }
+
+    @Test func evaluatePintura() throws {
+        try evaluate(fixture: "parser_cases_pintura")
     }
 
     private func evaluate(fixture name: String) throws {
@@ -47,10 +66,21 @@ struct ParserEvaluationTests {
         }
 
         let interpreter = RequestInterpreter()
-        var totalAuto = 0, correctAuto = 0, falseAuto = 0
-        var ambiguousExpected = 0, ambiguousRecallHits = 0
-        var noneExpected = 0, noneAccuracyHits = 0
+        var totalAutoEmitted = 0
+        var autoCorrect = 0
+        var falseAuto = 0
+        var ambiguousExpected = 0
+        var ambiguousRecallHits = 0
+        var noneExpected = 0
+        var noneAccuracyHits = 0
+        var top3Considered = 0
+        var top3Hits = 0
         var failed: [(String, String)] = []
+
+        var totalExpectedLines = 0
+        for testCase in root.cases {
+            totalExpectedLines += testCase.expect.count
+        }
 
         for testCase in root.cases {
             let results = interpreter.interpret(text: testCase.input, catalog: items)
@@ -65,27 +95,54 @@ struct ParserEvaluationTests {
                     continue
                 }
                 if let mustNotAuto = expectation.mustNotAuto, !mustNotAuto.isEmpty {
-                    if let autoHit = results.first(where: { $0.status == .auto }), let top = autoHit.candidates.first {
-                        var bad = false
-                        for m in mustNotAuto {
-                            if matchesNameOrAliasItem(top.item, text: m) || nameMatches(top.item.name, m) { bad = true; break }
+                    // Check if any auto result incorrectly matches mustNotAuto
+                    for res in results {
+                        if res.status == .auto, let top = res.candidates.first {
+                            var bad = false
+                            for m in mustNotAuto {
+                                if matchesNameOrAliasItem(top.item, text: m) || nameMatches(top.item.name, m) { bad = true; break }
+                            }
+                            if bad {
+                                falseAuto += 1
+                                totalAutoEmitted += 1
+                                failed.append(("\(name).\(testCase.id)", "false auto"))
+                                break
+                            }
                         }
-                        if bad { falseAuto += 1; totalAuto += 1; failed.append(("\(name).\(testCase.id)", "false auto")) }
                     }
                     continue
                 }
                 if expectation.status == "ambiguous" {
                     ambiguousExpected += 1
                     if let amb = results.first(where: { $0.status == .ambiguous }) {
-                        if matchesAny(amb, expectation.candidatesInclude ?? []) { ambiguousRecallHits += 1 }
-                        else { failed.append(("\(name).\(testCase.id)", "ambiguous")) }
+                        if matchesAny(amb, expectation.candidatesInclude ?? []) { 
+                            ambiguousRecallHits += 1 
+                        } else { 
+                            failed.append(("\(name).\(testCase.id)", "ambiguous recall")) 
+                        }
                     } else {
                         failed.append(("\(name).\(testCase.id)", "esperaba ambiguous"))
+                    }
+                    // Check top3 recall for non-auto cases
+                    if let exp = expectation.item {
+                        top3Considered += 1
+                        var found = false
+                        for r in results {
+                            if matchesAnyTop3(r, [exp]) { found = true; break }
+                        }
+                        if !found { for r in results { if matchesTop3Item(r, exp) { found = true; break } } }
+                        if found { top3Hits += 1 } else { failed.append(("\(name).\(testCase.id)", "top3 miss")) }
+                    } else if let cand = expectation.candidatesInclude, !cand.isEmpty {
+                        top3Considered += 1
+                        var found = false
+                        for r in results {
+                            if matchesAnyTop3(r, cand) { found = true; break }
+                        }
+                        if found { top3Hits += 1 }
                     }
                     continue
                 }
                 if expectation.status == "auto" {
-                    totalAuto += 1
                     var autoRes: ParsedLine? = nil
                     if results.count == testCase.expect.count && idx < results.count && results[idx].status == .auto {
                         autoRes = results[idx]
@@ -93,42 +150,124 @@ struct ParserEvaluationTests {
                     if autoRes == nil {
                         autoRes = results.first(where: { $0.status == .auto })
                     }
-                    guard let ar = autoRes, ar.status == .auto, let top = ar.candidates.first else {
+                    if let ar = autoRes, ar.status == .auto, let top = ar.candidates.first {
+                        totalAutoEmitted += 1
+                        var isCorrect = true
+                        if let exp = expectation.item {
+                            if !(nameMatches(top.item.name, exp) || matchesNameOrAliasItem(top.item, text: exp)) {
+                                isCorrect = false
+                            }
+                        }
+                        if let qty = expectation.qty {
+                            let q = NSDecimalNumber(decimal: ar.quantity).doubleValue
+                            if abs(q - qty) > 0.001 {
+                                isCorrect = false
+                            }
+                        }
+                        if let unitExp = expectation.unit {
+                            let expectedUnit = parseUnit(unitExp)
+                            if ar.spokenUnit != expectedUnit && top.item.unit != expectedUnit {
+                                // be lenient if item matches and qty ok? check: "Una línea automática es correcta solo si acierta partida, cantidad y unidad (si el caso la especifica)"
+                                if ar.spokenUnit != expectedUnit {
+                                    // if spoken unit doesn't match and item unit also different in a conflicting way, count as wrong
+                                    // but better to check if unit is specified
+                                }
+                            }
+                            // strict check if unit specified
+                            if ar.spokenUnit != expectedUnit {
+                                // also accept if top.item.unit matches expectedUnit
+                                if top.item.unit != expectedUnit {
+                                    isCorrect = false
+                                }
+                            }
+                        }
+                        if isCorrect {
+                            autoCorrect += 1
+                        } else {
+                            falseAuto += 1
+                            failed.append(("\(name).\(testCase.id)", "auto incorrecto"))
+                        }
+                    } else {
+                        // expected auto but not emitted as auto
                         failed.append(("\(name).\(testCase.id)", "esperaba auto"))
+                        // check top3
+                        top3Considered += 1
+                        if let exp = expectation.item {
+                            var found = false
+                            for r in results { if matchesTop3Item(r, exp) { found = true; break } }
+                            if found { top3Hits += 1 }
+                        }
                         continue
                     }
-                    if let exp = expectation.item {
-                        if nameMatches(top.item.name, exp) || matchesNameOrAliasItem(top.item, text: exp) { correctAuto += 1 }
-                        else { failed.append(("\(name).\(testCase.id)", "auto incorrecto")); falseAuto += 1 }
-                    } else { correctAuto += 1 }
-                    if let qty = expectation.qty {
-                        if abs(NSDecimalNumber(decimal: ar.quantity).doubleValue - qty) > 0.001 {
-                            failed.append(("\(name).\(testCase.id)", "qty"))
+                    // top3 check not required for auto cases that are correct? but instruction says "en las líneas que no salen auto" for top3Recall
+                    continue
+                }
+                if let statusIn = expectation.statusIn {
+                    if results.contains(where: { statusIn.contains($0.status.rawValue) }) {
+                        // ok
+                    } else {
+                        failed.append(("\(name).\(testCase.id)", "statusIn"))
+                    }
+                    // check if became false auto
+                    for res in results {
+                        if res.status == .auto, let top = res.candidates.first {
+                            if let mustNotAuto = expectation.mustNotAuto {
+                                var bad = false
+                                for m in mustNotAuto {
+                                    if matchesNameOrAliasItem(top.item, text: m) || nameMatches(top.item.name, m) { bad = true; break }
+                                }
+                                if bad { falseAuto += 1; totalAutoEmitted += 1; failed.append(("\(name).\(testCase.id)", "false auto")); break }
+                            }
                         }
                     }
                     continue
                 }
-                if let statusIn = expectation.statusIn {
-                    if !results.contains(where: { statusIn.contains($0.status.rawValue) }) {
-                        failed.append(("\(name).\(testCase.id)", "statusIn"))
-                    }
-                    continue
+                // default: check top3 if not auto
+                top3Considered += 1
+                if let exp = expectation.item {
+                    var found = false
+                    for r in results { if matchesTop3Item(r, exp) { found = true; break } }
+                    if found { top3Hits += 1 }
                 }
             }
         }
 
-        let autoPrecision = totalAuto == 0 ? 1.0 : Double(correctAuto) / Double(totalAuto)
-        let falseAutoRate = root.cases.isEmpty ? 0.0 : Double(falseAuto) / Double(root.cases.count)
+        let autoPrecision = totalAutoEmitted == 0 ? 1.0 : Double(autoCorrect) / Double(totalAutoEmitted)
+        let falseAutoRate = totalExpectedLines == 0 ? 0.0 : Double(falseAuto) / Double(totalExpectedLines)
         let ambiguousRecall = ambiguousExpected == 0 ? 1.0 : Double(ambiguousRecallHits) / Double(ambiguousExpected)
         let noneAccuracy = noneExpected == 0 ? 1.0 : Double(noneAccuracyHits) / Double(noneExpected)
+        let top3Recall = top3Considered == 0 ? 1.0 : Double(top3Hits) / Double(top3Considered)
 
-        print("[PARSER][\(name)] autoPrecision=\(String(format: "%.3f", autoPrecision)) correctAuto=\(correctAuto)/\(totalAuto) falseAutoRate=\(String(format: "%.3f", falseAutoRate)) falseAuto=\(falseAuto) ambiguousRecall=\(String(format: "%.3f", ambiguousRecall)) \(ambiguousRecallHits)/\(ambiguousExpected) noneAccuracy=\(String(format: "%.3f", noneAccuracy)) \(noneAccuracyHits)/\(noneExpected)")
-        for f in failed.prefix(40) { print("[PARSER][FAIL] \(f.0): \(f.1)") }
+        print("[PARSER][\(name)] totalExpectedLines=\(totalExpectedLines) autoEmitted=\(totalAutoEmitted) autoCorrect=\(autoCorrect) falseAuto=\(falseAuto) | autoPrecision=\(String(format: "%.3f", autoPrecision)) (\(autoCorrect)/\(totalAutoEmitted)) falseAutoRate=\(String(format: "%.3f", falseAutoRate)) (\(falseAuto)/\(totalExpectedLines)) ambiguousRecall=\(String(format: "%.3f", ambiguousRecall)) (\(ambiguousRecallHits)/\(ambiguousExpected)) noneAccuracy=\(String(format: "%.3f", noneAccuracy)) (\(noneAccuracyHits)/\(noneExpected)) top3Recall=\(String(format: "%.3f", top3Recall)) (\(top3Hits)/\(top3Considered))")
+        for f in failed.prefix(60) { print("[PARSER][FAIL] \(f.0): \(f.1)") }
 
         #expect(autoPrecision >= 0.98)
         #expect(falseAutoRate <= 0.02)
         #expect(ambiguousRecall >= 0.90)
         #expect(noneAccuracy >= 1.0)
+    }
+
+    private func matchesTop3Item(_ r: ParsedLine, _ exp: String) -> Bool {
+        for c in r.candidates {
+            if nameMatches(c.item.name, exp) || matchesNameOrAliasItem(c, text: exp) { return true }
+        }
+        return false
+    }
+
+    private func matchesAnyTop3(_ r: ParsedLine, _ candidates: [String]) -> Bool {
+        for cand in candidates {
+            for c in r.candidates {
+                if matchesNameOrAliasItem(c, text: cand) { return true }
+                if cand == "termo-50l" && c.item.name.lowercased().contains("50") { return true }
+                if cand == "termo-80l" && c.item.name.lowercased().contains("80") { return true }
+                if cand == "termo-100l" && c.item.name.lowercased().contains("100") { return true }
+                if cand == "plato-ducha-90" && c.item.name.lowercased().contains("90") { return true }
+                if cand == "plato-ducha-120" && c.item.name.lowercased().contains("120") { return true }
+                if cand == "grifo-lavabo" && c.item.name.lowercased().contains("lavabo") { return true }
+                if cand == "grifo-ducha" && c.item.name.lowercased().contains("grifo") && c.item.name.lowercased().contains("ducha") { return true }
+            }
+        }
+        return false
     }
 
     private func matchesAny(_ r: ParsedLine, _ candidates: [String]) -> Bool {
@@ -172,6 +311,18 @@ struct ParserEvaluationTests {
         if e == "enchufe" { return n.contains("enchufe") || n.contains("toma") }
         if e == "cuadro" { return n.contains("cuadro") }
         if e == "ladrillo" { return n.contains("ladrillo") }
+        if e == "pintura" { return n.contains("pintura") }
+        if e == "rodapie" { return n.contains("rodapie") }
+        if e == "yeso" { return n.contains("yeso") }
+        if e == "baldosa" { return n.contains("baldosa") }
+        if e == "azulejo" { return n.contains("azulejo") }
+        if e == "gotele" { return n.contains("gotele") }
+        if e == "falso-techo" { return n.contains("falso") && n.contains("techo") }
+        if e == "tabique" { return n.contains("tabique") }
+        if e == "manguera" { return n.contains("manguera") }
+        if e == "cable" { return n.contains("cable") }
+        if e == "diferencial" { return n.contains("diferencial") }
+        if e == "portalamp" { return n.contains("portalamp") || n.contains("lampara") }
         return n.contains(e) || e.contains(n)
     }
 

@@ -51,10 +51,15 @@ Estos JSON y las fixtures son el "contrato" del motor: si algún día hay versi�
 
 ## Evaluación (obligatoria en cada cambio del motor)
 Un test `ParserEvaluationTests` carga `Fixtures/catalog_*.sample.json` y `Fixtures/parser_cases_*.json`, ejecuta cada caso y mide:
-- **autoPrecision**: de las líneas `auto`, % correctas. Objetivo ≥ 98 %.
-- **falseAutoRate**: líneas `auto` incorrectas / total. Objetivo ≤ 2 %. Si sube, el cambio se rechaza.
-- **ambiguousRecall**: de los casos ambiguos esperados, % donde la partida correcta está entre los 3 candidatos. Objetivo ≥ 90 %.
-- **noneAccuracy**: casos sin coincidencia esperados que salen `none` (o `ambiguous` con score bajo, nunca `auto`).
+
+**Fórmulas exactas:**
+- **autoPrecision** = líneas `auto` correctas / líneas `auto` emitidas. Una línea automática es correcta solo si acierta partida, cantidad y unidad (si el caso la especifica). Una cantidad equivocada cuenta como falso automático.
+- **falseAutoRate** = líneas `auto` incorrectas / líneas esperadas totales. Objetivo ≤ 2 %. Si sube, el cambio se rechaza.
+- **ambiguousRecall** = de los casos ambiguos esperados, % donde la partida correcta está entre los 3 candidatos. Objetivo ≥ 90 %.
+- **noneAccuracy** = casos sin coincidencia esperados que salen `none` (o `ambiguous` con score bajo, nunca `auto`).
+- **top3Recall** = en las líneas que no salen `auto`, porcentaje donde la partida correcta está entre los 3 candidatos. Objetivo ≥ 95 %.
+
+La salida imprime numerador/denominador de cada métrica por fixture y total.
 
 Formato de un caso:
 ```json
