@@ -68,3 +68,7 @@ Formato de un caso:
 ```
 Campos opcionales por línea esperada: `candidatesInclude`, `statusIn`, `mustNotAuto`, `assumedQuantity`, `unit`.
 Los datos de prueba llevan precios de PRUEBA (no reales). Cuando haya tarifas reales de fontaneros (con su permiso), se añaden como fixtures nuevas.
+
+### Notas sobre el recuento (M2)
+- **Discrepancia albañilería "5/12 con 6 falsos":** Con el recuento anterior, `falseAutoRate` se calculaba sobre número de casos y la corrección de `auto` era más laxa; ahora `autoPrecision = líneas auto correctas / líneas auto emitidas` (solo si acierta partida, cantidad y unidad si se especifica) y `falseAutoRate = líneas auto incorrectas / líneas esperadas totales` (suma de todas las expectativas). Una cantidad equivocada es falso automático.
+- **c27 fontanería "1 fallo qty":** Con el recuento anterior el fallo de cantidad se registraba pero no restaba de `autoPrecision` de la misma forma; con las reglas nuevas, cantidad incorrecta cuenta como línea auto incorrecta/falso automático, por lo que afecta a las métricas.

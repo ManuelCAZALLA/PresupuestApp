@@ -84,6 +84,12 @@ struct ParserEvaluationTests {
 
         for testCase in root.cases {
             let results = interpreter.interpret(text: testCase.input, catalog: items)
+            if testCase.id == "c08" || testCase.id == "c16" {
+                print("[DEBUG" + testCase.id + "] IN:" + testCase.input)
+                for (i,r) in results.enumerated() {
+                    print("[DEBUG" + testCase.id + "] r\(i): st=\(r.status) cands=\(r.candidates.map{$0.item.name})")
+                }
+            }
             for (idx, expectation) in testCase.expect.enumerated() {
                 if expectation.status == "none" {
                     noneExpected += 1
@@ -249,7 +255,7 @@ struct ParserEvaluationTests {
 
     private func matchesTop3Item(_ r: ParsedLine, _ exp: String) -> Bool {
         for c in r.candidates {
-            if nameMatches(c.item.name, exp) || matchesNameOrAliasItem(c, text: exp) { return true }
+            if nameMatches(c.item.name, exp) || matchesNameOrAliasItem(c.item, text: exp) { return true }
         }
         return false
     }
@@ -257,7 +263,7 @@ struct ParserEvaluationTests {
     private func matchesAnyTop3(_ r: ParsedLine, _ candidates: [String]) -> Bool {
         for cand in candidates {
             for c in r.candidates {
-                if matchesNameOrAliasItem(c, text: cand) { return true }
+                if matchesNameOrAliasItem(c.item, text: cand) { return true }
                 if cand == "termo-50l" && c.item.name.lowercased().contains("50") { return true }
                 if cand == "termo-80l" && c.item.name.lowercased().contains("80") { return true }
                 if cand == "termo-100l" && c.item.name.lowercased().contains("100") { return true }

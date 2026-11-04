@@ -13,8 +13,34 @@ public final class QuantityExtractor {
         public let remainingText: String
     }
     
+    private func stripLeadingArticles(_ tokens: inout [String]) {
+        while !tokens.isEmpty {
+            let t = tokens[0]
+            // Don't strip 'un'/'una' as they are number words meaning 1 in many cases
+            // Only strip definite articles that aren't quantities
+            if t == "el" || t == "la" || t == "los" || t == "las" || t == "del" || t == "al" {
+                tokens.removeFirst()
+                continue
+            }
+            break
+        }
+    }
+    
+    private func isStrictNumber(_ s: String) -> Bool {
+        let trimmed = s.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return false }
+        // allow digits, optional sign, dot, comma already normalized to dot
+        let allowed = CharacterSet(charactersIn: "0123456789.-")
+        if trimmed.unicodeScalars.contains(where: { !allowed.contains($0) }) { return false }
+        if trimmed.filter({ $0 == "." }).count > 1 { return false }
+        if trimmed.filter({ $0 == "-" }).count > 1 { return false }
+        if trimmed.hasPrefix("-") && trimmed.count == 1 { return false }
+        return true
+    }
+    
     public func extract(from segment: String) -> Result {
         var tokens = normalizer.normalize(segment).split(separator: " ").map(String.init)
+        stripLeadingArticles(&tokens)
         var qty: Decimal? = nil
         var qtyWasAssumed = false
         var spokenUnit: MeasureUnit? = nil
@@ -41,9 +67,9 @@ public final class QuantityExtractor {
         
         if qty == nil && !tokens.isEmpty {
             let first = tokens[0]
-            if let d = Decimal(string: first) {
+            if isStrictNumber(first), let d = Decimal(string: first), d > 0 {
                 qty = d; tokens.removeFirst()
-            } else if let w = numberWords.toNumber(first) {
+            } else if let w = numberWords.toNumber(first), w > 0 {
                 qty = w; tokens.removeFirst()
             }
         } else if qty != nil && !tokens.isEmpty && (tokens[0] == "centimetros" || tokens[0] == "centimetro") {
@@ -83,8 +109,8 @@ public final class QuantityExtractor {
                         newTokens.append(t)
                         continue
                     }
-                    if let d = Decimal(string: t) { qty = d; qtyWasAssumed = false; continue }
-                    if let w = numberWords.toNumber(t) { qty = w; qtyWasAssumed = false; continue }
+                    if isStrictNumber(t), let d = Decimal(string: t), d > 0 { qty = d; qtyWasAssumed = false; continue }
+                    if let w = numberWords.toNumber(t), w > 0 { qty = w; qtyWasAssumed = false; continue }
                 }
                 newTokens.append(t)
             }
@@ -102,8 +128,8 @@ public final class QuantityExtractor {
             }
         }
         if qty == nil && !tokens.isEmpty {
-            if let d = Decimal(string: tokens[0]) { qty = d; qtyWasAssumed = false; tokens.removeFirst() }
-            else if let w = numberWords.toNumber(tokens[0]) { qty = w; qtyWasAssumed = false; tokens.removeFirst() }
+            if isStrictNumber(tokens[0]), let d = Decimal(string: tokens[0]), d > 0 { qty = d; qtyWasAssumed = false; tokens.removeFirst() }
+            else if let w = numberWords.toNumber(tokens[0]), w > 0 { qty = w; qtyWasAssumed = false; tokens.removeFirst() }
         }
         
         if qty == nil {
