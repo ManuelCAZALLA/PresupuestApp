@@ -1,0 +1,97 @@
+{
+ "_comment": "DATOS DE PRUEBA. Los precios NO son reales.",
+ "sector": "pintura",
+ "synonyms": [
+  [
+   "pintura",
+   "pintar"
+  ],
+  [
+   "techo",
+   "techos"
+  ]
+ ],
+ "items": [
+  {
+   "id": "pintura-paredes",
+   "name": "Pintura plástica en paredes",
+   "aliases": [],
+   "unit": "m2",
+   "price": 6,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "pintura-techos",
+   "name": "Pintura plástica en techos",
+   "aliases": [],
+   "unit": "m2",
+   "price": 7,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "puertas",
+   "name": "Esmaltado de puertas",
+   "aliases": [],
+   "unit": "ud",
+   "price": 45,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "lijado",
+   "name": "Lijado de paramentos",
+   "aliases": [],
+   "unit": "m2",
+   "price": 4,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "empaste",
+   "name": "Empaste de paredes",
+   "aliases": [],
+   "unit": "m2",
+   "price": 5,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "proteccion",
+   "name": "Protección de suelos y muebles",
+   "aliases": [],
+   "unit": "global",
+   "price": 60,
+   "kind": "other",
+   "category": "General"
+  },
+  {
+   "id": "cubo-15",
+   "name": "Cubo de pintura 15 litros",
+   "aliases": [],
+   "unit": "ud",
+   "price": 55,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "cubo-4",
+   "name": "Cubo de pintura 4 litros",
+   "aliases": [],
+   "unit": "ud",
+   "price": 20,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "mano-obra",
+   "name": "Mano de obra",
+   "aliases": [],
+   "unit": "h",
+   "price": 22,
+   "kind": "labor",
+   "category": "General"
+  }
+ ]
+}

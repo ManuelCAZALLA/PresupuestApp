@@ -1,0 +1,123 @@
+{
+ "_comment": "DATOS DE PRUEBA. Los precios NO son reales.",
+ "sector": "albanileria",
+ "synonyms": [
+  [
+   "tabique",
+   "tabiqueria"
+  ],
+  [
+   "alicatado",
+   "azulejado"
+  ],
+  [
+   "solado",
+   "embaldosado"
+  ],
+  [
+   "escombros",
+   "cascotes"
+  ]
+ ],
+ "items": [
+  {
+   "id": "tabique-ladrillo",
+   "name": "Tabique de ladrillo hueco",
+   "aliases": [],
+   "unit": "m2",
+   "price": 18,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "demolicion-tabique",
+   "name": "Demolición de tabique",
+   "aliases": [],
+   "unit": "m2",
+   "price": 12,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "alicatado",
+   "name": "Alicatado de paredes",
+   "aliases": [],
+   "unit": "m2",
+   "price": 30,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "solado",
+   "name": "Solado de baldosa",
+   "aliases": [],
+   "unit": "m2",
+   "price": 28,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "enfoscado",
+   "name": "Enfoscado de paramentos",
+   "aliases": [],
+   "unit": "m2",
+   "price": 14,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "solera-10",
+   "name": "Solera de hormigón 10 cm",
+   "aliases": [],
+   "unit": "m2",
+   "price": 20,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "solera-15",
+   "name": "Solera de hormigón 15 cm",
+   "aliases": [],
+   "unit": "m2",
+   "price": 26,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "saco-cemento",
+   "name": "Saco de cemento",
+   "aliases": [],
+   "unit": "ud",
+   "price": 6,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "retirada-escombros",
+   "name": "Retirada de escombros",
+   "aliases": [],
+   "unit": "m3",
+   "price": 40,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "oficial",
+   "name": "Mano de obra oficial",
+   "aliases": [],
+   "unit": "h",
+   "price": 25,
+   "kind": "labor",
+   "category": "General"
+  },
+  {
+   "id": "ayudante",
+   "name": "Mano de obra ayudante",
+   "aliases": [],
+   "unit": "h",
+   "price": 18,
+   "kind": "labor",
+   "category": "General"
+  }
+ ]
+}

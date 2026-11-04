@@ -1,0 +1,157 @@
+{
+ "_comment": "Casos de evaluación. Estados: auto | ambiguous | none.",
+ "catalog": "catalog_pintura.sample.json",
+ "cases": [
+  {
+   "id": "p01",
+   "input": "80 metros cuadrados de pintura en paredes",
+   "expect": [
+    {
+     "item": "pintura-paredes",
+     "qty": 80,
+     "status": "auto",
+     "unit": "m2"
+    }
+   ]
+  },
+  {
+   "id": "p02",
+   "input": "40 m2 de pintura de techos",
+   "expect": [
+    {
+     "item": "pintura-techos",
+     "qty": 40,
+     "status": "auto",
+     "unit": "m2"
+    }
+   ]
+  },
+  {
+   "id": "p03",
+   "input": "dos puertas",
+   "expect": [
+    {
+     "item": "puertas",
+     "qty": 2,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "p04",
+   "input": "lijado",
+   "expect": [
+    {
+     "item": "lijado",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "p05",
+   "input": "50 m2 de empaste",
+   "expect": [
+    {
+     "item": "empaste",
+     "qty": 50,
+     "status": "auto",
+     "unit": "m2"
+    }
+   ]
+  },
+  {
+   "id": "p06",
+   "input": "un cubo de pintura",
+   "expect": [
+    {
+     "status": "ambiguous",
+     "qty": 1,
+     "candidatesInclude": [
+      "cubo-15",
+      "cubo-4"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p07",
+   "input": "un cubo de pintura de 15 litros",
+   "expect": [
+    {
+     "item": "cubo-15",
+     "qty": 1,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "p08",
+   "input": "un cubo de pintura de 10 litros",
+   "expect": [
+    {
+     "statusIn": [
+      "ambiguous",
+      "none"
+     ],
+     "qty": 1,
+     "mustNotAuto": [
+      "cubo-15",
+      "cubo-4"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p09",
+   "input": "protección de suelos",
+   "expect": [
+    {
+     "item": "proteccion",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "p10",
+   "input": "tres horas de mano de obra",
+   "expect": [
+    {
+     "item": "mano-obra",
+     "qty": 3,
+     "status": "auto",
+     "unit": "h"
+    }
+   ]
+  },
+  {
+   "id": "p11",
+   "input": "dos manos de pintura",
+   "expect": [
+    {
+     "statusIn": [
+      "ambiguous",
+      "none"
+     ],
+     "qty": 2,
+     "mustNotAuto": [
+      "mano-obra"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p12",
+   "input": "una nevera",
+   "expect": [
+    {
+     "status": "none",
+     "qty": 1
+    }
+   ]
+  }
+ ]
+}
