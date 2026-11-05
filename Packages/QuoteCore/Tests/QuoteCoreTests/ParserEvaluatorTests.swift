@@ -4,11 +4,10 @@ import Testing
 
 @Suite("Contabilidad del evaluador del parser")
 struct ParserEvaluatorTests {
-    private let ids = FixtureItemUUIDs.make(for: ["part-a", "part-b"])
-    private var firstItem: Item { Item(id: ids["part-a"]!, name: "Copper valve", unit: .unit) }
-    private var similarItem: Item { Item(id: ids["part-b"]!, name: "Copper valves", unit: .unit) }
+    private var firstItem: Item { Item(id: FixtureItemUUIDs.uuid(for: "part-a"), name: "Copper valve", unit: .unit) }
+    private var similarItem: Item { Item(id: FixtureItemUUIDs.uuid(for: "part-b"), name: "Copper valves", unit: .unit) }
     private var itemIDsByUUID: [UUID: String] {
-        Dictionary(uniqueKeysWithValues: ids.map { ($0.value, $0.key) })
+        [FixtureItemUUIDs.uuid(for: "part-a"): "part-a", FixtureItemUUIDs.uuid(for: "part-b"): "part-b"]
     }
 
     @Test func countsAutomaticWithWrongQuantityAsFalse() {
