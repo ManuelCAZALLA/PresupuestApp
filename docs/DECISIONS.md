@@ -155,3 +155,10 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
 - **Decisión**: se sube el esquema a una nueva versión con migración ligera: quitar `trade` de `ItemRecord` y de `QuoteRecord` (o equivalente), añadir los nuevos campos a `QuoteRecord` y a `BusinessProfileRecord` con valores por defecto razonables. No se borran datos del usuario.
 - **Motivo**: pasar de v2 a la siguiente versión sin perder la tarifa ni los presupuestos.
 - **Consecuencia**: `VersionedSchema` + `MigrationStage.lightweight` (o el mecanismo ya usado) en `PersistenceSetup`. Los tests de migración deben seguir verdes o actualizarse con cuidado, sin tocar las muestras ni los oráculos existentes salvo lo imprescindible.
+
+## D-021 — M2 en modo sugerencia para la versión 1.0
+- **Fecha**: 2026-11-05
+- **Estado**: aceptada
+- **Decisión**: la interpretación de texto no bloquea la versión 1.0, que se publica sin dictado. Como M2 no alcanza el límite de falsos automáticos en todas las fixtures de ajuste (fontanería: 1/35, 2.86 %), `ParserConfig.default` activa `suggestionOnly`: el motor devuelve `ambiguous` y coloca el mejor candidato primero. No emite `auto`.
+- **Motivo**: el comportamiento silencioso ante una coincidencia dudosa no cumple el principio del producto. El modo de sugerencia evita seleccionar una partida en silencio mientras la app v1 no depende del parser.
+- **Consecuencia**: los objetivos de precisión y recall de auto quedan pendientes en `ParserTargetsTests`; no se relajan. La suite evalúa las cinco fixtures en modo sugerencia y confirma cero falsos automáticos y cero violaciones `mustNotAuto`. Se mantiene el modo pendiente de revisión del usuario y la rama M2 no se fusiona hasta su aprobación.

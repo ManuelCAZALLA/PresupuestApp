@@ -10,6 +10,7 @@ public struct ParserConfig: Sendable {
     public var trigramWeight: Double
     public var tokenOverlapWeight: Double
     public var idfWeight: Double
+    public var suggestionOnly: Bool
     
     public init(
         autoMinScore: Double = 0.08,
@@ -20,7 +21,8 @@ public struct ParserConfig: Sendable {
         aliasBoost: Double = 3.0,
         trigramWeight: Double = 0.6,
         tokenOverlapWeight: Double = 1.0,
-        idfWeight: Double = 0.8
+        idfWeight: Double = 0.8,
+        suggestionOnly: Bool = false
     ) {
         self.autoMinScore = autoMinScore
         self.autoMinAdvantage = autoMinAdvantage
@@ -31,7 +33,8 @@ public struct ParserConfig: Sendable {
         self.trigramWeight = trigramWeight
         self.tokenOverlapWeight = tokenOverlapWeight
         self.idfWeight = idfWeight
+        self.suggestionOnly = suggestionOnly
     }
     
-    public static let `default` = ParserConfig()
+    public static let `default` = ParserConfig(suggestionOnly: true)
 }

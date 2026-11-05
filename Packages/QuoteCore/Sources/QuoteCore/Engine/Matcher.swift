@@ -12,6 +12,17 @@ public final class Matcher {
     public func match(remainingText: String, quantity: Decimal, quantityWasAssumed: Bool, spokenUnit: MeasureUnit?, catalog: [Item]) -> ParsedLine {
         let segNorm = normalizer.normalize(remainingText)
         scorer.buildIDF(from: catalog)
+
+        if config.suggestionOnly {
+            let ranked = catalog.map { item in
+                (item: item, score: scorer.score(segment: remainingText, item: item, config: config))
+            }.sorted {
+                if $0.score != $1.score { return $0.score > $1.score }
+                return $0.item.id.uuidString < $1.item.id.uuidString
+            }
+            let suggestions = Array(ranked.prefix(config.maxTopCandidates))
+            return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: suggestions, status: .ambiguous, warnings: [])
+        }
         
         if segNorm.isEmpty {
             return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: [], status: .none, warnings: [])
