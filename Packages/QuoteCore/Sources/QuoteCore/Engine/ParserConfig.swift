@@ -4,6 +4,7 @@ public struct ParserConfig: Sendable {
     public var autoMinScore: Double
     public var autoMinAdvantage: Double  // minimum difference between best and second
     public var ambiguousMinScore: Double
+    public var minimumCandidateScore: Double
     public var maxTopCandidates: Int
     public var aliasBoost: Double
     public var trigramWeight: Double
@@ -14,6 +15,7 @@ public struct ParserConfig: Sendable {
         autoMinScore: Double = 0.08,
         autoMinAdvantage: Double = 0.001,
         ambiguousMinScore: Double = 0.02,
+        minimumCandidateScore: Double = 0.4,
         maxTopCandidates: Int = 3,
         aliasBoost: Double = 3.0,
         trigramWeight: Double = 0.6,
@@ -23,6 +25,7 @@ public struct ParserConfig: Sendable {
         self.autoMinScore = autoMinScore
         self.autoMinAdvantage = autoMinAdvantage
         self.ambiguousMinScore = ambiguousMinScore
+        self.minimumCandidateScore = minimumCandidateScore
         self.maxTopCandidates = maxTopCandidates
         self.aliasBoost = aliasBoost
         self.trigramWeight = trigramWeight

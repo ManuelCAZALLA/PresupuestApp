@@ -67,6 +67,11 @@ public final class Matcher {
         }
         let best = penalized[0]
         let second = penalized.count > 1 ? penalized[1] : nil
+
+        guard scorer.sharesWordOrNumber(segment: remainingText, item: best.item),
+              best.score >= config.minimumCandidateScore else {
+            return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: penalized, status: .none, warnings: warnings)
+        }
         
         // General ambiguous cases for generic terms
         if segNorm == "grifo" || segNorm == "grifos" {

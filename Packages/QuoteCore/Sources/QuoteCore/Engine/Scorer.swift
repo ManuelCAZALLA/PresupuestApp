@@ -8,6 +8,13 @@ public final class Scorer {
     public func buildIDF(from catalog: [Item]) {
         // no-op for compatibility
     }
+
+    public func sharesWordOrNumber(segment: String, item: Item) -> Bool {
+        let segmentTokens = Set(normalizer.normalize(segment).split(separator: " ").map(String.init))
+        let catalogTokens = ([item.name] + item.aliases)
+            .flatMap { normalizer.normalize($0).split(separator: " ").map(String.init) }
+        return !segmentTokens.isDisjoint(with: catalogTokens)
+    }
     
     public func score(segment: String, item: Item, config: ParserConfig = .default) -> Double {
         let segNorm = normalizer.normalize(segment)
