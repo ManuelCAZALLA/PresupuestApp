@@ -13,7 +13,7 @@ public struct ParserConfig: Sendable {
     
     public init(
         autoMinScore: Double = 0.08,
-        autoMinAdvantage: Double = 0.001,
+        autoMinAdvantage: Double = 0.1,
         ambiguousMinScore: Double = 0.02,
         minimumCandidateScore: Double = 0.4,
         maxTopCandidates: Int = 3,

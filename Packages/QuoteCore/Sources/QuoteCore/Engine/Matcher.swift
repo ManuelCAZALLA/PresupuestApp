@@ -103,13 +103,11 @@ public final class Matcher {
         
         if best.score >= 0.12 {
             if let second = second {
-                if isExactMatch {
+                let advantage = best.score - second.score
+                if isExactMatch && advantage >= config.autoMinAdvantage {
                     return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: penalized, status: .auto, warnings: warnings)
                 }
-                if best.score - second.score >= 0.005 {
-                    return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: penalized, status: .auto, warnings: warnings)
-                }
-                if best.score >= 0.25 {
+                if advantage >= config.autoMinAdvantage {
                     return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: penalized, status: .auto, warnings: warnings)
                 }
                 return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: penalized, status: .ambiguous, warnings: warnings)
