@@ -52,12 +52,14 @@ Estos JSON y las fixtures son el "contrato" del motor: si algún día hay versi�
 ## Evaluación (obligatoria en cada cambio del motor)
 Un test `ParserEvaluationTests` carga `Fixtures/catalog_*.sample.json` y `Fixtures/parser_cases_*.json`, ejecuta cada caso y mide:
 
-**Fórmulas exactas:**
-- **autoPrecision** = líneas `auto` correctas / líneas `auto` emitidas. Una línea automática es correcta solo si acierta partida, cantidad y unidad (si el caso la especifica). Una cantidad equivocada cuenta como falso automático.
-- **falseAutoRate** = líneas `auto` incorrectas / líneas esperadas totales. Objetivo ≤ 2 %. Si sube, el cambio se rechaza.
-- **ambiguousRecall** = de los casos ambiguos esperados, % donde la partida correcta está entre los 3 candidatos. Objetivo ≥ 90 %.
-- **noneAccuracy** = casos sin coincidencia esperados que salen `none` (o `ambiguous` con score bajo, nunca `auto`).
-- **top3Recall** = en las líneas que no salen `auto`, porcentaje donde la partida correcta está entre los 3 candidatos. Objetivo ≥ 95 %.
+**Fórmulas exactas (se reportan numerador y denominador, por fixture):**
+- **autoPrecision** = cantidad de líneas esperadas correctamente resueltas como `auto` / cantidad total de líneas realmente emitidas como `auto`. Correcta significa partida, cantidad y unidad (si se especificó) correctas.
+- **falseAutoRate** = cantidad de líneas emitidas como `auto` que contradicen el oráculo / cantidad total de líneas esperadas (`sum(expect.count)`). Objetivo ≤ 2 %.
+- **ambiguousRecall** = casos cuya expectativa pide `ambiguous` y cuyo resultado es `ambiguous` con una partida esperada entre sus primeros tres candidatos / casos cuya expectativa pide `ambiguous`.
+- **noneAccuracy** = expectativas sin partida (estado `none`) resueltas con todos los resultados en `none` o sin resultados / total de expectativas `none`.
+- **top3Recall** = expectativas no resueltas como `auto` cuya partida esperada aparece entre los primeros tres candidatos / total de expectativas no resueltas como `auto` que sí tienen partida esperada. Las expectativas `none` se excluyen.
+
+La evaluación conserva un resultado observado por caso con entrada, expectativa, resultados emitidos (partida, cantidad, unidad y estado) y los tres candidatos con puntuaciones. No se deduce el resultado a partir del mensaje de fallo.
 
 La salida imprime numerador/denominador de cada métrica por fixture y total.
 

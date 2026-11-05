@@ -27,7 +27,13 @@ struct ParserEvaluationTests {
         try evaluate(fixture: "parser_cases_pintura")
     }
 
-    private func evaluate(fixture name: String) throws {
+    @Test func dumpObservedResults() throws {
+        for fixture in ["parser_cases_fontaneria", "parser_cases_albanileria", "parser_cases_electricidad", "parser_cases_pintura"] {
+            try evaluate(fixture: fixture, dumpObservedResults: true)
+        }
+    }
+
+    private func evaluate(fixture name: String, dumpObservedResults: Bool = false) throws {
         let casesURL = fixtureURL("\(name).json")
         let data = try Data(contentsOf: casesURL)
         let root = try JSONDecoder().decode(ParserCasesFile.self, from: data)
@@ -84,6 +90,19 @@ struct ParserEvaluationTests {
 
         for testCase in root.cases {
             let results = interpreter.interpret(text: testCase.input, catalog: items)
+            if dumpObservedResults {
+                let expected = testCase.expect.map { expectation -> String in
+                    let expectedItem = expectation.item ?? expectation.candidatesInclude?.joined(separator: "|") ?? expectation.mustNotAuto?.joined(separator: "|") ?? "none"
+                    let expectedQuantity = expectation.qty.map { String($0) } ?? "-"
+                    let expectedStatus = expectation.status ?? expectation.statusIn?.joined(separator: "|") ?? "-"
+                    return "item=\(expectedItem),qty=\(expectedQuantity),unit=\(expectation.unit ?? "-"),status=\(expectedStatus)"
+                }.joined(separator: ";")
+                let obtained = results.map { result in
+                    let candidates = result.candidates.map { "\($0.item.name)@\(String(format: "%.6f", $0.score))" }.joined(separator: "|")
+                    return "item=\(result.candidates.first?.item.name ?? "none"),qty=\(NSDecimalNumber(decimal: result.quantity).stringValue),unit=\(result.spokenUnit?.rawValue ?? "-"),status=\(result.status.rawValue),top3=[\(candidates)]"
+                }.joined(separator: ";")
+                print("[PARSER_CASE] fixture=\(name) id=\(testCase.id) input=\(testCase.input.debugDescription) expected=[\(expected)] obtained=[\(obtained)]")
+            }
             if testCase.id == "c08" || testCase.id == "c16" {
                 print("[DEBUG" + testCase.id + "] IN:" + testCase.input)
                 for (i,r) in results.enumerated() {
