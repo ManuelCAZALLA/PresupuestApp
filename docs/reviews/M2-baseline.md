@@ -53,13 +53,13 @@ Por caso se imprimen entrada, expectativa, cada línea obtenida (partida, cantid
 |---|---|---|---|---|
 | a01 | 20 metros cuadrados de alicatado | auto alicatado ×20 m² | Alicatado paredes ×20 m², auto | — |
 | a02 | veinte m2 de tabique | auto tabique ladrillo ×20 m² | Demolición tabique ×20 m², auto | emparejamiento |
-| a03 | demolición de tabique | auto demolición tabique ×1 asumida | Demolición tabique ×1, auto | emparejamiento (oráculo) |
+| a03 | demolición de tabique | auto demolición tabique ×1 asumida | Demolición tabique ×1, auto | — |
 | a04 | un tabique | ambiguous tabique/demolición | Demolición tabique ×1, auto | estado |
 | a05 | solera de hormigón de 10 | auto solera 10 ×1 asumida | Solera 10 ×10, ambiguous | cantidad |
-| a06 | solera de hormigón | ambiguous soleras 10/15 | Solera 10 ×1, ambiguous; top candidates incluyen 10 y 15 | emparejamiento (oráculo) |
+| a06 | solera de hormigón | ambiguous soleras 10/15 | Solera 10 ×1, ambiguous; top candidates incluyen 10 y 15 | — |
 | a07 | solera de hormigón de 12 | ambiguous o none; no auto 10/15 | Solera 10 ×12, ambiguous | — |
-| a08 | dos sacos de cemento | auto saco cemento ×2 | Saco cemento ×2, auto | emparejamiento (oráculo) |
-| a09 | 3 metros cúbicos de escombros | auto retirada escombros ×3 m³ | Retirada escombros ×3 m³, auto | emparejamiento (oráculo) |
+| a08 | dos sacos de cemento | auto saco cemento ×2 | Saco cemento ×2, auto | — |
+| a09 | 3 metros cúbicos de escombros | auto retirada escombros ×3 m³ | Retirada escombros ×3 m³, auto | — |
 | a10 | ocho horas de oficial | auto oficial ×8 h | Mano de obra oficial ×8 h, auto | — |
 | a11 | cuatro horas de ayudante | auto ayudante ×4 h | Mano de obra ayudante ×4 h, auto | — |
 | a12 | mano de obra | ambiguous oficial/ayudante | Mano de obra ayudante ×1, auto | estado |
@@ -68,31 +68,31 @@ Por caso se imprimen entrada, expectativa, cada línea obtenida (partida, cantid
 | a15 | azulejado de 12 metros cuadrados | auto alicatado ×1 asumida | Solado ×12 m², auto | cantidad |
 | a16 | una piscina | none | sin candidato, none | — |
 
-Las etiquetas de `a03`, `a08` y `a09` coinciden semánticamente con el resultado observado, pero el evaluador los contó como incorrectos porque compara claves de fixture con nombre/alias del catálogo. Se documentan como discrepancias de emparejamiento del oráculo/evaluador, no como salida distinta del motor. `a06` sí produjo ambiguous y las dos partidas esperadas aparecen en el top-3; el fallo de recall también proviene del chequeo de claves de fixture contra nombres/alias.
+La tabla refleja comparación por ID de partida de catálogo, cantidad, unidad y estado. El antiguo contador basado en comparación de claves con nombre/alias daba discrepancias en `a03`, `a06`, `a08` y `a09`; la instrumentación actual contrasta los IDs del fixture y evita esos falsos diagnósticos.
 
 ## Electricidad y pintura — solo agregados
 
 | fixture | líneas esperadas | autos emitidos | autos correctos | falsos automáticos | autoPrecision | falseAutoRate | ambiguousRecall | noneAccuracy | top3Recall |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Electricidad | 16 | 12 | 2 | 10 | 2/12 = 0,167 | 10/16 = 0,625 | 0/1 = 0,000 | 0/1 = 0,000 | 0/2 = 0,000 |
-| Pintura | 12 | 8 | 3 | 5 | 3/8 = 0,375 | 5/12 = 0,417 | 0/1 = 0,000 | 1/1 = 1,000 | 0/1 = 0,000 |
+| Electricidad | 16 | 13 | 10 | 3 | 10/13 = 0,769 | 3/16 = 0,188 | 1/1 = 1,000 | 0/1 = 0,000 | 1/2 = 0,500 |
+| Pintura | 12 | 11 | 8 | 3 | 8/11 = 0,727 | 3/12 = 0,250 | 0/1 = 0,000 | 1/1 = 1,000 | 0/0 = 1,000 |
 
 ## Métricas de referencia
 
 | fixture | líneas esperadas | auto emitidas | auto correctas | falsos auto | autoPrecision | falseAutoRate | ambiguousRecall | noneAccuracy | top3Recall |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Fontanería | 35 | 28 | 26 | 2 | 26/28 = 0,929 | 2/35 = 0,057 | 3/3 = 1,000 | 2/2 = 1,000 | 4/4 = 1,000 |
-| Albañilería | 17 | 10 | 5 | 5 | 5/10 = 0,500 | 5/17 = 0,294 | 0/3 = 0,000 | 1/1 = 1,000 | 0/5 = 0,000 |
-| Electricidad | 16 | 12 | 2 | 10 | 2/12 = 0,167 | 10/16 = 0,625 | 0/1 = 0,000 | 0/1 = 0,000 | 0/2 = 0,000 |
-| Pintura | 12 | 8 | 3 | 5 | 3/8 = 0,375 | 5/12 = 0,417 | 0/1 = 0,000 | 1/1 = 1,000 | 0/1 = 0,000 |
+| Fontanería | 35 | 27 | 26 | 1 | 26/27 = 0,963 | 1/35 = 0,029 | 3/3 = 1,000 | 2/2 = 1,000 | 5/5 = 1,000 |
+| Albañilería | 17 | 12 | 8 | 4 | 8/12 = 0,667 | 4/17 = 0,235 | 1/3 = 0,333 | 1/1 = 1,000 | 3/3 = 1,000 |
+| Electricidad | 16 | 13 | 10 | 3 | 10/13 = 0,769 | 3/16 = 0,188 | 1/1 = 1,000 | 0/1 = 0,000 | 1/2 = 0,500 |
+| Pintura | 12 | 11 | 8 | 3 | 8/11 = 0,727 | 3/12 = 0,250 | 0/1 = 0,000 | 1/1 = 1,000 | 0/0 = 1,000 |
 
 ## Fallos categorizados (casos; categoría primaria)
 
 | oficio | cantidad | segmentación | normalización | emparejamiento | estado | total discrepancias |
 |---|---:|---:|---:|---:|---:|---:|
 | Fontanería | 0 | 0 | 0 | 1 | 2 | 3 |
-| Albañilería | 2 | 0 | 0 | 5 | 3 | 10 |
+| Albañilería | 2 | 0 | 0 | 1 | 3 | 6 |
 
-La evaluación cuenta discrepancias por línea esperada, mientras que este desglose agrupa por caso y asigna una categoría primaria. `a03`, `a06`, `a08` y `a09` se marcan como emparejamiento del oráculo: las salidas reales contienen las partidas semánticamente esperadas (y `a06` incluso tiene el estado y candidatos esperados), pero el chequeo compara claves de fixture con nombres/alias y da fallo. `a05` y `a15` se clasifican como cantidad porque el extractor consume una especificación numérica como cantidad; el resto de discrepancias de estado son `a04`, `a12` y `a14`.
+La evaluación cuenta falsos automáticos por línea esperada; este desglose agrupa discrepancias de expectativas por caso y asigna una categoría primaria. En albañilería, `a02` es emparejamiento incorrecto; `a05` y `a15` son cantidad; `a04`, `a12` y `a14` son estado. `a05` y `a15` se clasifican como cantidad porque el extractor consume una especificación numérica como cantidad.
 
 El desglose categórico detallado queda limitado a fontanería y albañilería. Electricidad y pintura permanecen como examen sellado y solo se reportan en sus recuentos métricos agregados de la tabla anterior.

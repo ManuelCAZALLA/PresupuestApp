@@ -53,11 +53,11 @@ Estos JSON y las fixtures son el "contrato" del motor: si algún día hay versi�
 Un test `ParserEvaluationTests` carga `Fixtures/catalog_*.sample.json` y `Fixtures/parser_cases_*.json`, ejecuta cada caso y mide:
 
 **Fórmulas exactas (se reportan numerador y denominador, por fixture):**
-- **autoPrecision** = cantidad de líneas esperadas correctamente resueltas como `auto` / cantidad total de líneas realmente emitidas como `auto`. Correcta significa partida, cantidad y unidad (si se especificó) correctas.
+- **autoPrecision** = automáticos emitidos que corresponden a una expectativa `auto` con ID de partida, cantidad y unidad (si se especificó) correctos / total de automáticos realmente emitidos.
 - **falseAutoRate** = cantidad de líneas emitidas como `auto` que contradicen el oráculo / cantidad total de líneas esperadas (`sum(expect.count)`). Objetivo ≤ 2 %.
 - **ambiguousRecall** = casos cuya expectativa pide `ambiguous` y cuyo resultado es `ambiguous` con una partida esperada entre sus primeros tres candidatos / casos cuya expectativa pide `ambiguous`.
 - **noneAccuracy** = expectativas sin partida (estado `none`) resueltas con todos los resultados en `none` o sin resultados / total de expectativas `none`.
-- **top3Recall** = expectativas no resueltas como `auto` cuya partida esperada aparece entre los primeros tres candidatos / total de expectativas no resueltas como `auto` que sí tienen partida esperada. Las expectativas `none` se excluyen.
+- **top3Recall** = expectativas con partida esperada cuyo resultado observado no es `auto` y cuya partida aparece entre los tres primeros candidatos / expectativas con partida esperada cuyo resultado observado no es `auto`. Las expectativas sin partida esperada se excluyen.
 
 La evaluación conserva un resultado observado por caso con entrada, expectativa, resultados emitidos (partida, cantidad, unidad y estado) y los tres candidatos con puntuaciones. No se deduce el resultado a partir del mensaje de fallo.
 
@@ -72,5 +72,4 @@ Campos opcionales por línea esperada: `candidatesInclude`, `statusIn`, `mustNot
 Los datos de prueba llevan precios de PRUEBA (no reales). Cuando haya tarifas reales de fontaneros (con su permiso), se añaden como fixtures nuevas.
 
 ### Notas sobre el recuento (M2)
-- **Discrepancia albañilería "5/12 con 6 falsos":** Con el recuento anterior, `falseAutoRate` se calculaba sobre número de casos y la corrección de `auto` era más laxa; ahora `autoPrecision = líneas auto correctas / líneas auto emitidas` (solo si acierta partida, cantidad y unidad si se especifica) y `falseAutoRate = líneas auto incorrectas / líneas esperadas totales` (suma de todas las expectativas). Una cantidad equivocada es falso automático.
-- **c27 fontanería "1 fallo qty":** Con el recuento anterior el fallo de cantidad se registraba pero no restaba de `autoPrecision` de la misma forma; con las reglas nuevas, cantidad incorrecta cuenta como línea auto incorrecta/falso automático, por lo que afecta a las métricas.
+- El informe anterior de M2 no era reproducible: mezclaba estados que no se habían observado y el evaluador comparaba algunas claves de fixture con nombres visibles de catálogo. `ParserEvaluationTests` ahora mapea IDs de fixture a entidades emitidas y calcula las métricas con sus estados, partidas, cantidades y unidades observados. Los valores válidos son los del informe enlazado en `docs/reviews/M2-baseline.md`.

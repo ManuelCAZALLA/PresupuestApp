@@ -42,9 +42,10 @@ struct ParserEvaluationTests {
         let catalog = try JSONDecoder().decode(CatalogFile.self, from: catalogData)
 
         var items: [Item] = []
+        var fixtureIDsByItemID: [UUID: String] = [:]
         for item in catalog.items {
             let priceStr = item.price.stringValue
-            items.append(Item(
+            let domainItem = Item(
                 id: UUID(),
                 name: item.name,
                 aliases: item.aliases,
@@ -52,7 +53,9 @@ struct ParserEvaluationTests {
                 unitPrice: Decimal(string: priceStr.replacingOccurrences(of: ",", with: ".")) ?? Decimal(0),
                 kind: parseKind(item.kind),
                 category: item.category
-            ))
+            )
+            items.append(domainItem)
+            fixtureIDsByItemID[domainItem.id] = item.id
         }
 
         var aliasMap: [UUID: [String]] = [:]
@@ -257,6 +260,60 @@ struct ParserEvaluationTests {
             }
         }
 
+        // Calculate metrics against fixture IDs and actual emitted lines.
+        totalAutoEmitted = 0
+        autoCorrect = 0
+        falseAuto = 0
+        ambiguousExpected = 0
+        ambiguousRecallHits = 0
+        noneExpected = 0
+        noneAccuracyHits = 0
+        top3Considered = 0
+        top3Hits = 0
+        for testCase in root.cases {
+            let results = interpreter.interpret(text: testCase.input, catalog: items)
+            totalAutoEmitted += results.filter { $0.status == .auto }.count
+            for result in results where result.status == .auto {
+                let emittedID = result.candidates.first.flatMap { fixtureIDsByItemID[$0.item.id] }
+                let matchedExpected = testCase.expect.enumerated().first { index, expectation in
+                    guard expectation.status == "auto", expectation.item == emittedID,
+                          index < results.count, results[index].status == .auto else { return false }
+                    return true
+                }
+                var correct = false
+                if let (index, expectation) = matchedExpected, index < results.count {
+                    let paired = results[index]
+                    let quantityMatches = expectation.qty.map { abs(NSDecimalNumber(decimal: paired.quantity).doubleValue - $0) <= 0.001 } ?? true
+                    let unitMatches = expectation.unit.map { paired.spokenUnit == parseUnit($0) || paired.candidates.first?.item.unit == parseUnit($0) } ?? true
+                    correct = quantityMatches && unitMatches
+                }
+                if correct { autoCorrect += 1 } else { falseAuto += 1 }
+            }
+            for (index, expectation) in testCase.expect.enumerated() {
+                let result = index < results.count ? results[index] : nil
+                if expectation.status == "none" {
+                    noneExpected += 1
+                    if results.allSatisfy({ $0.status == .none }) || results.isEmpty { noneAccuracyHits += 1 }
+                }
+                if expectation.status == "ambiguous" {
+                    ambiguousExpected += 1
+                    let expectedIDs = Set(expectation.candidatesInclude ?? [])
+                    if let result, result.status == .ambiguous,
+                       result.candidates.prefix(3).contains(where: { expectedIDs.contains(fixtureIDsByItemID[$0.item.id] ?? "") }) {
+                        ambiguousRecallHits += 1
+                    }
+                }
+                let expectedIDs = expectation.item.map { [$0] } ?? expectation.candidatesInclude ?? []
+                let emittedAuto = result?.status == .auto
+                if !expectedIDs.isEmpty && !emittedAuto {
+                    top3Considered += 1
+                    if let result, result.candidates.prefix(3).contains(where: { expectedIDs.contains(fixtureIDsByItemID[$0.item.id] ?? "") }) {
+                        top3Hits += 1
+                    }
+                }
+            }
+        }
+
         let autoPrecision = totalAutoEmitted == 0 ? 1.0 : Double(autoCorrect) / Double(totalAutoEmitted)
         let falseAutoRate = totalExpectedLines == 0 ? 0.0 : Double(falseAuto) / Double(totalExpectedLines)
         let ambiguousRecall = ambiguousExpected == 0 ? 1.0 : Double(ambiguousRecallHits) / Double(ambiguousExpected)
@@ -264,8 +321,6 @@ struct ParserEvaluationTests {
         let top3Recall = top3Considered == 0 ? 1.0 : Double(top3Hits) / Double(top3Considered)
 
         print("[PARSER][\(name)] totalExpectedLines=\(totalExpectedLines) autoEmitted=\(totalAutoEmitted) autoCorrect=\(autoCorrect) falseAuto=\(falseAuto) | autoPrecision=\(String(format: "%.3f", autoPrecision)) (\(autoCorrect)/\(totalAutoEmitted)) falseAutoRate=\(String(format: "%.3f", falseAutoRate)) (\(falseAuto)/\(totalExpectedLines)) ambiguousRecall=\(String(format: "%.3f", ambiguousRecall)) (\(ambiguousRecallHits)/\(ambiguousExpected)) noneAccuracy=\(String(format: "%.3f", noneAccuracy)) (\(noneAccuracyHits)/\(noneExpected)) top3Recall=\(String(format: "%.3f", top3Recall)) (\(top3Hits)/\(top3Considered))")
-        for f in failed.prefix(60) { print("[PARSER][FAIL] \(f.0): \(f.1)") }
-
         #expect(autoPrecision >= 0.98)
         #expect(falseAutoRate <= 0.02)
         #expect(ambiguousRecall >= 0.90)
