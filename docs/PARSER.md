@@ -52,16 +52,19 @@ Estos JSON y las fixtures son el "contrato" del motor: si algún día hay versi�
 ## Evaluación (obligatoria en cada cambio del motor)
 Un test `ParserEvaluationTests` carga `Fixtures/catalog_*.sample.json` y `Fixtures/parser_cases_*.json`, ejecuta cada caso y mide:
 
-**Fórmulas exactas (se reportan numerador y denominador, por fixture):**
-- **autoPrecision** = automáticos emitidos que corresponden a una expectativa `auto` con ID de partida, cantidad y unidad (si se especificó) correctos / total de automáticos realmente emitidos.
-- **falseAutoRate** = cantidad de líneas emitidas como `auto` que contradicen el oráculo / cantidad total de líneas esperadas (`sum(expect.count)`). Objetivo ≤ 2 %.
-- **ambiguousRecall** = casos cuya expectativa pide `ambiguous` y cuyo resultado es `ambiguous` con una partida esperada entre sus primeros tres candidatos / casos cuya expectativa pide `ambiguous`.
-- **noneAccuracy** = expectativas sin partida (estado `none`) resueltas con todos los resultados en `none` o sin resultados / total de expectativas `none`.
-- **top3Recall** = expectativas con partida esperada cuyo resultado observado no es `auto` y cuya partida aparece entre los tres primeros candidatos / expectativas con partida esperada cuyo resultado observado no es `auto`. Las expectativas sin partida esperada se excluyen.
+**Emparejamiento y fórmulas exactas (se reportan numerador y denominador, por fixture):**
+- Cada partida tiene un UUID determinista derivado del ID del JSON. El evaluador compara exclusivamente ese UUID, nunca nombres, texto de alias ni especificaciones.
+- Si el caso emite la misma cantidad de líneas que espera, empareja `expected[i]` con `obtained[i]`. Si los recuentos difieren, empareja las líneas comunes por índice, informa fallo de segmentación, cuenta las expectativas sobrantes como no emitidas y las salidas sobrantes como no emparejadas. Una salida sobrante `auto` es falso automático. Cada línea se consume una vez.
+- **autoPrecision** = automáticos emparejados cuya partida (UUID), cantidad y unidad (si se especificó) son correctas / total de automáticos emitidos. Denominador cero: `n/a`.
+- **autoRecall** = líneas esperadas `auto` cuya pareja salió `auto` / total de líneas esperadas `auto`. No exige que partida, cantidad y unidad sean correctas; esos errores sí son falsos automáticos. Denominador cero: `n/a`.
+- **falseAutoRate** = automáticos falsos / líneas esperadas totales (`sum(expect.count)`). Es falso todo `auto` emparejado con expectativa no automática, con UUID/cantidad/unidad incorrectos, o emitido sin pareja. `mustNotAuto` también se comprueba por UUID y marca como falso cualquier `auto` del caso cuyo UUID aparezca en la lista. Denominador cero: `n/a`. Objetivo ≤ 2 %.
+- **ambiguousRecall** = expectativas `ambiguous` cuya pareja salió `ambiguous` y contiene uno de sus UUID esperados entre los tres primeros candidatos / total de expectativas `ambiguous`. Denominador cero: `n/a`.
+- **noneAccuracy** = expectativas `none` cuya pareja salió `none` / total de expectativas `none`. Denominador cero: `n/a`.
+- **top3Recall** = expectativas con partida objetivo cuya pareja no salió `auto` y cuyo UUID aparece entre los tres primeros candidatos / expectativas con partida objetivo cuya pareja no salió `auto`. Una expectativa sin pareja cuenta como no automática y como fallo de recall. Denominador cero: `n/a`.
 
-La evaluación conserva un resultado observado por caso con entrada, expectativa, resultados emitidos (partida, cantidad, unidad y estado) y los tres candidatos con puntuaciones. No se deduce el resultado a partir del mensaje de fallo.
+`ParserEvaluatorTests` prueba la contabilidad con un intérprete falso. `ParserEvaluationTests` descubre todos los `parser_cases_*.json` en orden de nombre, carga sus catálogos con UUID estables y registra por cada caso entrada, esperado, obtenido (partida, cantidad, unidad, estado), top-3 y causa. Los objetivos del motor viven en el test separado `parserTargets`, para distinguir un evaluador correcto de un motor que aún no los cumple.
 
-La salida imprime numerador/denominador de cada métrica por fixture y total.
+La salida imprime numerador/denominador de cada métrica por fixture.
 
 Formato de un caso:
 ```json
