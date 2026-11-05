@@ -1,0 +1,229 @@
+{
+ "_comment": "Casos sintéticos. Estados: auto | ambiguous | none.",
+ "catalog": "catalog_sintetico.sample.json",
+ "cases": [
+  {
+   "id": "s01",
+   "input": "cinco quelmos",
+   "expect": [
+    {
+     "item": "quelmo",
+     "qty": 5,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "s02",
+   "input": "un zorba de 17",
+   "expect": [
+    {
+     "item": "zorba-17",
+     "qty": 1,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "s03",
+   "input": "dos zorbas de 23",
+   "expect": [
+    {
+     "item": "zorba-23",
+     "qty": 2,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "s04",
+   "input": "un zorba",
+   "expect": [
+    {
+     "status": "ambiguous",
+     "qty": 1,
+     "candidatesInclude": [
+      "zorba-17",
+      "zorba-23"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s05",
+   "input": "un zorba de 19",
+   "expect": [
+    {
+     "statusIn": [
+      "ambiguous",
+      "none"
+     ],
+     "qty": 1,
+     "mustNotAuto": [
+      "zorba-17",
+      "zorba-23"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s06",
+   "input": "12 metros de tirvo de 7",
+   "expect": [
+    {
+     "item": "tirvo-7",
+     "qty": 12,
+     "status": "auto",
+     "unit": "m"
+    }
+   ]
+  },
+  {
+   "id": "s07",
+   "input": "tirvo de 9",
+   "expect": [
+    {
+     "item": "tirvo-9",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "s08",
+   "input": "tres horas de pluma",
+   "expect": [
+    {
+     "item": "pluma",
+     "qty": 3,
+     "status": "auto",
+     "unit": "h"
+    }
+   ]
+  },
+  {
+   "id": "s09",
+   "input": "un nabo de 150 litros",
+   "expect": [
+    {
+     "item": "nabo-150",
+     "qty": 1,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "s10",
+   "input": "un nabo de 175 litros",
+   "expect": [
+    {
+     "statusIn": [
+      "ambiguous",
+      "none"
+     ],
+     "qty": 1,
+     "mustNotAuto": [
+      "nabo-150",
+      "nabo-200"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s11",
+   "input": "dos nabos de 200",
+   "expect": [
+    {
+     "item": "nabo-200",
+     "qty": 2,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "s12",
+   "input": "7 quelmos",
+   "expect": [
+    {
+     "item": "quelmo",
+     "qty": 7,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "s13",
+   "input": "17 quelmos",
+   "expect": [
+    {
+     "item": "quelmo",
+     "qty": 17,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "s14",
+   "input": "una cosa rara",
+   "expect": [
+    {
+     "status": "none",
+     "qty": 1
+    }
+   ]
+  },
+  {
+   "id": "s15",
+   "input": "quelmo y zorba de 23",
+   "expect": [
+    {
+     "item": "quelmo",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    },
+    {
+     "item": "zorba-23",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "s16",
+   "input": "kelmo",
+   "expect": [
+    {
+     "item": "quelmo",
+     "qty": 1,
+     "status": "auto",
+     "assumedQuantity": true
+    }
+   ]
+  },
+  {
+   "id": "s17",
+   "input": "nueve zorbas de 17",
+   "expect": [
+    {
+     "item": "zorba-17",
+     "qty": 9,
+     "status": "auto"
+    }
+   ]
+  },
+  {
+   "id": "s18",
+   "input": "23 zorbas de 23",
+   "expect": [
+    {
+     "item": "zorba-23",
+     "qty": 23,
+     "status": "auto"
+    }
+   ]
+  }
+ ]
+}

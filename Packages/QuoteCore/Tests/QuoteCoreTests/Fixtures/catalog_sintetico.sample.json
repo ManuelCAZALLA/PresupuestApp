@@ -1,0 +1,84 @@
+{
+ "_comment": "SINTÉTICO: palabras inventadas y medidas poco habituales. Sirve para detectar reglas con vocabulario o números escritos a mano.",
+ "sector": "sintetico",
+ "synonyms": [
+  [
+   "quelmo",
+   "kelmo"
+  ]
+ ],
+ "items": [
+  {
+   "id": "zorba-17",
+   "name": "Zorba 17 cm",
+   "aliases": [],
+   "unit": "ud",
+   "price": 10,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "zorba-23",
+   "name": "Zorba 23 cm",
+   "aliases": [],
+   "unit": "ud",
+   "price": 12,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "quelmo",
+   "name": "Quelmo reforzado",
+   "aliases": [],
+   "unit": "ud",
+   "price": 5,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "tirvo-7",
+   "name": "Tirvo 7 mm",
+   "aliases": [],
+   "unit": "m",
+   "price": 2,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "tirvo-9",
+   "name": "Tirvo 9 mm",
+   "aliases": [],
+   "unit": "m",
+   "price": 3,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "pluma",
+   "name": "Pluma de montaje",
+   "aliases": [],
+   "unit": "h",
+   "price": 20,
+   "kind": "labor",
+   "category": "General"
+  },
+  {
+   "id": "nabo-150",
+   "name": "Nabo 150 litros",
+   "aliases": [],
+   "unit": "ud",
+   "price": 40,
+   "kind": "material",
+   "category": "General"
+  },
+  {
+   "id": "nabo-200",
+   "name": "Nabo 200 litros",
+   "aliases": [],
+   "unit": "ud",
+   "price": 55,
+   "kind": "material",
+   "category": "General"
+  }
+ ]
+}
