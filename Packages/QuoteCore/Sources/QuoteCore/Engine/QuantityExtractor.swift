@@ -12,6 +12,33 @@ public final class QuantityExtractor {
         public let spokenUnit: MeasureUnit?
         public let remainingText: String
     }
+
+    private struct UnitMatch {
+        let unit: MeasureUnit?
+        let count: Int
+    }
+
+    private func unitMatch(_ tokens: [String], at index: Int) -> UnitMatch? {
+        guard tokens.indices.contains(index) else { return nil }
+        let token = tokens[index]
+        if token == "m2" { return UnitMatch(unit: .squareMeter, count: 1) }
+        if token == "m3" { return UnitMatch(unit: .cubicMeter, count: 1) }
+        if token == "m" || token == "metro" || token == "metros" { return UnitMatch(unit: .meter, count: 1) }
+        if token == "h" || token == "hora" || token == "horas" { return UnitMatch(unit: .hour, count: 1) }
+        if ["litro", "litros", "l", "cm", "centimetro", "centimetros", "mm", "milimetro", "milimetros"].contains(token) {
+            return UnitMatch(unit: nil, count: 1)
+        }
+        if index + 1 < tokens.count, token == "metros" || token == "metro" {
+            if ["cuadrado", "cuadrados"].contains(tokens[index + 1]) { return UnitMatch(unit: .squareMeter, count: 2) }
+            if ["cubico", "cubicos"].contains(tokens[index + 1]) { return UnitMatch(unit: .cubicMeter, count: 2) }
+        }
+        return nil
+    }
+
+    private func removeUnit(_ match: UnitMatch, from tokens: inout [String], at index: Int) {
+        tokens.removeSubrange(index..<(index + match.count))
+        if index < tokens.count && tokens[index] == "de" { tokens.remove(at: index) }
+    }
     
     private func stripLeadingArticles(_ tokens: inout [String]) {
         while !tokens.isEmpty {
@@ -100,21 +127,21 @@ public final class QuantityExtractor {
             }
         }
         
+        if qty != nil, let unit = unitMatch(tokens, at: 0) {
+            spokenUnit = unit.unit
+            removeUnit(unit, from: &tokens, at: 0)
+        }
         if qty == nil {
-            var newTokens: [String] = []
-            for t in tokens {
-                if qty == nil {
-                    // Avoid taking spec numbers as quantities
-                    if t == "50" || t == "60" || t == "80" || t == "90" || t == "100" || t == "120" || t == "20" || t == "25" {
-                        newTokens.append(t)
-                        continue
-                    }
-                    if isStrictNumber(t), let d = Decimal(string: t), d > 0 { qty = d; qtyWasAssumed = false; continue }
-                    if let w = numberWords.toNumber(t), w > 0 { qty = w; qtyWasAssumed = false; continue }
-                }
-                newTokens.append(t)
+            for index in tokens.indices {
+                let token = tokens[index]
+                let number = isStrictNumber(token) ? Decimal(string: token) : numberWords.toNumber(token)
+                guard let value = number, value > 0, let unit = unitMatch(tokens, at: index + 1) else { continue }
+                qty = value
+                spokenUnit = unit.unit
+                tokens.remove(at: index)
+                removeUnit(unit, from: &tokens, at: index)
+                break
             }
-            tokens = newTokens
         }
         if spokenUnit == nil {
             for (i, t) in tokens.enumerated() {
@@ -127,11 +154,6 @@ public final class QuantityExtractor {
                 }
             }
         }
-        if qty == nil && !tokens.isEmpty {
-            if isStrictNumber(tokens[0]), let d = Decimal(string: tokens[0]), d > 0 { qty = d; qtyWasAssumed = false; tokens.removeFirst() }
-            else if let w = numberWords.toNumber(tokens[0]), w > 0 { qty = w; qtyWasAssumed = false; tokens.removeFirst() }
-        }
-        
         if qty == nil {
             qty = Decimal(1); qtyWasAssumed = true
         }

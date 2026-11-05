@@ -68,11 +68,6 @@ public final class Matcher {
         let best = penalized[0]
         let second = penalized.count > 1 ? penalized[1] : nil
         
-        // General ambiguous cases for generic terms
-        if segNorm == "grifo" || segNorm == "grifos" {
-            return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: penalized, status: .ambiguous, warnings: warnings)
-        }
-        
         let segNormCheck = normalizer.normalize(remainingText)
         var isExactMatch = normalizer.normalize(best.item.name) == segNormCheck
         if !isExactMatch {
