@@ -94,3 +94,5 @@ Las etiquetas de `a03`, `a08` y `a09` coinciden semánticamente con el resultado
 | Albañilería | 2 | 0 | 0 | 5 | 3 | 10 |
 
 La evaluación cuenta discrepancias por línea esperada, mientras que este desglose agrupa por caso y asigna una categoría primaria. `a03`, `a06`, `a08` y `a09` se marcan como emparejamiento del oráculo: las salidas reales contienen las partidas semánticamente esperadas (y `a06` incluso tiene el estado y candidatos esperados), pero el chequeo compara claves de fixture con nombres/alias y da fallo. `a05` y `a15` se clasifican como cantidad porque el extractor consume una especificación numérica como cantidad; el resto de discrepancias de estado son `a04`, `a12` y `a14`.
+
+El desglose categórico detallado queda limitado a fontanería y albañilería. Electricidad y pintura permanecen como examen sellado y solo se reportan en sus recuentos métricos agregados de la tabla anterior.
