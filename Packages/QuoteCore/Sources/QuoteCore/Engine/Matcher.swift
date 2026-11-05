@@ -73,11 +73,6 @@ public final class Matcher {
             return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: penalized, status: .none, warnings: warnings)
         }
         
-        // General ambiguous cases for generic terms
-        if segNorm == "grifo" || segNorm == "grifos" {
-            return ParsedLine(originalText: remainingText, quantity: quantity, quantityWasAssumed: quantityWasAssumed, spokenUnit: spokenUnit, candidates: penalized, status: .ambiguous, warnings: warnings)
-        }
-        
         let segNormCheck = normalizer.normalize(remainingText)
         var isExactMatch = normalizer.normalize(best.item.name) == segNormCheck
         if !isExactMatch {
