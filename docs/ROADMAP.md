@@ -18,13 +18,13 @@ Estado: [ ] pendiente · [~] en curso · [x] hecho.
 - Casos de uso `CreateQuote`, `DuplicateQuote`, `ChangeQuoteStatus`, `CheckQuota` con repositorios falsos.
 **Hecho cuando**: vectores en verde; cobertura de cálculo del 100 % de ramas.
 
-## [ ] M2 — Motor de interpretación
+## [~] M2 — Motor de interpretación — APARCADO (motor en modo sugerencia, no fusionado; se retoma con M5)
 **Dueños**: domain_engineer + qa_engineer.
 - Normalizador, números en palabras, segmentador, extractor de cantidad, puntuador, decisor.
 - `ParserEvaluationTests` con las fixtures de fontanería incluidas.
 - Fixtures nuevas para albañilería y electricidad (con PRUEBA en los precios).
 **Hecho cuando**: autoPrecision ≥ 98 %, falseAutoRate ≤ 2 %, ambiguousRecall ≥ 90 % en las fixtures.
-Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
+**Estado (2026-11-05)**: aparcado en modo sugerencia; no fusionado. Se retoma junto con M5. Revisión: [docs/reviews/M2.md](reviews/M2.md).
 
 ## [ ] M3 — Persistencia, catálogo y onboarding
 **Dueños**: data_engineer + ui_engineer.

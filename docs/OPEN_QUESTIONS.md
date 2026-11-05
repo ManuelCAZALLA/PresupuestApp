@@ -26,3 +26,15 @@ Cosas que el producto o la técnica no definen y que **no se inventan**. Cada un
 - **Bloquea**: no a M4b: el PDF cumple el criterio de `PRODUCT.md` y el resto de la skill.
 - **Propuesta**: decidir si el texto de aceptación reutiliza `terms` o es un campo nuevo en Ajustes (`BusinessProfile.acceptanceText`); la segunda opción añade esquema v3 y su etapa de migración. Encaja en M6 (PDF y envío).
 
+## Q-006 — Tareas pendientes al retomar M2 con M5
+- **Contexto**: M2 quedó aparcado con el motor en modo sugerencia, sin fusionar (ver [docs/reviews/M2.md](reviews/M2.md)). Estas tareas deben resolverse antes de activar el modo automático; no relajan los objetivos del modo automático.
+- **Tareas**:
+  1. Corregir que `ParserConfig()` permite `suggestionOnly=false`.
+  2. Corregir `unitMatch`: actualmente clasifica “metros cuadrados” y “metros cúbicos” como metros antes de revisar la unidad compuesta.
+  3. Definir cómo tratar en modo sugerencia una frase sin relación con el catálogo: hoy sale como sugerencia en vez de `none` (`noneAccuracy=0` en las cinco fixtures).
+  4. Corregir el caso de fontanería c21, que devuelve una unidad incorrecta; la última evaluación automática tuvo 1 falso automático de 35 líneas.
+  5. Elevar `top3Recall` de electricidad desde 11/14 hasta el objetivo acordado.
+  6. Redefinir `parserTargets` para el modo sugerencia mediante una decisión escrita, sin relajar el objetivo del modo automático.
+  7. Evaluar el motor con 20 frases reales de un profesional, sin datos personales, antes de activar el modo automático.
+- **Bloquea**: activar el modo automático y completar M2.
+
