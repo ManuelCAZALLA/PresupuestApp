@@ -9,21 +9,31 @@ import Testing
 struct QuotePDFProfessionalTests {
     @Test("Por defecto el PDF no muestra precios unitarios ni importes de línea")
     func pdfHidesLineAmountsByDefault() throws {
-        let line = QuoteLine(
-            name: "Urinario PRUEBA",
-            unit: .unit,
-            quantity: Decimal(4),
-            unitPrice: Decimal(50),
-            vatRate: Decimal(21),
-            origin: .manual
-        )
+        let lines = [
+            QuoteLine(
+                name: "Urinario PRUEBA",
+                unit: .unit,
+                quantity: Decimal(3),
+                unitPrice: Decimal(37),
+                vatRate: Decimal(21),
+                origin: .manual
+            ),
+            QuoteLine(
+                name: "Termo PRUEBA",
+                unit: .unit,
+                quantity: Decimal(2),
+                unitPrice: Decimal(19),
+                vatRate: Decimal(21),
+                origin: .manual
+            )
+        ]
         let quote = Quote(
             number: "P-2026-9001",
             date: Date(timeIntervalSince1970: 1_771_372_800),
             validityDays: 30,
             client: Client(name: "Cliente PRUEBA"),
             status: .draft,
-            lines: [line],
+            lines: lines,
             discount: .none,
             notes: "",
             defaultVATRate: Decimal(21)
@@ -33,30 +43,46 @@ struct QuotePDFProfessionalTests {
         let text = try renderText(quote, totals: totals, profile: profile, watermark: false)
 
         #expect(text.contains("Urinario PRUEBA"))
-        #expect(text.contains("4"))
-        #expect(!text.contains("50,00"))
-        #expect(!text.contains("200,00"))
-        #expect(text.contains("Subtotal"))
-        #expect(text.contains("Total"))
+        #expect(text.contains("3"))
+        #expect(text.contains("Termo PRUEBA"))
+        #expect(text.contains("2"))
+        #expect(!text.contains("37,00"))
+        #expect(!text.contains("111,00"))
+        #expect(!text.contains("19,00"))
+        #expect(!text.contains("38,00"))
+        #expect(text.contains("Subtotal: 149,00"))
+        #expect(text.contains("IVA 21 %"))
+        #expect(text.contains("cuota 31,29"))
+        #expect(text.contains("Total: 180,29"))
     }
 
     @Test("Con el ajuste global activado sí se muestran importes por línea")
     func pdfShowsLineAmountsWithGlobalSetting() throws {
-        let line = QuoteLine(
-            name: "Termo PRUEBA",
-            unit: .unit,
-            quantity: Decimal(1),
-            unitPrice: Decimal(120),
-            vatRate: Decimal(21),
-            origin: .manual
-        )
+        let lines = [
+            QuoteLine(
+                name: "Urinario PRUEBA",
+                unit: .unit,
+                quantity: Decimal(3),
+                unitPrice: Decimal(37),
+                vatRate: Decimal(21),
+                origin: .manual
+            ),
+            QuoteLine(
+                name: "Termo PRUEBA",
+                unit: .unit,
+                quantity: Decimal(2),
+                unitPrice: Decimal(19),
+                vatRate: Decimal(21),
+                origin: .manual
+            )
+        ]
         let quote = Quote(
             number: "P-2026-9002",
             date: Date(timeIntervalSince1970: 1_771_372_800),
             validityDays: 30,
             client: Client(name: "Cliente PRUEBA"),
             status: .draft,
-            lines: [line],
+            lines: lines,
             discount: .none,
             notes: "",
             defaultVATRate: Decimal(21)
@@ -65,9 +91,12 @@ struct QuotePDFProfessionalTests {
         let profile = BusinessProfile(name: "Taller PRUEBA", showLineAmountsInPDF: true)
         let text = try renderText(quote, totals: totals, profile: profile, watermark: false)
 
+        #expect(text.contains("Urinario PRUEBA"))
         #expect(text.contains("Termo PRUEBA"))
-        #expect(text.contains("120,00"))
-        #expect(text.contains("121,00") || text.contains("120,00"))
+        #expect(text.contains("37,00"))
+        #expect(text.contains("111,00"))
+        #expect(text.contains("19,00"))
+        #expect(text.contains("38,00"))
     }
 
     @Test("El override por presupuesto prevalece sobre el ajuste global")
