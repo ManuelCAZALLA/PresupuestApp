@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: macos-15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Run QuoteCore tests
+        run: swift test --package-path Packages/QuoteCore
+
+      - name: Select an available iPhone simulator
+        id: simulator
+        shell: bash
+        run: |
+          GITHUB_OUTPUT="$GITHUB_OUTPUT" python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          import sys
+
+          devices = json.loads(subprocess.check_output(
+              ["xcrun", "simctl", "list", "devices", "available", "--json"],
+              text=True,
+          ))["devices"]
+          iphones = [
+              device
+              for runtime_devices in devices.values()
+              for device in runtime_devices
+              if device.get("isAvailable") and device.get("name", "").startswith("iPhone")
+          ]
+          iphones.sort(key=lambda device: (device["name"] != "iPhone 17", device["name"], device["udid"]))
+          if not iphones:
+              print("No available iPhone simulator found", file=sys.stderr)
+              sys.exit(1)
+          selected = iphones[0]
+          print(f"Selected simulator: {selected['name']} ({selected['udid']})")
+          if selected["name"] != "iPhone 17":
+              print(f"::notice::iPhone 17 is unavailable; using {selected['name']} instead")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"udid={selected['udid']}\n")
+          PY
+
+      - name: Run AppTests
+        run: >-
+          xcodebuild test -scheme PresupuestApp
+          -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}"
+          -only-testing:AppTests
