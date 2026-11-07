@@ -80,16 +80,29 @@ struct QuotePDFRendererTests {
         #expect(text.contains("546,48"))
     }
 
-    @Test("Con 25 líneas cabe en una página y el total está")
-    func twentyFiveLines() throws {
+    @Test("25 filas y totales se mantienen con la última fila")
+    func twentyFiveRowsKeepTotalsWithLastRowAndRepeatHeaderWhereRowsAppear() throws {
         let quote = makeQuote(number: "P-2026-0003", lines: lineItems(count: 25))
         let totals = QuoteCalculator().calculate(lines: quote.lines, discount: .none)
 
         let url = try render(quote, totals: totals, watermark: false)
         let document = try #require(PDFDocument(url: url))
-        #expect(document.pageCount == 1)
-        let text = text(of: document)
-        #expect(text.contains("302,50"))
+        let pages = (0..<document.pageCount).map { document.page(at: $0)?.string ?? "" }
+        let rowsByPage = pages.map { page in
+            page.components(separatedBy: .newlines).filter { $0.hasPrefix("Partida ") }
+        }
+        let totalRows = rowsByPage.reduce(0) { $0 + $1.count }
+        #expect(totalRows == 25)
+
+        let lastRowPageIndex = try #require(pages.firstIndex { $0.contains("Partida 25 PRUEBA") })
+        let lastRowPage = pages[lastRowPageIndex]
+        #expect(lastRowPage.contains("Subtotal: 250,00"))
+        #expect(lastRowPage.contains("IVA 21 %"))
+        #expect(lastRowPage.contains("Total: 302,50"))
+
+        for (index, rows) in rowsByPage.enumerated() where !rows.isEmpty {
+            #expect(pages[index].contains("Concepto"))
+        }
     }
 
     @Test("Con 80 líneas la tabla se parte y repite la cabecera")
