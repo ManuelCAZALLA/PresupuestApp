@@ -52,6 +52,7 @@ final class AppContainer {
             profile: profileRepository,
             clock: clock as Clock
         )
+        let deleteQuote = DeleteQuote(quotes: quoteRepository)
 
         self.loadQuote = LoadQuote(quotes: quoteRepository)
         self.updateQuote = UpdateQuote(quotes: quoteRepository)
@@ -93,7 +94,8 @@ final class AppContainer {
         self.quoteListViewModel = QuoteListViewModel(
             listQuotes: ListQuotes(quotes: quoteRepository),
             createQuote: createQuote,
-            duplicateQuote: duplicateQuote
+            duplicateQuote: duplicateQuote,
+            deleteQuote: deleteQuote
         )
     }
 
