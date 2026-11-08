@@ -1883,6 +1883,26 @@
         }
       }
     },
+    "settings.support.mail.subject" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soporte PresupuestApp"
+          }
+        }
+      }
+    },
+    "settings.support.mail.body" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versión: %@\nCompilación: %@\niOS: %@"
+          }
+        }
+      }
+    },
     "settings.title" : {
       "localizations" : {
         "es" : {
