@@ -31,12 +31,10 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Data/Import/.gitkeep,
-				Data/Packs/.gitkeep,
 				Data/PDF/.gitkeep,
 				Data/Persistence/.gitkeep,
 				Data/Repositories/.gitkeep,
 				Data/Speech/.gitkeep,
-				Resources/Packs/.gitkeep,
 			);
 			target = 1A0000000000000000000005 /* PresupuestApp */;
 		};
