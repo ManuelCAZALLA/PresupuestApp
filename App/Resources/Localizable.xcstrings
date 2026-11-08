@@ -1599,6 +1599,56 @@
         }
       }
     },
+    "quote.list.duplicate.confirmation" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presupuesto %@ duplicado"
+          }
+        }
+      }
+    },
+    "quote.list.delete" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar"
+          }
+        }
+      }
+    },
+    "quote.list.delete.confirmation.named" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar el presupuesto %@ de %@? No se puede deshacer."
+          }
+        }
+      }
+    },
+    "quote.list.delete.confirmation.unnamed" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar el presupuesto %@? No se puede deshacer."
+          }
+        }
+      }
+    },
+    "quote.list.delete.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar presupuesto"
+          }
+        }
+      }
+    },
     "quote.list.empty" : {
       "localizations" : {
         "es" : {

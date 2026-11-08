@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 import QuoteCore
 
@@ -17,18 +18,65 @@ struct QuoteListView: View {
                         total: viewModel.totals(for: quote).total
                     )
                 }
-                .swipeActions(edge: .trailing) {
+                .swipeActions(edge: .leading, allowsFullSwipe: false) {
                     Button {
                         viewModel.duplicate(quote)
                     } label: {
                         Label("quote.list.duplicate", systemImage: "plus.square.on.square")
                     }
-                    .tint(.blue)
+                    .tint(duplicateTint)
                 }
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    Button(role: .destructive) {
+                        viewModel.requestDelete(quote)
+                    } label: {
+                        Label("quote.list.delete", systemImage: "trash")
+                    }
+                }
+                .contextMenu {
+                    Button {
+                        viewModel.duplicate(quote)
+                    } label: {
+                        Label("quote.list.duplicate", systemImage: "plus.square.on.square")
+                    }
+                    Button(role: .destructive) {
+                        viewModel.requestDelete(quote)
+                    } label: {
+                        Label("quote.list.delete", systemImage: "trash")
+                    }
+                }
+                .accessibilityAction(named: Text("quote.list.duplicate")) {
+                    viewModel.duplicate(quote)
+                }
+                .accessibilityAction(named: Text("quote.list.delete")) {
+                    viewModel.requestDelete(quote)
+                }
+                .listRowBackground(
+                    viewModel.highlightedQuoteID == quote.id
+                        ? duplicateTint.opacity(0.14)
+                        : Color.clear
+                )
+                .animation(.easeInOut(duration: 0.2), value: viewModel.highlightedQuoteID)
             }
         }
         .listStyle(.insetGrouped)
         .overlay { emptyOverlay }
+        .overlay(alignment: .top) {
+            if let number = viewModel.duplicateNoticeNumber {
+                Text(duplicateNotice(for: number))
+                    .font(.subheadline.weight(.medium))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(.regularMaterial, in: Capsule())
+                    .overlay(Capsule().stroke(duplicateTint.opacity(0.3)))
+                    .shadow(radius: 4, y: 2)
+                    .padding(.top, 8)
+                    .accessibilityAddTraits(.updatesFrequently)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: viewModel.duplicateNoticeNumber)
+        .sensoryFeedback(.success, trigger: viewModel.hapticEventCount)
         .searchable(text: $viewModel.searchText, prompt: "quote.list.search")
         .navigationTitle("quote.list.title")
         .navigationBarTitleDisplayMode(.large)
@@ -49,6 +97,12 @@ struct QuoteListView: View {
             .accessibilityLabel("quote.list.new")
         }
         .task { viewModel.load() }
+        .task(id: viewModel.duplicateNoticeNumber) {
+            guard viewModel.duplicateNoticeNumber != nil else { return }
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            viewModel.clearDuplicateFeedback()
+        }
         .onChange(of: router.quotesPath.count) { _, _ in
             viewModel.load()
         }
@@ -67,6 +121,51 @@ struct QuoteListView: View {
                 Text(LocalizedStringKey(message))
             }
         }
+        .confirmationDialog(
+            "quote.list.delete.title",
+            isPresented: Binding(
+                get: { viewModel.quotePendingDelete != nil },
+                set: { if !$0 { viewModel.cancelDelete() } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("quote.list.delete", role: .destructive) {
+                viewModel.confirmDelete()
+            }
+            Button("action.cancel", role: .cancel) {
+                viewModel.cancelDelete()
+            }
+        } message: {
+            if let quote = viewModel.quotePendingDelete {
+                Text(deleteConfirmation(for: quote))
+            }
+        }
+    }
+
+    private var duplicateTint: Color {
+        Color(red: 47.0 / 255, green: 91.0 / 255, blue: 255.0 / 255)
+    }
+
+    private func deleteConfirmation(for quote: Quote) -> String {
+        let clientName = quote.client.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        if clientName.isEmpty {
+            return String.localizedStringWithFormat(
+                NSLocalizedString("quote.list.delete.confirmation.unnamed", comment: ""),
+                quote.number
+            )
+        }
+        return String.localizedStringWithFormat(
+            NSLocalizedString("quote.list.delete.confirmation.named", comment: ""),
+            quote.number,
+            clientName
+        )
+    }
+
+    private func duplicateNotice(for number: String) -> String {
+        String.localizedStringWithFormat(
+            NSLocalizedString("quote.list.duplicate.confirmation", comment: ""),
+            number
+        )
     }
 
     @ViewBuilder
@@ -116,5 +215,6 @@ private struct QuoteRow: View {
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
     }
 }
