@@ -19,7 +19,7 @@ Cada pantalla es una carpeta en `App/Presentation/Features/`.
 | Id | Feature (carpeta) | Para qué sirve | Criterio de aceptación |
 |---|---|---|---|
 | S1 | `Onboarding` | Carrusel de tres pasos, datos del negocio e IVA por defecto; termina en la pantalla del catálogo vacío, que ofrece importar Excel/CSV, pegar una lista y añadir a mano | Se completa en menos de 5 min; no vuelve a mostrarse; "Cómo funciona" reabre el carrusel desde Ajustes |
-| S2 | `QuoteList` | Lista de presupuestos con estado y búsqueda; botón grande "Nuevo presupuesto" | Estados: borrador, enviado, aceptado, rechazado; duplicar desde aquí |
+| S2 | `QuoteList` | Lista de presupuestos con estado y búsqueda; botón grande "Nuevo presupuesto" | Estados: borrador, enviado, aceptado, rechazado; duplicar y eliminar desde aquí, con confirmación al borrar |
 | S3 | `NewQuote` | Datos del cliente + zona de dictado o escritura | Dictado nativo sin red; texto editable antes de interpretar |
 | S4 | `MatchReview` | Revisar lo que la app entendió, línea por línea | Verde = automática, naranja = ambigua (2-3 opciones), rojo = sin coincidencia; nunca se avanza con líneas rojas sin resolver |
 | S5 | `QuoteEditor` | Líneas con +/−, buscar partida, añadir kit, horas de mano de obra, desplazamiento, descuento, IVA, total | Total recalculado al instante; coincide con los vectores de `docs/DOMAIN.md` |
@@ -40,6 +40,11 @@ Tras el onboarding la app tiene tres pestañas: **Presupuestos**, **Precios** y 
 4. Presupuesto terminado: desglose de IVA, "Ver PDF" (S6) con formato profesional (por línea solo descripción y cantidad por defecto), "Enviar" con la hoja de compartir del sistema y mensaje editable ("Hola {cliente}, te paso el presupuesto de {título} (ref. {número}). Cualquier duda, me dices.").
 
 El dictado (S3) y la revisión de lo entendido (S4) llegan en M5: el recorrido de arriba funciona escribiendo y tocando, sin voz.
+
+### Acciones de la lista de presupuestos (S2)
+- Deslizar a la derecha sobre un presupuesto lo duplica. El duplicado queda primero en la lista, como borrador con número nuevo; la app confirma brevemente la acción y resalta esa fila.
+- Deslizar a la izquierda solicita borrar el presupuesto. La confirmación muestra su número y cliente cuando existe; el borrado requiere pulsar "Eliminar" y se puede cancelar.
+- Duplicar y eliminar también están disponibles en el menú contextual y como acciones personalizadas de VoiceOver.
 
 ## Onboarding (S1)
 Cinco pasos y una sola vez. El carrusel (pasos 1–3) se puede saltar; no hay selección de oficio.
