@@ -27,7 +27,7 @@ Cada pantalla es una carpeta en `App/Presentation/Features/`.
 | S7 | `Catalog` | Lista por categorías, búsqueda, crear/editar partida (nombre, alias, unidad, precio, tipo) | Cambiar un precio no altera presupuestos ya hechos |
 | S8 | `ImportTariff` | Cargar la tarifa del usuario: Excel/CSV, pegar una lista; asignar columnas; revisar; marcar si los precios llevan IVA; plantilla Excel descargable con columnas Nombre, Unidad y Precio | Nada se guarda sin pantalla de revisión |
 | S9 | `Kits` | Paquetes de partidas ("cambio de termo") | Un kit se añade a un presupuesto de un toque |
-| S10 | `Settings` | Empresa (nombre, dirección, teléfono, correo, NIF, IBAN opcional, logo), textos por defecto de condiciones de pago y alcance/exclusiones, IVA por defecto, validez, numeración e "Mostrar importes por línea en el PDF" | Los textos por defecto se copian a los presupuestos nuevos; el IBAN solo se muestra si se rellena y nunca aparece en logs ni tests. Los cambios aplican a presupuestos nuevos, no a los antiguos |
+| S10 | `Settings` | Datos del negocio y valores por defecto; ayuda ("Cómo funciona", contacto y web); compartir; enlaces legales; versión y compilación | "Cómo funciona" reabre solo los tres pasos del carrusel sin cambiar perfil ni bandera. Contacto, web, política, términos y reseña solo aparecen cuando están configurados. Compartir usa la hoja del sistema. Los cambios de perfil siguen aplicando a presupuestos nuevos, no a los antiguos |
 | S11 | `Paywall` | Planes Pro | Solo se muestra al llegar al límite o desde Ajustes |
 
 Los clientes NO tienen pantalla propia: se guardan dentro del presupuesto.

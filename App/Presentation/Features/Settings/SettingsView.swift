@@ -1,12 +1,16 @@
 import SwiftUI
+import UIKit
 
 /// S10 Ajustes: datos de empresa, IVA por defecto, condiciones y numeración.
 struct SettingsView: View {
     @Bindable var viewModel: SettingsViewModel
     let makeWalkthroughViewModel: () -> OnboardingViewModel
+    private let links = AppLinks.configured
 
     @Environment(AppRouter.self) private var router
+    @Environment(\.openURL) private var openURL
     @State private var walkthroughPresentation: WalkthroughPresentation?
+    @State private var isMailUnavailablePresented = false
 
     @State private var name = ""
     @State private var taxID = ""
@@ -74,6 +78,82 @@ struct SettingsView: View {
                 } label: {
                     Label("settings.howItWorks", systemImage: "questionmark.circle")
                 }
+                .accessibilityLabel(Text("settings.howItWorks"))
+
+                if let mailtoURL = supportMailtoURL,
+                   let supportEmail = links.supportEmail {
+                    Button {
+                        openURL(mailtoURL) { didOpen in
+                            if !didOpen {
+                                isMailUnavailablePresented = true
+                            }
+                        }
+                    } label: {
+                        Label("settings.contact", systemImage: "envelope")
+                    }
+                    .accessibilityLabel(Text("settings.contact"))
+                    .accessibilityHint(Text("settings.contact.hint"))
+                    .accessibilityIdentifier("settings.contact")
+                    .accessibilityValue(Text(verbatim: supportEmail))
+                }
+
+                if let websiteURL = links.validWebsiteURL {
+                    Link(destination: websiteURL) {
+                        Label("settings.website", systemImage: "globe")
+                    }
+                    .accessibilityLabel(Text("settings.website"))
+                    .accessibilityHint(Text("settings.opensBrowser"))
+                }
+            } header: {
+                Text("settings.help.section")
+            }
+
+            Section {
+                ShareLink(item: shareText) {
+                    Label("settings.share", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(Text("settings.share"))
+
+                if let reviewURL = links.reviewURL {
+                    Button {
+                        openURL(reviewURL)
+                    } label: {
+                        Label("settings.rate", systemImage: "star")
+                    }
+                    .accessibilityLabel(Text("settings.rate"))
+                    .accessibilityHint(Text("settings.opensBrowser"))
+                }
+            } header: {
+                Text("settings.share.section")
+            }
+
+            Section {
+                if let privacyURL = links.validPrivacyURL {
+                    Link(destination: privacyURL) {
+                        Label("settings.privacy", systemImage: "hand.raised")
+                    }
+                    .accessibilityLabel(Text("settings.privacy"))
+                    .accessibilityHint(Text("settings.opensBrowser"))
+                }
+
+                if let termsURL = links.validTermsURL {
+                    Link(destination: termsURL) {
+                        Label("settings.terms", systemImage: "doc.text")
+                    }
+                    .accessibilityLabel(Text("settings.terms"))
+                    .accessibilityHint(Text("settings.opensBrowser"))
+                }
+            } header: {
+                Text("settings.legal.section")
+            }
+
+            Section {
+                LabeledContent("settings.about.version") {
+                    Text(versionDescription)
+                        .accessibilityLabel(Text(verbatim: versionDescription))
+                }
+            } header: {
+                Text("settings.about.section")
             }
         }
         .listStyle(.insetGrouped)
@@ -81,6 +161,19 @@ struct SettingsView: View {
         .navigationBarTitleDisplayMode(.large)
         .sheet(item: $walkthroughPresentation) { presentation in
             OnboardingView(viewModel: presentation.viewModel, router: router)
+        }
+        .alert(
+            "settings.contact.unavailable.title",
+            isPresented: $isMailUnavailablePresented
+        ) {
+            Button("settings.contact.copyAddress") {
+                if let supportEmail = links.supportEmail {
+                    UIPasteboard.general.string = supportEmail
+                }
+            }
+            Button("action.cancel", role: .cancel) {}
+        } message: {
+            Text("settings.contact.unavailable.message")
         }
         .task { viewModel.load() }
         .onChange(of: viewModel.state) { _, newState in
@@ -119,6 +212,39 @@ struct SettingsView: View {
             numberPrefix: numberPrefix
         )
         viewModel.save()
+    }
+
+    private var supportMailtoURL: URL? {
+        links.supportMailtoURL(
+            appVersion: appVersion,
+            buildVersion: buildVersion,
+            iosVersion: UIDevice.current.systemVersion
+        )
+    }
+
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            ?? String(localized: "settings.about.version.unknown")
+    }
+
+    private var buildVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+            ?? String(localized: "settings.about.version.unknown")
+    }
+
+    private var versionDescription: String {
+        String.localizedStringWithFormat(
+            String(localized: "settings.about.version.value"),
+            appVersion,
+            buildVersion
+        )
+    }
+
+    private var shareText: String {
+        links.shareText(
+            appName: String(localized: "settings.appName"),
+            phrase: String(localized: "settings.share.phrase")
+        )
     }
 }
 
