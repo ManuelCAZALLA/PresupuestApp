@@ -5,7 +5,7 @@ import SwiftData
 /// del presupuesto, textos por defecto del perfil y ajuste global de PDF.
 /// Ver docs/ARCHITECTURE.md y la skill swiftdata-repositories.
 enum PresupuestAppSchema: VersionedSchema {
-    static let versionIdentifier = Schema.Version(3, 0, 0)
+    static var versionIdentifier: Schema.Version { Schema.Version(3, 0, 0) }
     static let models: [any PersistentModel.Type] = [
         ItemRecord.self,
         KitRecord.self,
@@ -18,7 +18,7 @@ enum PresupuestAppSchema: VersionedSchema {
 
 /// Esquema v2: las partidas ganan `vatRate`. Solo existe para migrar en ligero.
 enum PresupuestAppSchemaV2: VersionedSchema {
-    static let versionIdentifier = Schema.Version(2, 0, 0)
+    static var versionIdentifier: Schema.Version { Schema.Version(2, 0, 0) }
     static let models: [any PersistentModel.Type] = [
         ItemRecord.self,
         KitRecord.self,
@@ -151,7 +151,7 @@ enum PresupuestAppSchemaV2: VersionedSchema {
 
 /// Esquema v1: las partidas todavía sin IVA propio. Solo existe para migrar en ligero.
 enum PresupuestAppSchemaV1: VersionedSchema {
-    static let versionIdentifier = Schema.Version(1, 0, 0)
+    static var versionIdentifier: Schema.Version { Schema.Version(1, 0, 0) }
     static let models: [any PersistentModel.Type] = [
         ItemRecord.self,
         KitRecord.self,
@@ -280,15 +280,19 @@ enum PresupuestAppSchemaV1: VersionedSchema {
 }
 
 enum PresupuestAppMigrationPlan: SchemaMigrationPlan {
-    static let schemas: [any VersionedSchema.Type] = [
-        PresupuestAppSchemaV1.self,
-        PresupuestAppSchemaV2.self,
-        PresupuestAppSchema.self
-    ]
-    static let stages: [MigrationStage] = [
-        .lightweight(fromVersion: PresupuestAppSchemaV1.self, toVersion: PresupuestAppSchemaV2.self),
-        .lightweight(fromVersion: PresupuestAppSchemaV2.self, toVersion: PresupuestAppSchema.self)
-    ]
+    static var schemas: [any VersionedSchema.Type] {
+        [
+            PresupuestAppSchemaV1.self,
+            PresupuestAppSchemaV2.self,
+            PresupuestAppSchema.self
+        ]
+    }
+    static var stages: [MigrationStage] {
+        [
+            .lightweight(fromVersion: PresupuestAppSchemaV1.self, toVersion: PresupuestAppSchemaV2.self),
+            .lightweight(fromVersion: PresupuestAppSchemaV2.self, toVersion: PresupuestAppSchema.self)
+        ]
+    }
 }
 
 enum PersistenceSetup {
