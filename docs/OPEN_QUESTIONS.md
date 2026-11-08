@@ -31,3 +31,14 @@ Cosas que el producto o la técnica no definen y que **no se inventan**. Cada un
 - **Bloquea**: validar que las instalaciones anteriores pueden arrancar y conservar sus datos.
 - **Tarea**: Antes de TestFlight: fijar el esquema SwiftData definitivo (incluidos los campos del PDF nuevo) y escribir entonces los tests de migración.
 
+## Q-007 — Borrado de presupuestos y cuota mensual
+- **Contexto**: `CreateQuote` comprueba la cuota gratuita contando los presupuestos fechados en el mes actual; `DuplicateQuote` no consulta `CheckQuota`. Borrar un presupuesto del mes reduce ese conteo y podría liberar una plaza para crear otro presupuesto.
+- **Bloquea**: no a la lista S2 de la v1; no activar ni ampliar la lógica de cuota en esta tarea.
+- **Tarea previa a TestFlight**: StubEntitlements usa .free por defecto, así que la app aplica hoy el límite de 5 presupuestos al mes; la 1.0 debe salir sin límite. Dejar el plan por defecto sin límite en una tarea aparte con su test.
+- **Propuesta**: antes de activar el límite mensual/Paywall, decidir cómo deben tratarse duplicados y presupuestos borrados para que el conteo no permita eludir la cuota.
+
+## Q-008 — Reutilización del número más alto al borrar
+- **Contexto**: la numeración usa el máximo número existente del año más uno. Si se borra el presupuesto con el número más alto, una creación posterior puede reutilizar ese número.
+- **Bloquea**: no a S2; no cambiar el algoritmo ni el esquema en esta tarea.
+- **Solución prevista**: Al borrar el presupuesto con el número más alto, ese número se reutiliza. Solución prevista: contador persistente por año en el perfil del negocio, al congelar el esquema. No escribir un test que consagre la reutilización.
+

@@ -62,6 +62,63 @@ struct UseCaseTests {
         #expect(q3.number == "P-2027-0001")
     }
 
+    @Test func quoteNumberAfterSequenceGapUsesMaximumPlusOne() throws {
+        let clock = FixedClock(date: makeUTCDate(2026, 3, 15))
+        let quotesRepo = FakeQuoteRepository()
+        let profileRepo = FakeProfileRepository()
+        profileRepo.profile = makeProfile()
+        let create = CreateQuote(
+            quotes: quotesRepo,
+            profile: profileRepo,
+            clock: clock,
+            entitlements: FixedEntitlements(plan: .free)
+        )
+
+        func quote(number: String) -> Quote {
+            Quote(
+                number: number,
+                date: makeUTCDate(2026, 3, 1),
+                validityDays: 30,
+                client: Client(),
+                status: .draft,
+                lines: [],
+                discount: .none,
+                notes: "",
+                defaultVATRate: d("21")
+            )
+        }
+        try quotesRepo.save(quote(number: "P-2026-0001"))
+        try quotesRepo.save(quote(number: "P-2026-0003"))
+
+        let created = try create.execute(client: Client())
+
+        #expect(created.number == "P-2026-0004")
+    }
+
+    @Test func deleteQuoteRemovesOnlyTheRequestedQuote() throws {
+        let quotesRepo = FakeQuoteRepository()
+        let quoteToDelete = makeQuote()
+        let quoteToKeep = Quote(
+            number: "P-2026-0002",
+            date: makeUTCDate(2026, 1, 2),
+            validityDays: 30,
+            client: Client(name: "Keep"),
+            status: .draft,
+            lines: [],
+            discount: .none,
+            notes: "",
+            defaultVATRate: d("21")
+        )
+        try quotesRepo.save(quoteToDelete)
+        try quotesRepo.save(quoteToKeep)
+
+        try DeleteQuote(quotes: quotesRepo).execute(id: quoteToDelete.id)
+
+        #expect(try quotesRepo.quote(id: quoteToDelete.id) == nil)
+        #expect(try quotesRepo.quote(id: quoteToKeep.id) == quoteToKeep)
+        #expect(try quotesRepo.all().count == 1)
+    }
+
     // Límite gratuito: 5 presupuestos por mes natural; Plan Pro sin límite
     @Test func quotaEnforcedForFreePlan() throws {
         let clock = FixedClock(date: makeUTCDate(2026, 3, 15))
