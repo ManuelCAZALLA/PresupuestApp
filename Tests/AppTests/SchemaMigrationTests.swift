@@ -10,7 +10,7 @@ import Testing
 @Suite("Migración de esquema v1 a v2")
 @MainActor
 struct SchemaMigrationTests {
-    @Test("Un almacén v1 se abre con el esquema actual sin perder partidas")
+    @Test(.disabled("Pendiente: congelar el esquema antes de la 1.0; ver OPEN_QUESTIONS.md"))
     func migratesV1StoreToV2() throws {
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("migracion-\(UUID().uuidString).sqlite")

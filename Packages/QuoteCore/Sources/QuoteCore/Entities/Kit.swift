@@ -1,6 +1,6 @@
 import Foundation
 
-/// Kit: paquete de partidas ("cambio de termo").
+/// Kit: paquete de partidas.
 public struct Kit: Identifiable, Equatable, Sendable {
     public let id: UUID
     public var name: String

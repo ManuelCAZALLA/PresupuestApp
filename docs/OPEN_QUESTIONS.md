@@ -26,3 +26,8 @@ Cosas que el producto o la técnica no definen y que **no se inventan**. Cada un
 - **Bloquea**: no a M4b: el PDF cumple el criterio de `PRODUCT.md` y el resto de la skill.
 - **Propuesta**: decidir si el texto de aceptación reutiliza `terms` o es un campo nuevo en Ajustes (`BusinessProfile.acceptanceText`); la segunda opción añade esquema v3 y su etapa de migración. Encaja en M6 (PDF y envío).
 
+## Q-006 — Congelar el esquema SwiftData antes de TestFlight
+- **Contexto**: el test que crea un almacén v1 y lo abre con el plan actual falla con `unknownDataStoreSchema`. Las definiciones históricas comparten algunos modelos `@Model` actuales; deben verificarse contra el esquema que realmente se publicó.
+- **Bloquea**: validar que las instalaciones anteriores pueden arrancar y conservar sus datos.
+- **Tarea**: Antes de TestFlight: fijar el esquema SwiftData definitivo (incluidos los campos del PDF nuevo) y escribir entonces los tests de migración.
+
