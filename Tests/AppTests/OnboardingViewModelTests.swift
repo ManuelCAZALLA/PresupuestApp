@@ -193,6 +193,8 @@ struct OnboardingViewModelTests {
         onboarding.continueFromBusiness()
         onboarding.start(with: .later)
         #expect(session.isOnboarded)
+        let savedProfile = try #require(profiles.saved.first)
+        let savedCount = profiles.saved.count
 
         var completions = 0
         let walkthrough = OnboardingViewModel(
@@ -213,6 +215,8 @@ struct OnboardingViewModelTests {
 
         #expect(completions == 0)
         #expect(session.isOnboarded)
+        #expect(profiles.saved.count == savedCount)
+        #expect(profiles.saved.first == savedProfile)
     }
 
     @Test("Un negocio ya guardado cuenta como onboarding hecho")
