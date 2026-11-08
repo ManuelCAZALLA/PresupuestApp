@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "presupuestos_app_icon_xcode_1024.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "presupuestos_app_icon_xcode_1024 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "presupuestos_app_icon_xcode_1024 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
