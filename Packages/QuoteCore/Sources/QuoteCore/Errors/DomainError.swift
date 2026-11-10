@@ -13,4 +13,6 @@ public enum DomainError: Error, Equatable, Sendable {
     case lineNotFound
     /// No existe la partida pedida en el catálogo.
     case itemNotFound
+    /// No existe la agrupación pedida.
+    case kitNotFound
 }

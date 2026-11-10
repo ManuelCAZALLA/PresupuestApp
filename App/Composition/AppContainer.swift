@@ -22,6 +22,9 @@ final class AppContainer {
     private let updateLineQuantity: UpdateLineQuantity
     private let removeLine: RemoveLine
     private let listItems: ListItems
+    private let listKits: ListKits
+    private let manageKits: ManageKits
+    private let addKitToQuote: AddKitToQuote
     private let exportQuotePDF: ExportQuotePDF
     private let changeQuoteStatus: ChangeQuoteStatus
     private let saveBusinessProfile: SaveBusinessProfile
@@ -32,11 +35,15 @@ final class AppContainer {
         let itemRepository = SwiftDataItemRepository(container: modelContainer)
         let quoteRepository = SwiftDataQuoteRepository(container: modelContainer)
         let profileRepository = SwiftDataProfileRepository(container: modelContainer)
+        let kitRepository = SwiftDataKitRepository(container: modelContainer)
 
         let loadBusinessProfile = LoadBusinessProfile(profile: profileRepository)
         let saveBusinessProfile = SaveBusinessProfile(profile: profileRepository)
         let listItems = ListItems(items: itemRepository)
         let manageItems = ManageItems(items: itemRepository)
+        let listKits = ListKits(kits: kitRepository)
+        let manageKits = ManageKits(kits: kitRepository)
+        let addKitToQuote = AddKitToQuote(quotes: quoteRepository, items: itemRepository, kits: kitRepository)
 
         let clock = SystemClock()
         let entitlements = StubEntitlements()
@@ -60,6 +67,9 @@ final class AppContainer {
         self.updateLineQuantity = UpdateLineQuantity(quotes: quoteRepository)
         self.removeLine = RemoveLine(quotes: quoteRepository)
         self.listItems = listItems
+        self.listKits = listKits
+        self.manageKits = manageKits
+        self.addKitToQuote = addKitToQuote
         self.saveBusinessProfile = saveBusinessProfile
         self.changeQuoteStatus = ChangeQuoteStatus(quotes: quoteRepository)
         self.exportQuotePDF = ExportQuotePDF(
@@ -108,15 +118,25 @@ final class AppContainer {
         )
     }
 
+    func makeKitsViewModel() -> KitsViewModel {
+        KitsViewModel(
+            listKits: listKits,
+            manageKits: manageKits,
+            listItems: listItems
+        )
+    }
+
     func makeQuoteEditorViewModel(id: UUID) -> QuoteEditorViewModel {
         QuoteEditorViewModel(
             quoteID: id,
             loadQuote: loadQuote,
             updateQuote: updateQuote,
             addLine: addLine,
+            addKitToQuote: addKitToQuote,
             updateLineQuantity: updateLineQuantity,
             removeLine: removeLine,
-            listItems: listItems
+            listItems: listItems,
+            listKits: listKits
         )
     }
 

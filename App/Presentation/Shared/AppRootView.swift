@@ -68,7 +68,10 @@ struct AppRootView: View {
             .tag(AppTab.quotes)
 
             NavigationStack {
-                CatalogView(viewModel: container.catalogViewModel)
+                CatalogView(
+                    viewModel: container.catalogViewModel,
+                    makeKitsViewModel: container.makeKitsViewModel
+                )
             }
             .tabItem {
                 Label("tab.prices", systemImage: "tag")

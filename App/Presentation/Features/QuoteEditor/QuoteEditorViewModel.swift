@@ -26,6 +26,8 @@ final class QuoteEditorViewModel {
     private(set) var quote: Quote?
     private(set) var totals: QuoteTotals?
     private(set) var catalog: [Item] = []
+    private(set) var kits: [Kit] = []
+    private(set) var itemsByID: [UUID: Item] = [:]
 
     var clientName = ""
     var clientPhone = ""
@@ -39,9 +41,11 @@ final class QuoteEditorViewModel {
     private let loadQuote: LoadQuote
     private let updateQuote: UpdateQuote
     private let addLine: AddLine
+    private let addKitToQuote: AddKitToQuote
     private let updateLineQuantity: UpdateLineQuantity
     private let removeLine: RemoveLine
     private let listItems: ListItems
+    private let listKits: ListKits
     private let calculator = QuoteCalculator()
 
     init(
@@ -49,17 +53,21 @@ final class QuoteEditorViewModel {
         loadQuote: LoadQuote,
         updateQuote: UpdateQuote,
         addLine: AddLine,
+        addKitToQuote: AddKitToQuote,
         updateLineQuantity: UpdateLineQuantity,
         removeLine: RemoveLine,
-        listItems: ListItems
+        listItems: ListItems,
+        listKits: ListKits
     ) {
         self.quoteID = quoteID
         self.loadQuote = loadQuote
         self.updateQuote = updateQuote
         self.addLine = addLine
+        self.addKitToQuote = addKitToQuote
         self.updateLineQuantity = updateLineQuantity
         self.removeLine = removeLine
         self.listItems = listItems
+        self.listKits = listKits
     }
 
     var filteredCatalog: [Item] {
@@ -68,6 +76,22 @@ final class QuoteEditorViewModel {
             item.name.localizedCaseInsensitiveContains(itemSearch)
                 || item.aliases.contains { $0.localizedCaseInsensitiveContains(itemSearch) }
         }
+    }
+
+    var filteredKits: [Kit] {
+        guard !itemSearch.isEmpty else { return kits }
+        return kits.filter { kit in
+            kit.name.localizedCaseInsensitiveContains(itemSearch)
+                || kitSummary(for: kit).localizedCaseInsensitiveContains(itemSearch)
+        }
+    }
+
+    func kitSummary(for kit: Kit) -> String {
+        kit.entries.map { entry in
+            let name = itemsByID[entry.itemID]?.name ?? "—"
+            let qty = CurrencyFormatter.plainString(from: entry.quantity)
+            return "\(name) × \(qty)"
+        }.joined(separator: ", ")
     }
 
     func lineTotal(_ line: QuoteLine) -> Decimal {
@@ -80,6 +104,8 @@ final class QuoteEditorViewModel {
             let loaded = try loadQuote.execute(id: quoteID)
             quote = loaded
             catalog = try listItems.execute()
+            itemsByID = Dictionary(uniqueKeysWithValues: catalog.map { ($0.id, $0) })
+            kits = try listKits.execute().sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
             hydrate(from: loaded)
             totals = calculator.calculate(lines: loaded.lines, discount: loaded.discount)
             state = .loaded
@@ -110,6 +136,16 @@ final class QuoteEditorViewModel {
         persistDetails()
         do {
             try addLine.execute(itemID: item.id, quantity: Decimal(1), in: quoteID)
+            refreshQuote(hydrateFields: false)
+        } catch {
+            state = .failed(AppErrorMapper.message(for: error))
+        }
+    }
+
+    func addKit(_ kit: Kit) {
+        persistDetails()
+        do {
+            try addKitToQuote.execute(kitID: kit.id, in: quoteID)
             refreshQuote(hydrateFields: false)
         } catch {
             state = .failed(AppErrorMapper.message(for: error))

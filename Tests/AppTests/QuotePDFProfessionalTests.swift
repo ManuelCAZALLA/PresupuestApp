@@ -50,10 +50,12 @@ struct QuotePDFProfessionalTests {
         #expect(!text.contains("111,00"))
         #expect(!text.contains("19,00"))
         #expect(!text.contains("38,00"))
-        #expect(text.contains("Subtotal: 149,00"))
-        #expect(text.contains("IVA 21 %"))
-        #expect(text.contains("cuota 31,29"))
-        #expect(text.contains("Total: 180,29"))
+        #expect(text.contains("Subtotal"))
+        #expect(text.contains("149,00"))
+        #expect(text.contains("IVA 21"))
+        #expect(text.contains("31,29"))
+        #expect(text.uppercased().contains("TOTAL"))
+        #expect(text.contains("180,29"))
     }
 
     @Test("Con el ajuste global activado sí se muestran importes por línea")

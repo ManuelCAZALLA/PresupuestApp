@@ -159,14 +159,17 @@ struct QuoteFlowViewModelTests {
         )
         try quotes.save(quote)
 
+        let kits = MemoryKitRepository()
         let viewModel = QuoteEditorViewModel(
             quoteID: quote.id,
             loadQuote: LoadQuote(quotes: quotes),
             updateQuote: UpdateQuote(quotes: quotes),
             addLine: AddLine(quotes: quotes, items: items),
+            addKitToQuote: AddKitToQuote(quotes: quotes, items: items, kits: kits),
             updateLineQuantity: UpdateLineQuantity(quotes: quotes),
             removeLine: RemoveLine(quotes: quotes),
-            listItems: ListItems(items: items)
+            listItems: ListItems(items: items),
+            listKits: ListKits(kits: kits)
         )
         viewModel.load()
         viewModel.addItem(item)
@@ -270,5 +273,13 @@ private final class MemoryItemRepository: ItemRepository {
         storage.values.first { $0.nameKey == Item.nameKey(name) }
     }
     func save(_ item: Item) throws { storage[item.id] = item }
+    func delete(id: UUID) throws { storage[id] = nil }
+}
+
+private final class MemoryKitRepository: KitRepository {
+    var storage: [UUID: Kit] = [:]
+    func all() throws -> [Kit] { Array(storage.values) }
+    func kit(id: UUID) throws -> Kit? { storage[id] }
+    func save(_ kit: Kit) throws { storage[kit.id] = kit }
     func delete(id: UUID) throws { storage[id] = nil }
 }

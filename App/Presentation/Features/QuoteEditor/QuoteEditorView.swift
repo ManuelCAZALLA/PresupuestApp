@@ -15,9 +15,16 @@ struct QuoteEditorScreen: View {
 
 /// S5 Editor de presupuesto a mano: cliente, buscador de partidas, +/− y total.
 struct QuoteEditorView: View {
+    private enum AddMode: String, CaseIterable, Identifiable {
+        case item
+        case kit
+        var id: String { rawValue }
+    }
+
     @Bindable var viewModel: QuoteEditorViewModel
     @Environment(AppRouter.self) private var router
     @State private var isPickingItem = false
+    @State private var addMode: AddMode = .item
 
     var body: some View {
         Form {
@@ -154,24 +161,76 @@ struct QuoteEditorView: View {
 
     private var itemPicker: some View {
         NavigationStack {
-            List(viewModel.filteredCatalog) { item in
-                Button {
-                    viewModel.addItem(item)
-                    isPickingItem = false
-                } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(item.name)
-                            .foregroundStyle(.primary)
-                        HStack {
-                            Text(LocalizedStringKey(DomainLabels.measureUnit(item.unit)))
-                            Spacer()
-                            Text(CurrencyFormatter.string(from: item.unitPrice))
-                                .monospacedDigit()
+            VStack(spacing: 0) {
+                Picker("", selection: $addMode) {
+                    Text("quote.editor.addMode.item").tag(AddMode.item)
+                    Text("quote.editor.addMode.kit").tag(AddMode.kit)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+
+                Group {
+                    if addMode == .item {
+                        List(viewModel.filteredCatalog) { item in
+                            Button {
+                                viewModel.addItem(item)
+                                isPickingItem = false
+                            } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(item.name)
+                                        .foregroundStyle(.primary)
+                                    HStack {
+                                        Text(LocalizedStringKey(DomainLabels.measureUnit(item.unit)))
+                                        Spacer()
+                                        Text(CurrencyFormatter.string(from: item.unitPrice))
+                                            .monospacedDigit()
+                                    }
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                                }
+                                .padding(.vertical, 4)
+                            }
                         }
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .overlay {
+                            if viewModel.filteredCatalog.isEmpty {
+                                ContentUnavailableView(
+                                    "quote.editor.catalog.empty",
+                                    systemImage: "tag",
+                                    description: Text("quote.editor.catalog.empty.message")
+                                )
+                            }
+                        }
+                    } else {
+                        List(viewModel.filteredKits) { kit in
+                            Button {
+                                viewModel.addKit(kit)
+                                isPickingItem = false
+                            } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(kit.name)
+                                        .foregroundStyle(.primary)
+                                    let detail = viewModel.kitSummary(for: kit)
+                                    if !detail.isEmpty {
+                                        Text(detail)
+                                            .font(.footnote)
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(2)
+                                    }
+                                }
+                                .padding(.vertical, 4)
+                            }
+                        }
+                        .overlay {
+                            if viewModel.filteredKits.isEmpty {
+                                ContentUnavailableView(
+                                    "quote.editor.kits.empty",
+                                    systemImage: "square.stack.3d.up",
+                                    description: Text("quote.editor.kits.empty.message")
+                                )
+                            }
+                        }
                     }
-                    .padding(.vertical, 4)
                 }
             }
             .searchable(text: $viewModel.itemSearch, prompt: "catalog.search")
@@ -182,14 +241,8 @@ struct QuoteEditorView: View {
                     Button("action.cancel") { isPickingItem = false }
                 }
             }
-            .overlay {
-                if viewModel.filteredCatalog.isEmpty {
-                    ContentUnavailableView(
-                        "quote.editor.catalog.empty",
-                        systemImage: "tag",
-                        description: Text("quote.editor.catalog.empty.message")
-                    )
-                }
+            .onChange(of: isPickingItem) { _, presented in
+                if !presented { addMode = .item }
             }
         }
         .presentationDetents([.medium, .large])

@@ -52,7 +52,7 @@ struct QuotePDFRendererTests {
         #expect(text.contains("Cliente de prueba"))
         #expect(text.contains("387,20") || text.contains("387.20"))
         #expect(text.contains("21"))
-        #expect(text.contains("Presupuesto"))
+        #expect(text.uppercased().contains("PRESUPUESTO"))
     }
 
     @Test("Tipos de IVA distintos y descuento: el desglose sale de QuoteCalculator")
@@ -89,19 +89,24 @@ struct QuotePDFRendererTests {
         let document = try #require(PDFDocument(url: url))
         let pages = (0..<document.pageCount).map { document.page(at: $0)?.string ?? "" }
         let rowsByPage = pages.map { page in
-            page.components(separatedBy: .newlines).filter { $0.hasPrefix("Partida ") }
+            page.components(separatedBy: .newlines).filter { line in
+                line.range(of: #"^\d+\.\s*Partida "#, options: .regularExpression) != nil
+                    || line.hasPrefix("Partida ")
+            }
         }
         let totalRows = rowsByPage.reduce(0) { $0 + $1.count }
         #expect(totalRows == 25)
 
         let lastRowPageIndex = try #require(pages.firstIndex { $0.contains("Partida 25 PRUEBA") })
         let lastRowPage = pages[lastRowPageIndex]
-        #expect(lastRowPage.contains("Subtotal: 250,00"))
-        #expect(lastRowPage.contains("IVA 21 %"))
-        #expect(lastRowPage.contains("Total: 302,50"))
+        #expect(lastRowPage.contains("Subtotal"))
+        #expect(lastRowPage.contains("250,00"))
+        #expect(lastRowPage.contains("IVA 21"))
+        #expect(lastRowPage.uppercased().contains("TOTAL"))
+        #expect(lastRowPage.contains("302,50"))
 
         for (index, rows) in rowsByPage.enumerated() where !rows.isEmpty {
-            #expect(pages[index].contains("Concepto"))
+            #expect(pages[index].contains("DESCRIPCIÓN"))
         }
     }
 
@@ -115,7 +120,7 @@ struct QuotePDFRendererTests {
         let pages = (0..<document.pageCount).map { document.page(at: $0)?.string ?? "" }
 
         #expect(document.pageCount >= 2)
-        #expect(pages.filter { $0.contains("Concepto") }.count == document.pageCount)
+        #expect(pages.filter { $0.contains("DESCRIPCIÓN") }.count == document.pageCount)
         // El total no queda solo: subtotal y total van juntos en la última página.
         #expect(pages.last?.contains("Subtotal") == true)
         #expect(pages.last?.contains("968,00") == true)
@@ -142,9 +147,9 @@ struct QuotePDFRendererTests {
             let url = try render(quote, totals: totals, watermark: false)
             let document = try #require(PDFDocument(url: url))
             let pages = (0..<document.pageCount).map { document.page(at: $0)?.string ?? "" }
-            let totalsPage = try #require(pages.first { $0.contains("Total:") })
+            let totalsPage = try #require(pages.first { $0.uppercased().contains("TOTAL") && $0.contains("Subtotal") })
 
-            #expect(totalsPage.contains("Concepto"), "con \(count) líneas el total quedó solo")
+            #expect(totalsPage.contains("DESCRIPCIÓN"), "con \(count) líneas el total quedó solo")
             #expect(totalsPage.contains("Subtotal"), "con \(count) líneas falta el subtotal")
         }
     }

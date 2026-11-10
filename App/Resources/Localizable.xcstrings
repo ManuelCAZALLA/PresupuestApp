@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "es",
   "strings" : {
+    "" : {
+
+    },
     "action.cancel" : {
       "localizations" : {
         "es" : {
@@ -132,6 +135,16 @@
         }
       }
     },
+    "catalog.kits" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrupaciones"
+          }
+        }
+      }
+    },
     "catalog.noPrice" : {
       "localizations" : {
         "es" : {
@@ -224,6 +237,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No se encontró esa partida en tu tarifa."
+          }
+        }
+      }
+    },
+    "error.kitNotFound" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró la agrupación."
           }
         }
       }
@@ -1094,6 +1118,147 @@
         }
       }
     },
+    "kits.add" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva agrupación"
+          }
+        }
+      }
+    },
+    "kits.addEntry" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir partida"
+          }
+        }
+      }
+    },
+    "kits.delete.confirm" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Borrar esta agrupación?"
+          }
+        }
+      }
+    },
+    "kits.edit" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar agrupación"
+          }
+        }
+      }
+    },
+    "kits.empty" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin agrupaciones"
+          }
+        }
+      }
+    },
+    "kits.empty.message" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una agrupación para reutilizar varias partidas juntas en tus presupuestos."
+          }
+        }
+      }
+    },
+    "kits.entries" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partidas de la agrupación"
+          }
+        }
+      }
+    },
+    "kits.entry.quantity" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cantidad"
+          }
+        }
+      }
+    },
+    "kits.name" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre"
+          }
+        }
+      }
+    },
+    "kits.noEntries" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade partidas del catálogo para formar la agrupación."
+          }
+        }
+      }
+    },
+    "kits.picker.catalog.empty" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay partidas en el catálogo"
+          }
+        }
+      }
+    },
+    "kits.picker.catalog.empty.message" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade partidas en Precios para poder crear agrupaciones."
+          }
+        }
+      }
+    },
+    "kits.picker.item" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir partida"
+          }
+        }
+      }
+    },
+    "kits.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrupaciones"
+          }
+        }
+      }
+    },
     "measure.cubicMeter" : {
       "localizations" : {
         "es" : {
@@ -1419,6 +1584,26 @@
         }
       }
     },
+    "quote.editor.addMode.item" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partida"
+          }
+        }
+      }
+    },
+    "quote.editor.addMode.kit" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrupación"
+          }
+        }
+      }
+    },
     "quote.editor.catalog.empty" : {
       "localizations" : {
         "es" : {
@@ -1509,6 +1694,26 @@
         }
       }
     },
+    "quote.editor.kits.empty" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay agrupaciones"
+          }
+        }
+      }
+    },
+    "quote.editor.kits.empty.message" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea agrupaciones en Precios para añadirlas aquí."
+          }
+        }
+      }
+    },
     "quote.editor.lines" : {
       "localizations" : {
         "es" : {
@@ -1589,26 +1794,6 @@
         }
       }
     },
-    "quote.list.duplicate" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Duplicar"
-          }
-        }
-      }
-    },
-    "quote.list.duplicate.confirmation" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Presupuesto %@ duplicado"
-          }
-        }
-      }
-    },
     "quote.list.delete" : {
       "localizations" : {
         "es" : {
@@ -1645,6 +1830,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eliminar presupuesto"
+          }
+        }
+      }
+    },
+    "quote.list.duplicate" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplicar"
+          }
+        }
+      }
+    },
+    "quote.list.duplicate.confirmation" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presupuesto %@ duplicado"
           }
         }
       }
@@ -1833,16 +2038,6 @@
         }
       }
     },
-    "settings.businessSection" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empresa"
-          }
-        }
-      }
-    },
     "settings.about.section" : {
       "localizations" : {
         "es" : {
@@ -1889,6 +2084,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "PresupuestApp"
+          }
+        }
+      }
+    },
+    "settings.businessSection" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empresa"
           }
         }
       }
@@ -2023,6 +2228,16 @@
         }
       }
     },
+    "settings.saved" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardado"
+          }
+        }
+      }
+    },
     "settings.share" : {
       "localizations" : {
         "es" : {
@@ -2053,32 +2268,12 @@
         }
       }
     },
-    "settings.terms" : {
+    "settings.support.mail.body" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Términos de uso"
-          }
-        }
-      }
-    },
-    "settings.website" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sitio web"
-          }
-        }
-      }
-    },
-    "settings.saved" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardado"
+            "value" : "Versión: %@\nCompilación: %@\niOS: %@"
           }
         }
       }
@@ -2093,12 +2288,12 @@
         }
       }
     },
-    "settings.support.mail.body" : {
+    "settings.terms" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versión: %@\nCompilación: %@\niOS: %@"
+            "value" : "Términos de uso"
           }
         }
       }
@@ -2109,6 +2304,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajustes"
+          }
+        }
+      }
+    },
+    "settings.website" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitio web"
           }
         }
       }
