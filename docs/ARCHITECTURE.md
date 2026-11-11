@@ -4,11 +4,11 @@ Clean Architecture + MVVM. Objetivo: que cada agente trabaje en su carpeta sin p
 
 ## Capas y regla de dependencias
 ```
-Presentation (SwiftUI + ViewModels)  ──►  QuoteCore (Domain)  ◄──  Data (SwiftData, PDF, import, voz)
+Presentation (SwiftUI + ViewModels)  ──►  QuoteCore (Domain)  ◄──  Data (SwiftData, PDF, importación)
                          └──────────── Composition (une todo) ────────────┘
 ```
-- **QuoteCore** (paquete Swift local, solo Foundation): entidades, cálculo, motor de interpretación, casos de uso, protocolos (repositorios y "puertos"). No conoce a nadie.
-- **Data** implementa los protocolos de QuoteCore. Es la única capa que importa SwiftData, PDFKit, Speech, UniformTypeIdentifiers.
+- **QuoteCore** (paquete Swift local, solo Foundation): entidades, cálculo, casos de uso, protocolos (repositorios y "puertos"). El motor de interpretación queda para M5 y no forma parte de la 1.0.
+- **Data** implementa los protocolos de QuoteCore. Es la única capa que importa SwiftData, UIKit/CoreGraphics para el PDF y UniformTypeIdentifiers.
 - **Presentation** usa casos de uso de QuoteCore. No conoce SwiftData ni la implementación de Data.
 - **Composition** crea las implementaciones concretas y las inyecta (a mano, sin librerías).
 
@@ -22,30 +22,28 @@ PresupuestApp/
 ├─ Packages/QuoteCore/
 │  ├─ Package.swift
 │  ├─ Sources/QuoteCore/
-│  │  ├─ Entities/        Item, Kit, Quote, QuoteLine, Client, BusinessProfile, Trade, MeasureUnit, VATRate
+│  │  ├─ Entities/        Item, ItemKind, Discount, Kit, Quote, QuoteLine, QuoteStatus, Client, BusinessProfile, MeasureUnit
 │  │  ├─ Calculation/     QuoteCalculator, RoundingPolicy, QuoteTotals
-│  │  ├─ Engine/          Normalizer, NumberWords, Segmenter, QuantityExtractor, Scorer, Matcher, RequestInterpreter, SynonymTable
-│  │  ├─ Import/          ColumnMapper, PriceParser, UnitParser, entidades de importación
-│  │  ├─ Ports/           protocolos externos: DictationService, QuotePDFRenderer, Clock, EntitlementProvider, TariffImportSource, TariffTemplateProviding
+│  │  ├─ Engine/          (M5; no incluido en la 1.0)
+│  │  ├─ Import/          ColumnMapper, PriceParser, UnitParser, VATParser, entidades de importación
+│  │  ├─ Ports/           protocolos externos: QuotePDFRenderer, Clock, EntitlementProvider, TariffImportSource, TariffTemplateProviding
 │  │  ├─ Repositories/    protocolos: ItemRepository, KitRepository, QuoteRepository, ProfileRepository
 │  │  ├─ UseCases/        un tipo por caso de uso
 │  │  └─ Errors/          DomainError
-│  └─ Tests/QuoteCoreTests/ (+ Fixtures/)
+│  └─ Tests/QuoteCoreTests/ (+ Fixtures/ de M5, excluidas del target hasta que se usen)
 ├─ App/
 │  ├─ PresupuestApp.swift
-│  ├─ Composition/        AppContainer, AppRouter
+│  ├─ Composition/        AppContainer, AppRouter, AppSession, StubEntitlements
 │  ├─ Data/
 │  │  ├─ Persistence/     modelos @Model, ModelContainer, mappers
 │  │  ├─ Repositories/    SwiftData*Repository
-│  │  ├─ Import/          CSVReader, XLSXReader, PastedTextParser, LocalTariffSource, FileTariffTemplateProvider, ImportFileTypes
-│  │  ├─ Speech/          SpeechDictationService
-│  │  ├─ PDF/             QuotePDFRenderer
-│  │  └─ Packs/           TradePackLoader
+│  │  ├─ Import/          CSVReader, XLSXReader, XLSXOpenXMLReader, XLSXZipArchive, PastedTextParser, LocalTariffSource, TariffTemplateExporter
+│  │  └─ PDF/             DeviceQuotePDFRenderer
 │  ├─ Presentation/
 │  │  ├─ Shared/          componentes, tema, formateadores (moneda es-ES)
 │  │  └─ Features/<Feature>/  <Feature>View.swift, <Feature>ViewModel.swift
-│  └─ Resources/          Localizable.xcstrings, Assets, Packs/*.json
-└─ Tests/                 AppTests (target de tests unitarios, `xcodebuild test`), UITests, ImportSamples/ (archivos de ejemplo y `expected_imports.json`, no se editan)
+│  └─ Resources/          Localizable.xcstrings, Assets.xcassets
+└─ Tests/                 AppTests (target de tests unitarios, `xcodebuild test`), ImportSamples/ (archivos de ejemplo y `expected_imports.json`, no se editan)
 ```
 
 ## MVVM en este proyecto
@@ -70,7 +68,7 @@ PresupuestApp/
 | QuoteCore | Cálculo, motor, casos de uso | `swift test`; vectores de `DOMAIN.md`; fixtures del parser; repositorios falsos en memoria |
 | Data | Mappers, repositorios, importadores | Tests con `ModelContainer` en memoria y archivos de ejemplo de `Tests/ImportSamples`, en el target `AppTests` (`xcodebuild test`) |
 | Presentation | ViewModels | Casos de uso falsos; sin SwiftUI |
-| UI | Flujo principal | UITests mínimos: onboarding → presupuesto → PDF |
+| UI | Flujo principal | Sin target de UI tests en la 1.0; pasada manual documentada en `RELEASE_CHECKLIST.md` |
 
 ## Cómo añadir una feature (checklist)
 1. ¿Hace falta lógica nueva? Primero en QuoteCore, con test.
@@ -82,4 +80,4 @@ PresupuestApp/
 7. Actualizar `ROADMAP.md` y, si procede, `DECISIONS.md`.
 
 ## Dependencias externas
-Ninguna al empezar. Admitida en M4: lector `.xlsx` (p. ej. CoreXLSX). RevenueCat se estudiará en M7 (ver `DECISIONS.md`).
+La 1.0 usa CoreXLSX como lector de respaldo de `.xlsx`; el lector OpenXML propio es el principal. RevenueCat se estudiará en M7 (ver `DECISIONS.md`).
