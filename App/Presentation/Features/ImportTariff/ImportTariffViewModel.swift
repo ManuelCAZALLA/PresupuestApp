@@ -113,7 +113,7 @@ final class ImportTariffViewModel {
 
     // MARK: - Origen
 
-    /// Lee un archivo `.xlsx` o `.csv` elegido por el usuario.
+    /// Lee un archivo Excel (`.xlsx`, `.xlsm`, `.xls`) o `.csv` elegido por el usuario.
     func loadFile(at url: URL) {
         state = .loading
         do {
@@ -147,7 +147,7 @@ final class ImportTariffViewModel {
     /// columnas; un archivo de texto se interpreta como lista pegada.
     func openExternalFile(at url: URL) {
         switch url.pathExtension.lowercased() {
-        case "xlsx", "csv":
+        case "xlsx", "xlsm", "xls", "csv":
             loadFile(at: url)
         default:
             loadPlainTextFile(at: url)

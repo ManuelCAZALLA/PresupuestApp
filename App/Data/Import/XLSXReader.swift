@@ -2,20 +2,43 @@ import CoreXLSX
 import Foundation
 import QuoteCore
 
-/// Lector de `.xlsx` sobre CoreXLSX. Lee valores (nunca fórmulas) y conserva
-/// los índices de fila para que la cabecera y las filas vacías coincidan con la
-/// hoja. Devuelve una `RawTable` por hoja, con el nombre de la hoja.
-/// Ver docs/DECISIONS.md, D-008 y D-009.
+/// Lector de `.xlsx`. Primero intenta el parser OpenXML propio (libros reales
+/// con tabla Excel, `inlineStr` y namespaces en cada hoja) y, si falla, CoreXLSX.
+/// Lee valores, nunca fórmulas. Ver docs/DECISIONS.md, D-008 y D-009.
 enum XLSXReader {
     private static let maxRows = 20_000
     private static let maxColumns = 200
 
     static func read(url: URL) throws -> [RawTable] {
-        let data = try Data(contentsOf: url)
+        let needsScope = url.startAccessingSecurityScopedResource()
+        defer {
+            if needsScope { url.stopAccessingSecurityScopedResource() }
+        }
+        let data: Data
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            throw DomainError.importFailed("No se pudo abrir el archivo .xlsx")
+        }
         return try read(data: data)
     }
 
     static func read(data: Data) throws -> [RawTable] {
+        if let tables = try? XLSXOpenXMLReader.read(data: data), hasLetters(tables) {
+            return tables
+        }
+        return try readWithCoreXLSX(data)
+    }
+
+    private static func hasLetters(_ tables: [RawTable]) -> Bool {
+        tables.contains { table in
+            table.rows.contains { row in
+                row.contains { cell in cell.contains(where: \.isLetter) }
+            }
+        }
+    }
+
+    private static func readWithCoreXLSX(_ data: Data) throws -> [RawTable] {
         let file: XLSXFile
         do {
             file = try XLSXFile(data: data)
@@ -47,8 +70,6 @@ enum XLSXReader {
             throw DomainError.importFailed("No se pudo leer el contenido del .xlsx")
         }
     }
-
-    // MARK: - Conversión a filas
 
     private static func rows(from worksheet: Worksheet, sharedStrings: SharedStrings?) -> [[String]] {
         let sheetRows = worksheet.data?.rows ?? []

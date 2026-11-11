@@ -15,6 +15,8 @@ final class AppContainer {
     let importTariffViewModel: ImportTariffViewModel
     let settingsViewModel: SettingsViewModel
     let quoteListViewModel: QuoteListViewModel
+    let kitsViewModel: KitsViewModel
+    let clientsViewModel: ClientsViewModel
 
     private let loadQuote: LoadQuote
     private let updateQuote: UpdateQuote
@@ -60,6 +62,7 @@ final class AppContainer {
             clock: clock as Clock
         )
         let deleteQuote = DeleteQuote(quotes: quoteRepository)
+        let listQuotes = ListQuotes(quotes: quoteRepository)
 
         self.loadQuote = LoadQuote(quotes: quoteRepository)
         self.updateQuote = UpdateQuote(quotes: quoteRepository)
@@ -102,10 +105,19 @@ final class AppContainer {
             saveBusinessProfile: saveBusinessProfile
         )
         self.quoteListViewModel = QuoteListViewModel(
-            listQuotes: ListQuotes(quotes: quoteRepository),
+            listQuotes: listQuotes,
             createQuote: createQuote,
             duplicateQuote: duplicateQuote,
             deleteQuote: deleteQuote
+        )
+        self.kitsViewModel = KitsViewModel(
+            listKits: listKits,
+            manageKits: manageKits,
+            listItems: listItems
+        )
+        self.clientsViewModel = ClientsViewModel(
+            listQuotes: listQuotes,
+            createQuote: createQuote
         )
     }
 
@@ -115,14 +127,6 @@ final class AppContainer {
         OnboardingViewModel(
             mode: .walkthrough,
             saveBusinessProfile: saveBusinessProfile
-        )
-    }
-
-    func makeKitsViewModel() -> KitsViewModel {
-        KitsViewModel(
-            listKits: listKits,
-            manageKits: manageKits,
-            listItems: listItems
         )
     }
 

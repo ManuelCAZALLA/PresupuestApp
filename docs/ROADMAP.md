@@ -48,7 +48,7 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 ## [~] M4b — Flujo completo sin dictado
 **Dueños**: architect + qa_engineer + domain_engineer + data_engineer + ui_engineer.
 - Recorrido de punta a punta sin voz: onboarding → importar tarifa → catálogo → presupuesto a mano → PDF → compartir.
-- Navegación: `TabView` con pestañas **Presupuestos**, **Precios** y **Ajustes**, que aparecen tras completar el onboarding; mientras no esté puesta la bandera `hasCompletedOnboarding` (D-016) se abre `Onboarding` (S1) a pantalla completa.
+- Navegación: `TabView` con pestañas **Presupuestos**, **Precios**, **Agrupaciones** y **Clientes**, que aparecen tras completar el onboarding; **Ajustes** se abre con el engranaje de la esquina superior derecha y no ocupa pestaña (D-021). Mientras no esté puesta la bandera `hasCompletedOnboarding` (D-016) se abre `Onboarding` (S1) a pantalla completa.
 - IVA por partida: `Item.vatRate` opcional; el IVA de una línea es el de la partida o, si no la tiene, el del presupuesto. La importación acepta una columna `IVA` opcional.
 - Casos de uso de líneas: `AddLine`, `UpdateLineQuantity`, `RemoveLine`, `UpdateQuote`. El cálculo sigue siendo `QuoteCalculator` (no se duplica).
 - Features nuevas: `QuoteList` (S2), presupuesto a mano (cliente, buscador de partidas, líneas con +/−, descuento, total fijo), presupuesto terminado con desglose de IVA y envío (S6) con `QuotePDFRenderer`.

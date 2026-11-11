@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Raíz: onboarding a pantalla completa o pestañas según D-013.
+/// Raíz: onboarding a pantalla completa o pestañas según D-013 y D-021.
 struct AppRootView: View {
     let container: AppContainer
     @Bindable var router: AppRouter
@@ -38,6 +38,9 @@ struct AppRootView: View {
             }
             .presentationDetents([.large])
         }
+        .sheet(isPresented: $router.isSettingsPresented) {
+            settingsSheet
+        }
         .onChange(of: router.isImportPresented) { _, presented in
             if !presented {
                 container.importTariffViewModel.reset()
@@ -53,6 +56,7 @@ struct AppRootView: View {
         TabView(selection: $router.selectedTab) {
             NavigationStack(path: $router.quotesPath) {
                 QuoteListView(viewModel: container.quoteListViewModel)
+                    .settingsToolbarButton()
                     .navigationDestination(for: AppRoute.self) { route in
                         switch route {
                         case .quoteEditor(let id):
@@ -68,10 +72,8 @@ struct AppRootView: View {
             .tag(AppTab.quotes)
 
             NavigationStack {
-                CatalogView(
-                    viewModel: container.catalogViewModel,
-                    makeKitsViewModel: container.makeKitsViewModel
-                )
+                CatalogView(viewModel: container.catalogViewModel)
+                    .settingsToolbarButton()
             }
             .tabItem {
                 Label("tab.prices", systemImage: "tag")
@@ -79,15 +81,42 @@ struct AppRootView: View {
             .tag(AppTab.prices)
 
             NavigationStack {
-                SettingsView(
-                    viewModel: container.settingsViewModel,
-                    makeWalkthroughViewModel: container.makeWalkthroughViewModel
-                )
+                KitsView(viewModel: container.kitsViewModel)
+                    .settingsToolbarButton()
             }
             .tabItem {
-                Label("tab.settings", systemImage: "gearshape")
+                Label("tab.kits", systemImage: "square.stack.3d.up")
             }
-            .tag(AppTab.settings)
+            .tag(AppTab.kits)
+
+            NavigationStack {
+                ClientsView(viewModel: container.clientsViewModel)
+                    .settingsToolbarButton()
+            }
+            .tabItem {
+                Label("tab.clients", systemImage: "person.2")
+            }
+            .tag(AppTab.clients)
         }
+    }
+
+    /// Ajustes se abre desde el engranaje de la esquina superior derecha,
+    /// no ocupa una pestaña (D-021).
+    private var settingsSheet: some View {
+        NavigationStack {
+            SettingsView(
+                viewModel: container.settingsViewModel,
+                makeWalkthroughViewModel: container.makeWalkthroughViewModel
+            )
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("action.close") {
+                        router.isSettingsPresented = false
+                    }
+                }
+            }
+        }
+        .environment(router)
+        .presentationDetents([.large])
     }
 }

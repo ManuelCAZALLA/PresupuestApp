@@ -25,15 +25,16 @@ Cada pantalla es una carpeta en `App/Presentation/Features/`.
 | S5 | `QuoteEditor` | Líneas con +/−, buscar partida, añadir kit, horas de mano de obra, desplazamiento, descuento, IVA, total | Total recalculado al instante; coincide con los vectores de `docs/DOMAIN.md` |
 | S6 | `QuotePreview` | Vista previa del PDF y envío (WhatsApp, correo, guardar) | PDF profesional sin precios unitarios ni importes de línea por defecto; se puede mostrar con el ajuste global o el override por presupuesto. Hoja de compartir con mensaje editable |
 | S7 | `Catalog` | Lista por categorías, búsqueda, crear/editar partida (nombre, alias, unidad, precio, tipo) | Cambiar un precio no altera presupuestos ya hechos |
-| S8 | `ImportTariff` | Cargar la tarifa del usuario: Excel/CSV, pegar una lista; asignar columnas; revisar; marcar si los precios llevan IVA; plantilla Excel descargable con columnas Nombre, Unidad y Precio | Nada se guarda sin pantalla de revisión |
-| S9 | `Kits` | Paquetes de partidas ("cambio de termo") | Un kit se añade a un presupuesto de un toque |
-| S10 | `Settings` | Datos del negocio y valores por defecto; ayuda ("Cómo funciona", contacto y web); compartir; enlaces legales; versión y compilación | "Cómo funciona" reabre solo los tres pasos del carrusel sin cambiar perfil ni bandera. Contacto, web, política, términos y reseña solo aparecen cuando están configurados. Compartir usa la hoja del sistema. Los cambios de perfil siguen aplicando a presupuestos nuevos, no a los antiguos |
+| S8 | `ImportTariff` | Cargar la tarifa del usuario: Excel (`.xlsx`/`.xlsm`) o CSV, pegar una lista; asignar columnas; revisar; marcar si los precios llevan IVA; plantilla Excel descargable con columnas Nombre, Unidad y Precio | Nada se guarda sin pantalla de revisión. El `.xls` binario antiguo no se puede leer; la app pide guardarlo como `.xlsx` |
+| S9 | `Kits` | Paquetes de partidas ("cambio de termo"), en la pestaña **Agrupaciones** | Un kit se añade a un presupuesto de un toque |
+| S10 | `Settings` | Datos del negocio y valores por defecto; ayuda ("Cómo funciona", contacto y web); compartir; enlaces legales; versión y compilación | Se abre desde el engranaje de la esquina superior derecha, no ocupa pestaña. "Cómo funciona" reabre solo los tres pasos del carrusel sin cambiar perfil ni bandera. Contacto, web, política, términos y reseña solo aparecen cuando están configurados. Compartir usa la hoja del sistema. Los cambios de perfil siguen aplicando a presupuestos nuevos, no a los antiguos |
 | S11 | `Paywall` | Planes Pro | Solo se muestra al llegar al límite o desde Ajustes |
+| S12 | `Clients` | Directorio de clientes a partir de los presupuestos guardados | Agrupa por nombre normalizado, muestra el historial y permite crear un presupuesto nuevo con esos datos. No edita ni fusiona clientes: cada presupuesto conserva su propia copia del cliente |
 
-Los clientes NO tienen pantalla propia: se guardan dentro del presupuesto.
+Los clientes no tienen una entidad propia en la v1: la pestaña **Clientes** se calcula a partir de los presupuestos. Editar el cliente en un presupuesto no reescribe los antiguos. Los presupuestos sin nombre de cliente no aparecen en el directorio, pero siguen en **Presupuestos**.
 
 ## Recorrido principal (sin dictado)
-Tras el onboarding la app tiene tres pestañas: **Presupuestos**, **Precios** y **Ajustes**.
+Tras el onboarding la app tiene cuatro pestañas: **Presupuestos**, **Precios**, **Agrupaciones** y **Clientes**. **Ajustes** se abre con el engranaje de la esquina superior derecha de cualquier pestaña.
 1. Primera apertura → `Onboarding` (S1): carrusel de tres pasos, datos del negocio e IVA por defecto, y termina en el catálogo vacío. El onboarding no vuelve a mostrarse.
 2. **Precios** (`Catalog` S7): el catálogo vacío ofrece importar archivo (Excel/CSV), pegar una lista o añadir a mano; el botón de importar (S8) está siempre accesible.
 3. **Presupuestos** (`QuoteList` S2): "Nuevo presupuesto" → ficha con cliente, título de la obra, descripción de los trabajos, alcance/exclusiones, condiciones de pago y añadir partidas del catálogo; las líneas se ajustan con +/−, se borra, se aplica descuento y el total se recalcula al instante.
@@ -75,7 +76,7 @@ Al compartir se ofrece un **mensaje editable** con la plantilla: `"Hola {cliente
 
 ## Funcionalidades
 - Catálogo 100 % del usuario: la app no trae partidas. El catálogo vacío ofrece importar Excel/CSV, pegar una lista o añadir a mano.
-- Importación de tarifa (Excel, CSV, texto pegado, alta manual, compartir archivo desde otra app) y plantilla Excel descargable con columnas Nombre, Unidad y Precio. Foto/PDF con OCR: después del MVP.
+- Importación de tarifa (Excel `.xlsx`/`.xlsm`, CSV, texto pegado, alta manual y archivo recibido desde otra app) y plantilla Excel descargable con columnas Nombre, Unidad y Precio. El `.xls` binario antiguo se rechaza con un mensaje que pide guardarlo como `.xlsx`. Foto/PDF con OCR: después del MVP.
 - Motor de interpretación sin IA (ver `docs/PARSER.md`).
 - Cálculo con IVA editable por presupuesto y por línea (ver `docs/DOMAIN.md`).
 - PDF generado en el dispositivo.

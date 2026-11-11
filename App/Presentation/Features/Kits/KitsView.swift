@@ -4,6 +4,7 @@ import QuoteCore
 /// Apartado de agrupaciones: lista, alta, edición y borrado.
 struct KitsView: View {
     @Bindable var viewModel: KitsViewModel
+    @Environment(AppRouter.self) private var router
     @State private var isAdding = false
     @State private var editingKit: Kit?
 
@@ -81,6 +82,9 @@ struct KitsView: View {
             .presentationDetents([.large])
         }
         .task { viewModel.load() }
+        .onChange(of: router.selectedTab) { _, tab in
+            if tab == .kits { viewModel.load() }
+        }
         .alert(
             "error.title",
             isPresented: Binding(

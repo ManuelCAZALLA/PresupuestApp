@@ -3,7 +3,7 @@
 Cosas que el producto o la técnica no definen y que **no se inventan**. Cada una con contexto y una opción provisional si bloquea el avance.
 
 ## Q-001 — Documentos de producto — RESUELTA
-- **Contexto**: `AGENTS.md` y `docs/ARCHITECTURE.md` referencian `docs/PRODUCT.md`, `docs/DOMAIN.md` y `docs/PARSER.md` (pantallas S1–S11, vectores de cálculo, fixtures del parser).
+- **Contexto**: `AGENTS.md` y `docs/ARCHITECTURE.md` referencian `docs/PRODUCT.md`, `docs/DOMAIN.md` y `docs/PARSER.md` (pantallas S1–S12, vectores de cálculo, fixtures del parser).
 - **Estado**: resuelta el 2026-10-10; los tres documentos ya están en `docs/`. M1 y M3 pueden empezar.
 
 ## Q-002 — Nombre comercial y bundle identifier definitivos
@@ -41,4 +41,9 @@ Cosas que el producto o la técnica no definen y que **no se inventan**. Cada un
 - **Contexto**: la numeración usa el máximo número existente del año más uno. Si se borra el presupuesto con el número más alto, una creación posterior puede reutilizar ese número.
 - **Bloquea**: no a S2; no cambiar el algoritmo ni el esquema en esta tarea.
 - **Solución prevista**: Al borrar el presupuesto con el número más alto, ese número se reutiliza. Solución prevista: contador persistente por año en el perfil del negocio, al congelar el esquema. No escribir un test que consagre la reutilización.
+
+## Q-009 — ¿Clientes como entidad propia?
+- **Contexto**: la pestaña **Clientes** (D-021) agrupa por nombre normalizado los datos que cada presupuesto guarda. Dos clientes distintos con el mismo nombre se fusionan; un presupuesto sin nombre no aparece; y no se puede editar ni fusionar un cliente desde el directorio. Crear un presupuesto desde un cliente reutiliza la copia del presupuesto más reciente.
+- **Bloquea**: no a la cuarta pestaña ni a la v1. Sí a una gestión de clientes con edición, fusión o alta antes del primer presupuesto.
+- **Propuesta**: mantener el directorio derivado mientras no haya una necesidad real. Si se pide editar/fusionar, añadir `ClientRecord` con identificador estable, relación opcional desde `QuoteRecord` y migración; decidir entonces si los presupuestos antiguos se reescriben o conservan su copia (hoy se conserva).
 

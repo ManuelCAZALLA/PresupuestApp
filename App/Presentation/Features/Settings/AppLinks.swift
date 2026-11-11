@@ -1,7 +1,5 @@
 import Foundation
 
-/// Central configuration for links shown in Settings.
-/// Replace the reserved example values in `configured` before TestFlight.
 struct AppLinks: Equatable {
     let supportEmail: String?
     let websiteURL: URL?
@@ -23,13 +21,11 @@ struct AppLinks: Equatable {
         self.appStoreID = appStoreID
     }
 
-    /// Provisional values let the Settings screen be reviewed before real
-    /// contact details and store metadata exist. `.example` is reserved.
     static let configured = AppLinks(
         supportEmail: "soporte@presupuestapp.example",
         websiteURL: URL(string: "https://example.com/presupuestapp"),
-        privacyURL: URL(string: "https://example.com/presupuestapp/privacy"),
-        termsURL: URL(string: "https://example.com/presupuestapp/terms"),
+        privacyURL: URL(string: "https://manuelcazalla.github.io/PresupuestApp-Politica-Privacidad.html/"),
+        termsURL: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"),
         appStoreID: "0000000000"
     )
 

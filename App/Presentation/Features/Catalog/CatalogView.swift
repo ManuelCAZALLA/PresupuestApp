@@ -5,7 +5,6 @@ import QuoteCore
 struct CatalogView: View {
     @Bindable var viewModel: CatalogViewModel
     @Environment(AppRouter.self) private var router
-    let makeKitsViewModel: () -> KitsViewModel
 
     @State private var editingItem: Item?
 
@@ -15,15 +14,6 @@ struct CatalogView: View {
 
     var body: some View {
         List {
-            if viewModel.searchText.isEmpty {
-                Section {
-                    NavigationLink {
-                        KitsView(viewModel: makeKitsViewModel())
-                    } label: {
-                        Label("catalog.kits", systemImage: "square.stack.3d.up")
-                    }
-                }
-            }
             ForEach(viewModel.sections, id: \.category) { section in
                 Section {
                     ForEach(section.items) { item in

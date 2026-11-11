@@ -15,7 +15,6 @@
       }
     },
     "action.close" : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -136,6 +135,7 @@
       }
     },
     "catalog.kits" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -186,6 +186,148 @@
         }
       }
     },
+    "clients.address" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección"
+          }
+        }
+      }
+    },
+    "clients.contact" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contacto"
+          }
+        }
+      }
+    },
+    "clients.empty" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin clientes todavía"
+          }
+        }
+      }
+    },
+    "clients.empty.message" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando pongas el nombre del cliente en un presupuesto, aparecerá aquí."
+          }
+        }
+      }
+    },
+    "clients.empty.search" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay clientes que coincidan con la búsqueda."
+          }
+        }
+      }
+    },
+    "clients.groups.footer" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se agrupan por el nombre que figura en cada presupuesto."
+          }
+        }
+      }
+    },
+    "clients.newQuote" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo presupuesto"
+          }
+        }
+      }
+    },
+    "clients.phone" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teléfono"
+          }
+        }
+      }
+    },
+    "clients.quoteCount.one" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld presupuesto"
+          }
+        }
+      }
+    },
+    "clients.quoteCount.other" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld presupuestos"
+          }
+        }
+      }
+    },
+    "clients.quotes" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presupuestos"
+          }
+        }
+      }
+    },
+    "clients.search" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar cliente"
+          }
+        }
+      }
+    },
+    "clients.title" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clientes"
+          }
+        }
+      }
+    },
+    "clients.workAddress" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección de la obra"
+          }
+        }
+      }
+    },
     "error.emptyQuote" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -214,7 +356,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo leer el archivo. Comprueba que sea un Excel o CSV válido."
+            "value" : "No se pudo leer el archivo. Comprueba que sea un Excel (.xlsx), un Excel con macros (.xlsm) o un CSV válido. Si es un .xls antiguo, ábrelo en Excel y guárdalo como .xlsx."
           }
         }
       }
@@ -2314,6 +2456,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sitio web"
+          }
+        }
+      }
+    },
+    "tab.clients" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clientes"
+          }
+        }
+      }
+    },
+    "tab.kits" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrupaciones"
           }
         }
       }

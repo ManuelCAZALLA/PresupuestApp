@@ -184,23 +184,26 @@ struct QuoteListView: View {
     }
 }
 
-private struct QuoteRow: View {
+struct QuoteRow: View {
     let quote: Quote
     let total: Decimal
+    var showsClientName = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {
-                Group {
-                    if quote.client.name.isEmpty {
-                        Text("quote.client.placeholder")
-                    } else {
-                        Text(quote.client.name)
+                if showsClientName {
+                    Group {
+                        if quote.client.name.isEmpty {
+                            Text("quote.client.placeholder")
+                        } else {
+                            Text(quote.client.name)
+                        }
                     }
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
                 }
-                .font(.headline)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
                 Spacer()
                 Text(CurrencyFormatter.string(from: total))
                     .font(.body.weight(.semibold).monospacedDigit())

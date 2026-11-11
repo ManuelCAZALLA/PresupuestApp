@@ -4,7 +4,8 @@ import SwiftUI
 enum AppTab: Hashable {
     case quotes
     case prices
-    case settings
+    case kits
+    case clients
 }
 
 /// Rutas empujadas dentro de la pestaña Presupuestos (ver docs/DECISIONS.md, D-013).
@@ -21,6 +22,7 @@ final class AppRouter {
     var quotesPath = NavigationPath()
     var isImportPresented = false
     var isItemEditorPresented = false
+    var isSettingsPresented = false
 
     func openQuote(_ id: UUID) {
         selectedTab = .quotes
@@ -41,6 +43,10 @@ final class AppRouter {
     func presentNewItem() {
         selectedTab = .prices
         isItemEditorPresented = true
+    }
+
+    func presentSettings() {
+        isSettingsPresented = true
     }
 
     func popQuotesToRoot() {
