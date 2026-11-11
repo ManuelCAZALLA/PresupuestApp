@@ -1,5 +1,7 @@
 # Hoja de ruta
 
+> **Versión 1.0 (2026-11-11)**: se publica con el flujo sin dictado (M4b), PDF profesional, Agrupaciones y Clientes. El dictado (M5) y el Paywall (M7) quedan fuera de esta entrega. Las ramas activas son `main`, `develop` y `release`.
+
 Un hito = una rama. Al terminar un hito: tests en verde, `reviewer` aprueba, se marca como hecho aquí.
 Estado: [ ] pendiente · [~] en curso · [x] hecho.
 
