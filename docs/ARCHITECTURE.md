@@ -27,7 +27,7 @@ PresupuestApp/
 │  │  ├─ Engine/          Normalizer, NumberWords, Segmenter, QuantityExtractor, Scorer, Matcher, RequestInterpreter, SynonymTable
 │  │  ├─ Import/          ColumnMapper, PriceParser, UnitParser, entidades de importación
 │  │  ├─ Ports/           protocolos externos: DictationService, QuotePDFRenderer, Clock, EntitlementProvider, TariffImportSource, TariffTemplateProviding
-│  │  ├─ Repositories/    protocolos: ItemRepository, KitRepository, QuoteRepository, ProfileRepository, AliasRepository
+│  │  ├─ Repositories/    protocolos: ItemRepository, KitRepository, QuoteRepository, ProfileRepository
 │  │  ├─ UseCases/        un tipo por caso de uso
 │  │  └─ Errors/          DomainError
 │  └─ Tests/QuoteCoreTests/ (+ Fixtures/)

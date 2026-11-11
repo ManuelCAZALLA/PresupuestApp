@@ -26,26 +26,9 @@
 		1A0000000000000000000020 /* AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		1A0000000000000000000013 /* Exceptions for "App" folder in "PresupuestApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Data/Import/.gitkeep,
-				Data/PDF/.gitkeep,
-				Data/Persistence/.gitkeep,
-				Data/Repositories/.gitkeep,
-				Data/Speech/.gitkeep,
-			);
-			target = 1A0000000000000000000005 /* PresupuestApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1A0000000000000000000004 /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				1A0000000000000000000013 /* Exceptions for "App" folder in "PresupuestApp" target */,
-			);
 			path = App;
 			sourceTree = "<group>";
 		};

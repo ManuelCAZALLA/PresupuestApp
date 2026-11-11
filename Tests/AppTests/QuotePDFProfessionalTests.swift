@@ -162,9 +162,9 @@ struct QuotePDFProfessionalTests {
             defaultVATRate: quote.defaultVATRate,
             title: "PRUEBA Obra",
             workDescription: "PRUEBA Descripción",
-            scopeOfWork: profile.scopeOfWorkDefault ?? "",
-            exclusions: profile.exclusionsDefault ?? "",
-            paymentTerms: profile.paymentTermsDefault ?? "",
+            scopeOfWork: profile.scopeOfWorkDefault,
+            exclusions: profile.exclusionsDefault,
+            paymentTerms: profile.paymentTermsDefault,
             showLineAmounts: nil,
             shareMessage: "Hola {cliente}, te paso el presupuesto de {título} (ref. {número}). Cualquier duda, me dices."
         )

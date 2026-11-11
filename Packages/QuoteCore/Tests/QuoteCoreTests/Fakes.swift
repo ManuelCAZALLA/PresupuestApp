@@ -98,21 +98,6 @@ final class FakeProfileRepository: ProfileRepository {
     }
 }
 
-final class FakeAliasRepository: AliasRepository {
-    var aliases: [UUID: [String]] = [:]
-
-    func aliases(forItem itemID: UUID) throws -> [String] {
-        aliases[itemID] ?? []
-    }
-
-    func add(alias: String, toItem itemID: UUID) throws {
-        if aliases[itemID] == nil {
-            aliases[itemID] = []
-        }
-        aliases[itemID]?.append(alias)
-    }
-}
-
 struct FixedClock: Clock {
     let date: Date
     func now() -> Date { date }

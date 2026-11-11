@@ -17,7 +17,7 @@ Cosas que el producto o la técnica no definen y que **no se inventan**. Cada un
 - **Propuesta**: configurar el *Team* en Xcode cuando se pruebe en dispositivo físico.
 
 ## Q-004 — Desktop gestionado por iCloud rompe la firma de los tests
-- **Contexto**: el repo vive en `~/Desktop`, que en este Mac está gestionado por iCloud. `swift test` falla al firmar el `.xctest` (`resource fork, Finder information, or similar detritus not allowed`). Se resuelve apuntando `.build` a `~/Library/Caches/PresupuestApp/QuoteCore-build` (ver `docs/KICKOFF.md`, sección 4).
+- **Contexto**: el repo vive en `~/Desktop`, que en este Mac está gestionado por iCloud. `swift test` falla al firmar el `.xctest` (`resource fork, Finder information, or similar detritus not allowed`). Se resuelve con `swift test --package-path Packages/QuoteCore --scratch-path ~/Library/Caches/PresupuestApp/QuoteCore-build` o con un enlace `.build` fuera de iCloud.
 - **Bloquea**: no, con el enlace funciona.
 - **Propuesta**: mover el repo a una carpeta fuera de iCloud (p. ej. `~/Developer`) cuando se pueda; entonces `.build` normal ya sirve.
 
@@ -34,7 +34,7 @@ Cosas que el producto o la técnica no definen y que **no se inventan**. Cada un
 ## Q-007 — Borrado de presupuestos y cuota mensual
 - **Contexto**: `CreateQuote` comprueba la cuota gratuita contando los presupuestos fechados en el mes actual; `DuplicateQuote` no consulta `CheckQuota`. Borrar un presupuesto del mes reduce ese conteo y podría liberar una plaza para crear otro presupuesto.
 - **Bloquea**: no a la lista S2 de la v1; no activar ni ampliar la lógica de cuota en esta tarea.
-- **Tarea previa a TestFlight**: StubEntitlements usa .free por defecto, así que la app aplica hoy el límite de 5 presupuestos al mes; la 1.0 debe salir sin límite. Dejar el plan por defecto sin límite en una tarea aparte con su test.
+- **Estado 1.0**: resuelto. `StubEntitlements` usa `.pro` por defecto y `ReleaseConfigurationTests` lo verifica; la app se publica sin límite.
 - **Propuesta**: antes de activar el límite mensual/Paywall, decidir cómo deben tratarse duplicados y presupuestos borrados para que el conteo no permita eludir la cuota.
 
 ## Q-008 — Reutilización del número más alto al borrar

@@ -7,7 +7,7 @@
 - [ ] Completar el cuestionario de privacidad en App Store Connect.
 - [ ] Preparar y revisar las capturas de pantalla para los tamaños de dispositivo compatibles.
 - [ ] Elegir el nombre definitivo de la app y aplicarlo a los metadatos y textos de marca.
-- [ ] Cambiar el plan por defecto a ilimitado en una tarea aparte y añadir su test; ahora el stub de entitlements aplica el plan gratuito.
+- [x] Plan por defecto ilimitado en la v1 (`StubEntitlements`, con test en `ReleaseConfigurationTests`).
 - [ ] Congelar el esquema SwiftData definitivo, incluidos los campos añadidos para el PDF, y comprobar la migración desde el esquema anterior.
 
 ## Antes de enviar a App Store

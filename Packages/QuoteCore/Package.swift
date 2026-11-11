@@ -12,6 +12,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "QuoteCore"),
-        .testTarget(name: "QuoteCoreTests", dependencies: ["QuoteCore"])
+        .testTarget(
+            name: "QuoteCoreTests",
+            dependencies: ["QuoteCore"],
+            exclude: ["Fixtures"]
+        )
     ]
 )

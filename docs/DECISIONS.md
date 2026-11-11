@@ -165,3 +165,10 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
 - **Decisión**: la barra pasa a cuatro pestañas —**Presupuestos**, **Precios**, **Agrupaciones** y **Clientes**—. **Ajustes** deja de ser pestaña y se abre con un engranaje en la esquina superior derecha de cada pestaña, como hoja con botón Cerrar. **Agrupaciones** sale del catálogo y pasa a pestaña propia. **Clientes** es un directorio calculado a partir de los presupuestos: agrupa por nombre normalizado, ignora los presupuestos sin nombre, muestra el historial y permite crear uno nuevo con los datos del cliente. No hay entidad `Client` ni esquema nuevo en esta iteración.
 - **Motivo**: Ajustes es una pantalla de configuración poco frecuente y ocupaba un sitio fijo; Agrupaciones es una función de trabajo diario que estaba escondida dentro de Precios; y un directorio de clientes aporta valor para el trabajo repetido sin cambiar la forma en que se guardan los presupuestos.
 - **Consecuencia**: `AppTab` cambia a `quotes`, `prices`, `kits`, `clients`; `AppRouter` gana `isSettingsPresented`. `CatalogView` deja de hospedar `KitsView`. Se añaden `ClientsView`, `ClientsViewModel` y `SettingsToolbarButton`. La agrupación por nombre es una heurística: dos clientes con el mismo nombre se fusionan, y cambiar el nombre en un presupuesto crea un grupo distinto (los presupuestos conservan su copia). Queda anotado en Q-009.
+
+## D-022 — La versión 1.0 se publica sin límite de presupuestos
+- **Fecha**: 2026-11-11
+- **Estado**: aceptada
+- **Decisión**: `StubEntitlements` usa el plan `.pro` por defecto. `CreateQuote` conserva la comprobación de cuota para el futuro Paywall (M7), pero en la 1.0 no se alcanza. Se añade `ReleaseConfigurationTests` para fijar el comportamiento.
+- **Motivo**: la app se publica sin compras ni Paywall; un límite de cinco presupuestos al mes dejaría al usuario bloqueado sin forma de desbloquearlo.
+- **Consecuencia**: cuando se active el Paywall se cambiará el plan por defecto y se decidirá el tratamiento de duplicados y borrados (Q-007). `CheckQuota` y `QuotaPolicy` se mantienen como dominio probado, aunque la UI de la v1 no los use.
