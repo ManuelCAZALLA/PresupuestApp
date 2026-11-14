@@ -6,26 +6,18 @@ import QuoteCore
 struct ClientsView: View {
     @Bindable var viewModel: ClientsViewModel
     @Environment(AppRouter.self) private var router
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var selectedClientID: String?
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     var body: some View {
-        List {
-            Section {
-                ForEach(viewModel.filteredGroups) { group in
-                    NavigationLink {
-                        ClientDetailView(clientID: group.id, viewModel: viewModel)
-                    } label: {
-                        ClientRow(group: group)
-                    }
-                }
-            } footer: {
-                Text("clients.groups.footer")
+        Group {
+            if horizontalSizeClass == .regular {
+                splitView
+            } else {
+                compactView
             }
         }
-        .listStyle(.insetGrouped)
-        .searchable(text: $viewModel.searchText, prompt: "clients.search")
-        .navigationTitle("clients.title")
-        .navigationBarTitleDisplayMode(.large)
-        .overlay { emptyOverlay }
         .task { viewModel.load() }
         .onChange(of: router.selectedTab) { _, tab in
             if tab == .clients { viewModel.load() }
@@ -46,6 +38,71 @@ struct ClientsView: View {
             if case .failed(let message) = viewModel.state {
                 Text(LocalizedStringKey(message))
             }
+        }
+    }
+
+    private var splitView: some View {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            clientList
+        } detail: {
+            if let selectedClientID,
+               viewModel.groups.contains(where: { $0.id == selectedClientID }) {
+                ClientDetailView(clientID: selectedClientID, viewModel: viewModel)
+                    .settingsToolbarButton()
+            } else {
+                ContentUnavailableView {
+                    Label("clients.select", systemImage: "person.2")
+                } description: {
+                    Text("clients.select.message")
+                }
+                .settingsToolbarButton()
+            }
+        }
+        .navigationSplitViewStyle(.balanced)
+    }
+
+    private var compactView: some View {
+        NavigationStack {
+            List {
+                clientRows
+            }
+            .listStyle(.insetGrouped)
+            .searchable(text: $viewModel.searchText, prompt: "clients.search")
+            .navigationTitle("clients.title")
+            .navigationBarTitleDisplayMode(.large)
+            .overlay { emptyOverlay }
+            .settingsToolbarButton()
+        }
+    }
+
+    private var clientList: some View {
+        List(selection: $selectedClientID) {
+            clientRows
+        }
+        .listStyle(.insetGrouped)
+        .searchable(text: $viewModel.searchText, prompt: "clients.search")
+        .navigationTitle("clients.title")
+        .navigationBarTitleDisplayMode(.large)
+        .overlay { emptyOverlay }
+        .navigationSplitViewColumnWidth(min: 280, ideal: 340, max: 420)
+    }
+
+    private var clientRows: some View {
+        Section {
+            ForEach(viewModel.filteredGroups) { group in
+                if horizontalSizeClass == .regular {
+                    ClientRow(group: group)
+                        .tag(group.id)
+                } else {
+                    NavigationLink {
+                        ClientDetailView(clientID: group.id, viewModel: viewModel)
+                    } label: {
+                        ClientRow(group: group)
+                    }
+                }
+            }
+        } footer: {
+            Text("clients.groups.footer")
         }
     }
 
@@ -193,6 +250,7 @@ private struct ClientDetailView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .centeredActionWidth(520)
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
             .background(.bar)

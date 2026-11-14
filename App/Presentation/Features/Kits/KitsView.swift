@@ -67,7 +67,7 @@ struct KitsView: View {
                     viewModel.save(kit, isNew: true)
                 }
             }
-            .presentationDetents([.large])
+            .adaptiveSheetDetents([.large])
         }
         .sheet(item: $editingKit) { kit in
             NavigationStack {
@@ -79,7 +79,7 @@ struct KitsView: View {
                     viewModel.save(updated, isNew: false)
                 }
             }
-            .presentationDetents([.large])
+            .adaptiveSheetDetents([.large])
         }
         .task { viewModel.load() }
         .onChange(of: router.selectedTab) { _, tab in

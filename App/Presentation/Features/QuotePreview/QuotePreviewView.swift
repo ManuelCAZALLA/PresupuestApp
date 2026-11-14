@@ -54,6 +54,7 @@ struct QuotePreviewView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .centeredActionWidth(520)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
                 .background(.bar)

@@ -55,7 +55,7 @@ struct CatalogView: View {
                     viewModel.saveItem(updated, isNew: false)
                 }
             }
-            .presentationDetents([.large])
+            .adaptiveSheetDetents([.large])
         }
         .task { viewModel.load() }
         .onChange(of: router.isImportPresented) { _, presented in
@@ -79,6 +79,7 @@ struct CatalogView: View {
                     onPaste: { router.presentImport() },
                     onAddManually: { router.presentNewItem() }
                 )
+                .frame(maxWidth: 420)
             }
             .padding(.horizontal, 24)
         }

@@ -29,6 +29,7 @@ struct OnboardingLoadTariffView: View {
                     onPaste: { onChoose(.pasteList) },
                     onAddManually: { onChoose(.addManually) }
                 )
+                .frame(maxWidth: 480)
 
                 Button {
                     onChoose(.later)
@@ -39,6 +40,7 @@ struct OnboardingLoadTariffView: View {
                         .frame(maxWidth: .infinity, minHeight: 56)
                 }
                 .buttonStyle(.plain)
+                .frame(maxWidth: 480)
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 24)

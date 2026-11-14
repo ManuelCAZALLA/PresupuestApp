@@ -13,6 +13,7 @@ struct ImportTariffView: View {
 
     var body: some View {
         content
+            .readableContentWidth(860)
             .navigationTitle("importTariff.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -285,7 +286,7 @@ struct ImportTariffView: View {
                 dismiss()
             } label: {
                 Text("importTariff.done.close")
-                    .frame(maxWidth: .infinity, minHeight: 56)
+                    .frame(maxWidth: 480, minHeight: 56)
             }
             .buttonStyle(.borderedProminent)
         }

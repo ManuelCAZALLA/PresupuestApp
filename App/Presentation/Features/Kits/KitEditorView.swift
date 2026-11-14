@@ -83,6 +83,7 @@ struct KitEditorView: View {
                 .disabled(catalogItems.isEmpty)
             }
         }
+        .readableContentWidth(640)
         .navigationTitle(kit == nil ? "kits.add" : "kits.edit")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -126,7 +127,7 @@ struct KitEditorView: View {
                     }
                 }
             }
-            .presentationDetents([.medium, .large])
+            .adaptiveSheetDetents([.medium, .large])
         }
     }
 

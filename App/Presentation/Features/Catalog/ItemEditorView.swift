@@ -59,6 +59,7 @@ struct ItemEditorView: View {
                 Text("field.itemVAT.footer")
             }
         }
+        .readableContentWidth(560)
         .navigationTitle(item == nil ? "catalog.addItem" : "catalog.editItem")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

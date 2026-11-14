@@ -33,9 +33,11 @@ struct OnboardingView: View {
                 .frame(minHeight: 44)
             }
         }
+        .frame(maxWidth: 640)
         .padding(.horizontal, 20)
         .padding(.top, 8)
         .frame(minHeight: 44)
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Contenido
@@ -68,6 +70,7 @@ struct OnboardingView: View {
                 OnboardingLoadTariffView(onChoose: choose)
             }
         }
+        .frame(maxWidth: 640)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .id(viewModel.step)
         .transition(.opacity)
@@ -97,8 +100,10 @@ struct OnboardingView: View {
                 .disabled(!viewModel.isPrimaryEnabled)
             }
         }
+        .frame(maxWidth: 560)
         .padding(.horizontal, 20)
         .padding(.bottom, 12)
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Acciones

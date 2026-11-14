@@ -157,10 +157,12 @@ struct SettingsView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .readableContentWidth(700)
         .navigationTitle("settings.title")
         .navigationBarTitleDisplayMode(.large)
         .sheet(item: $walkthroughPresentation) { presentation in
             OnboardingView(viewModel: presentation.viewModel, router: router)
+                .adaptivePageSheet()
         }
         .alert(
             "settings.contact.unavailable.title",

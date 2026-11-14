@@ -29,6 +29,7 @@ struct AppRootView: View {
             NavigationStack {
                 ImportTariffView(viewModel: container.importTariffViewModel)
             }
+            .adaptiveSheetDetents([.large])
         }
         .sheet(isPresented: $router.isItemEditorPresented) {
             NavigationStack {
@@ -36,7 +37,7 @@ struct AppRootView: View {
                     container.catalogViewModel.saveItem(created, isNew: true)
                 }
             }
-            .presentationDetents([.large])
+            .adaptiveSheetDetents([.large])
         }
         .sheet(isPresented: $router.isSettingsPresented) {
             settingsSheet
@@ -89,14 +90,11 @@ struct AppRootView: View {
             }
             .tag(AppTab.kits)
 
-            NavigationStack {
-                ClientsView(viewModel: container.clientsViewModel)
-                    .settingsToolbarButton()
-            }
-            .tabItem {
-                Label("tab.clients", systemImage: "person.2")
-            }
-            .tag(AppTab.clients)
+            ClientsView(viewModel: container.clientsViewModel)
+                .tabItem {
+                    Label("tab.clients", systemImage: "person.2")
+                }
+                .tag(AppTab.clients)
         }
     }
 
@@ -117,6 +115,6 @@ struct AppRootView: View {
             }
         }
         .environment(router)
-        .presentationDetents([.large])
+        .adaptiveSheetDetents([.large])
     }
 }

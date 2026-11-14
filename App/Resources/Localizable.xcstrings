@@ -308,6 +308,26 @@
         }
       }
     },
+    "clients.select" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selecciona un cliente"
+          }
+        }
+      }
+    },
+    "clients.select.message" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige un cliente de la lista para ver su ficha y sus presupuestos."
+          }
+        }
+      }
+    },
     "clients.title" : {
       "localizations" : {
         "es" : {

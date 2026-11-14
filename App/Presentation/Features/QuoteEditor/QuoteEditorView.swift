@@ -38,6 +38,7 @@ struct QuoteEditorView: View {
                 }
             }
         }
+        .readableContentWidth(760)
         .scrollDismissesKeyboard(.interactively)
         .navigationTitle(viewModel.quote?.number ?? "")
         .navigationBarTitleDisplayMode(.inline)
@@ -74,6 +75,7 @@ struct QuoteEditorView: View {
                 .controlSize(.large)
                 .disabled(viewModel.quote?.lines.isEmpty ?? true)
             }
+            .centeredActionWidth(760)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(.bar)
@@ -245,7 +247,7 @@ struct QuoteEditorView: View {
                 if !presented { addMode = .item }
             }
         }
-        .presentationDetents([.medium, .large])
+        .adaptiveSheetDetents([.medium, .large])
     }
 }
 
