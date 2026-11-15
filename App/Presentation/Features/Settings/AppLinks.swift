@@ -22,8 +22,8 @@ struct AppLinks: Equatable {
     }
 
     static let configured = AppLinks(
-        supportEmail: "soporte@presupuestapp.example",
-        websiteURL: URL(string: "https://example.com/presupuestapp"),
+        supportEmail: "soportecazalla@gmail.com",
+        websiteURL: URL(string: "https://manuelcazalla.github.io/PresupuestApp-Web/"),
         privacyURL: URL(string: "https://manuelcazalla.github.io/PresupuestApp-Politica-Privacidad.html/"),
         termsURL: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"),
         appStoreID: "0000000000"
