@@ -18,6 +18,7 @@ struct QuoteListView: View {
                         total: viewModel.totals(for: quote).total
                     )
                 }
+                .buttonStyle(.plain)
                 .swipeActions(edge: .leading, allowsFullSwipe: false) {
                     Button {
                         viewModel.duplicate(quote)
@@ -56,10 +57,15 @@ struct QuoteListView: View {
                         ? duplicateTint.opacity(0.14)
                         : Color.clear
                 )
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
                 .animation(.easeInOut(duration: 0.2), value: viewModel.highlightedQuoteID)
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(BrandPalette.background)
+        .readableContentWidth(780)
         .overlay { emptyOverlay }
         .overlay(alignment: .top) {
             if let number = viewModel.duplicateNoticeNumber {
@@ -191,33 +197,42 @@ struct QuoteRow: View {
     var showsClientName = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
-                if showsClientName {
-                    Group {
-                        if quote.client.name.isEmpty {
-                            Text("quote.client.placeholder")
-                        } else {
-                            Text(quote.client.name)
+        CardSurface(padding: 15) {
+            VStack(alignment: .leading, spacing: 11) {
+                HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        if showsClientName {
+                            Group {
+                                if quote.client.name.isEmpty {
+                                    Text("quote.client.placeholder")
+                                } else {
+                                    Text(quote.client.name)
+                                }
+                            }
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                            .lineLimit(2)
                         }
+                        Text(verbatim: quote.number)
+                            .font(.subheadline.monospaced())
+                            .foregroundStyle(.secondary)
                     }
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
+                    Spacer(minLength: 4)
+                    Text(CurrencyFormatter.string(from: total))
+                        .font(.title3.weight(.bold).monospacedDigit())
+                        .foregroundStyle(BrandPalette.accent)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
-                Spacer()
-                Text(CurrencyFormatter.string(from: total))
-                    .font(.body.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(.primary)
-            }
-            HStack(spacing: 8) {
-                Text(verbatim: quote.number)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                StatusBadge(status: quote.status)
+                HStack {
+                    StatusBadge(status: quote.status)
+                    Spacer()
+                    Text(quote.issueDate, format: .dateTime.day().month().year())
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
-        .padding(.vertical, 4)
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
     }

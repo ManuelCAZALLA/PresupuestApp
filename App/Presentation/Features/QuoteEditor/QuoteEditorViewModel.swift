@@ -114,6 +114,20 @@ final class QuoteEditorViewModel {
         }
     }
 
+    /// Recarga el catálogo al abrir el selector por si se importó una tarifa
+    /// después de entrar en este presupuesto.
+    func refreshCatalog() {
+        do {
+            catalog = try listItems.execute()
+            itemsByID = Dictionary(uniqueKeysWithValues: catalog.map { ($0.id, $0) })
+            kits = try listKits.execute().sorted {
+                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
+        } catch {
+            state = .failed(AppErrorMapper.message(for: error))
+        }
+    }
+
     func persistDetails() {
         guard var quote else { return }
         quote.client = Client(

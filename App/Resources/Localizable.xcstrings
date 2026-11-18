@@ -763,6 +763,28 @@
         }
       }
     },
+    "importTariff.error.pdfNoRows" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El PDF tiene texto, pero no se han detectado partidas con precio. Revisa que cada partida y su precio estén en la misma línea."
+          }
+        }
+      }
+    },
+    "importTariff.error.pdfNoText" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer el PDF. Comprueba que no esté dañado y que tenga texto seleccionable; los PDF escaneados como imagen aún no se pueden importar."
+          }
+        }
+      }
+    },
     "importTariff.error.retry" : {
       "localizations" : {
         "es" : {
@@ -908,7 +930,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excel (.xlsx) o CSV, con una fila por partida."
+            "value" : "Excel (.xlsx), CSV o PDF con texto, una fila por partida."
           }
         }
       }
@@ -1038,7 +1060,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Precio"
+            "value" : "Precio sin IVA"
           }
         }
       }
@@ -1059,6 +1081,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unidad"
+          }
+        }
+      }
+    },
+    "importTariff.review.unit.confirm" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmar unidad seleccionada"
+          }
+        }
+      }
+    },
+    "importTariff.review.vat" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IVA (%)"
+          }
+        }
+      }
+    },
+    "importTariff.review.vat.hint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déjalo vacío para usar el IVA del presupuesto."
           }
         }
       }
@@ -1164,7 +1216,6 @@
       }
     },
     "importTariff.warning.duplicado" : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1196,6 +1247,17 @@
         }
       }
     },
+    "importTariff.warning.precioAmbiguo.detail" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precio «%@» ambiguo: acláralo en el campo."
+          }
+        }
+      }
+    },
     "importTariff.warning.precioInvalido" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1207,8 +1269,18 @@
         }
       }
     },
-    "importTariff.warning.precioSinMoneda" : {
+    "importTariff.warning.precioInvalido.detail" : {
       "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se entiende «%@» como precio. Corrígelo en el campo."
+          }
+        }
+      }
+    },
+    "importTariff.warning.precioSinMoneda" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1219,7 +1291,6 @@
       }
     },
     "importTariff.warning.sinPrecio" : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1236,6 +1307,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unidad no reconocida: se usa ud"
+          }
+        }
+      }
+    },
+    "importTariff.warning.unidadDesconocida.detail" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidad «%@» no reconocida. Elige la correcta."
+          }
+        }
+      }
+    },
+    "importTariff.warning.vatInvalido.detail" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IVA «%@» no reconocido. Corrígelo o déjalo vacío."
           }
         }
       }
@@ -1481,12 +1574,42 @@
         }
       }
     },
+    "onboarding.back" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atrás"
+          }
+        }
+      }
+    },
+    "onboarding.back.hint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve al paso anterior."
+          }
+        }
+      }
+    },
+    "onboarding.business.hint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El nombre es obligatorio. Puedes completar el resto más adelante en Ajustes."
+          }
+        }
+      }
+    },
     "onboarding.business.subtitle" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saldrá en tus presupuestos."
+            "value" : "Elige qué datos aparecerán en tus presupuestos."
           }
         }
       }
@@ -1556,11 +1679,12 @@
       }
     },
     "onboarding.page.indicator" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Página"
+            "value" : "Progreso de configuración"
           }
         }
       }
@@ -1631,6 +1755,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Envíalo como un profesional"
+          }
+        }
+      }
+    },
+    "onboarding.progress.format" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paso %1$ld de %2$ld"
+          }
+        }
+      }
+    },
+    "onboarding.progress.label" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progreso"
           }
         }
       }
@@ -2245,7 +2389,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "PresupuestApp"
+            "value" : "Presupuestos para Autónomos"
           }
         }
       }
@@ -2360,6 +2504,58 @@
         }
       }
     },
+    "settings.logo.add" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir logo"
+          }
+        }
+      }
+    },
+    "settings.logo.change" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar logo"
+          }
+        }
+      }
+    },
+    "settings.logo.footer" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se incluirá en la cabecera de los presupuestos en PDF."
+          }
+        }
+      }
+    },
+    "settings.logo.remove" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar"
+          }
+        }
+      }
+    },
+    "settings.logo.section" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logo de empresa"
+          }
+        }
+      }
+    },
     "settings.opensBrowser" : {
       "localizations" : {
         "es" : {
@@ -2445,7 +2641,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soporte PresupuestApp"
+            "value" : "Soporte Presupuestos para Autónomos"
           }
         }
       }

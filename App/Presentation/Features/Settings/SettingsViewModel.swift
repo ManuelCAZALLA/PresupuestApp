@@ -49,16 +49,20 @@ final class SettingsViewModel {
         validityDays: Int,
         numberPrefix: String
     ) {
-        profile = BusinessProfile(
-            name: name,
-            taxID: taxID,
-            phone: phone,
-            email: email,
-            defaultVATRate: defaultVATRate,
-            terms: terms,
-            validityDays: validityDays,
-            numberPrefix: numberPrefix
-        )
+        profile.name = name
+        profile.taxID = taxID
+        profile.phone = phone
+        profile.email = email
+        profile.defaultVATRate = defaultVATRate
+        profile.terms = terms
+        profile.validityDays = validityDays
+        profile.numberPrefix = numberPrefix
+        saved = false
+    }
+
+    func setLogo(_ data: Data?) {
+        profile.logo = data
+        saved = false
     }
 
     func save() {

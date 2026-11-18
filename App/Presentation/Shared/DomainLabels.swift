@@ -24,16 +24,28 @@ enum DomainLabels {
         }
     }
 
-    /// Etiqueta de un aviso de importación (S8), por su tipo.
+    /// Texto localizado de un aviso de importación (S8), incluyendo el valor
+    /// original cuando ayuda al usuario a corregirlo.
     static func importWarning(_ warning: ImportWarning) -> String {
-        switch warning.type {
-        case "sinPrecio": return "importTariff.warning.sinPrecio"
-        case "precioInvalido": return "importTariff.warning.precioInvalido"
-        case "unidadDesconocida": return "importTariff.warning.unidadDesconocida"
-        case "duplicado": return "importTariff.warning.duplicado"
-        case "precioAmbiguo": return "importTariff.warning.precioAmbiguo"
-        case "precioSinMoneda": return "importTariff.warning.precioSinMoneda"
-        default: return "importTariff.warning.generic"
+        switch warning {
+        case .unidadDesconocida(_, let raw):
+            return formattedWarning("importTariff.warning.unidadDesconocida.detail", raw)
+        case .precioInvalido(_, let raw):
+            return formattedWarning("importTariff.warning.precioInvalido.detail", raw)
+        case .precioAmbiguo(_, let raw):
+            return formattedWarning("importTariff.warning.precioAmbiguo.detail", raw)
+        case .vatInvalido(_, let raw):
+            return formattedWarning("importTariff.warning.vatInvalido.detail", raw)
+        case .sinPrecio:
+            return String(localized: "importTariff.warning.sinPrecio")
+        case .duplicado:
+            return String(localized: "importTariff.warning.duplicado")
+        case .precioSinMoneda:
+            return String(localized: "importTariff.warning.precioSinMoneda")
         }
+    }
+
+    private static func formattedWarning(_ key: String, _ value: String) -> String {
+        String.localizedStringWithFormat(NSLocalizedString(key, comment: ""), value)
     }
 }

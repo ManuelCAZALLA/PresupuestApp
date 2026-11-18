@@ -14,19 +14,38 @@ struct KitsView: View {
                 Button {
                     editingKit = kit
                 } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(kit.name)
-                            .foregroundStyle(.primary)
-                        let detail = viewModel.summary(for: kit)
-                        if !detail.isEmpty {
-                            Text(detail)
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(2)
+                    CardSurface(padding: 14) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "square.stack.3d.up.fill")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(BrandPalette.accent)
+                                .frame(width: 38, height: 38)
+                                .background(BrandPalette.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 11))
+                                .accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(kit.name)
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(.primary)
+                                let detail = viewModel.summary(for: kit)
+                                if !detail.isEmpty {
+                                    Text(detail)
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(2)
+                                }
+                            }
+                            Spacer(minLength: 0)
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.tertiary)
+                                .accessibilityHidden(true)
                         }
                     }
-                    .padding(.vertical, 4)
                 }
+                .buttonStyle(.plain)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
                 .swipeActions {
                     Button(role: .destructive) {
                         viewModel.delete(kit)
@@ -36,6 +55,10 @@ struct KitsView: View {
                 }
             }
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(BrandPalette.background)
+        .readableContentWidth(780)
         .navigationTitle("kits.title")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

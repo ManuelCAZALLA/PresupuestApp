@@ -16,5 +16,6 @@ struct CardSurface<Content: View>: View {
             .frame(maxWidth: fillsWidth ? .infinity : nil, alignment: .leading)
             .background(BrandPalette.card, in: shape)
             .overlay(shape.strokeBorder(BrandPalette.border, lineWidth: 1))
+            .shadow(color: .black.opacity(0.035), radius: 8, x: 0, y: 3)
     }
 }

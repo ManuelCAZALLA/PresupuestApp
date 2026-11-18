@@ -27,18 +27,26 @@ struct QuoteEditorView: View {
     @State private var addMode: AddMode = .item
 
     var body: some View {
-        Form {
-            clientSection
-            linesSection
-            discountSection
-            notesSection
-            if let totals = viewModel.totals {
-                Section {
-                    TotalsFooter(totals: totals)
+        ScrollView {
+            VStack(spacing: 14) {
+                quoteOverview
+                clientSection
+                linesSection
+                discountSection
+                notesSection
+                if let totals = viewModel.totals {
+                    CardSurface {
+                        TotalsFooter(totals: totals)
+                    }
                 }
             }
+            .frame(maxWidth: 760)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 20)
+            .frame(maxWidth: .infinity)
         }
-        .readableContentWidth(760)
+        .background(BrandPalette.background)
         .scrollDismissesKeyboard(.interactively)
         .navigationTitle(viewModel.quote?.number ?? "")
         .navigationBarTitleDisplayMode(.inline)
@@ -83,6 +91,11 @@ struct QuoteEditorView: View {
         .sheet(isPresented: $isPickingItem) {
             itemPicker
         }
+        .onChange(of: isPickingItem) { _, isPresented in
+            if isPresented {
+                viewModel.refreshCatalog()
+            }
+        }
         .task { viewModel.load() }
         .onDisappear { viewModel.persistDetails() }
         .alert(
@@ -100,65 +113,123 @@ struct QuoteEditorView: View {
         }
     }
 
+    private var quoteOverview: some View {
+        CardSurface(padding: 18) {
+            HStack(alignment: .center, spacing: 14) {
+                Image(systemName: "doc.text.fill")
+                    .font(.title2)
+                    .foregroundStyle(BrandPalette.accent)
+                    .frame(width: 48, height: 48)
+                    .background(BrandPalette.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 14))
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Group {
+                        if viewModel.clientName.isEmpty {
+                            Text("quote.client.placeholder")
+                        } else {
+                            Text(viewModel.clientName)
+                        }
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                if let quote = viewModel.quote {
+                    StatusBadge(status: quote.status)
+                }
+            }
+        }
+    }
+
     private var clientSection: some View {
-        Section("quote.editor.client") {
-            TextField("field.clientName", text: $viewModel.clientName)
-            TextField("field.phone", text: $viewModel.clientPhone)
-                .keyboardType(.phonePad)
-            TextField("field.address", text: $viewModel.clientAddress)
-            TextField("field.workAddress", text: $viewModel.workAddress)
+        CardSurface {
+            VStack(alignment: .leading, spacing: 12) {
+                sectionHeading("quote.editor.client", symbol: "person.crop.circle")
+                TextField("field.clientName", text: $viewModel.clientName)
+                    .textContentType(.name)
+                    .textFieldStyle(.roundedBorder)
+                TextField("field.phone", text: $viewModel.clientPhone)
+                    .keyboardType(.phonePad)
+                    .textContentType(.telephoneNumber)
+                    .textFieldStyle(.roundedBorder)
+                TextField("field.address", text: $viewModel.clientAddress)
+                    .textContentType(.fullStreetAddress)
+                    .textFieldStyle(.roundedBorder)
+                TextField("field.workAddress", text: $viewModel.workAddress)
+                    .textFieldStyle(.roundedBorder)
+            }
         }
     }
 
     private var linesSection: some View {
-        Section("quote.editor.lines") {
-            if viewModel.quote?.lines.isEmpty ?? true {
-                Text("quote.editor.lines.empty")
-                    .foregroundStyle(.secondary)
-            }
-            ForEach(viewModel.quote?.lines ?? []) { line in
-                QuoteLineRow(
-                    line: line,
-                    total: viewModel.lineTotal(line),
-                    onDecrease: { viewModel.decrease(line) },
-                    onIncrease: { viewModel.increase(line) }
-                )
-                .swipeActions {
-                    Button(role: .destructive) {
-                        viewModel.delete(line)
-                    } label: {
-                        Label("action.delete", systemImage: "trash")
-                    }
+        CardSurface {
+            VStack(alignment: .leading, spacing: 10) {
+                sectionHeading("quote.editor.lines", symbol: "list.bullet.rectangle")
+                if viewModel.quote?.lines.isEmpty ?? true {
+                    Label("quote.editor.lines.empty", systemImage: "tray")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, minHeight: 70)
+                }
+                ForEach(viewModel.quote?.lines ?? []) { line in
+                    Divider()
+                    QuoteLineRow(
+                        line: line,
+                        total: viewModel.lineTotal(line),
+                        onDecrease: { viewModel.decrease(line) },
+                        onIncrease: { viewModel.increase(line) },
+                        onDelete: { viewModel.delete(line) }
+                    )
                 }
             }
         }
     }
 
     private var discountSection: some View {
-        Section("quote.editor.discount") {
-            Picker("quote.editor.discount.kind", selection: $viewModel.discountKind) {
-                Text("quote.editor.discount.none").tag(QuoteEditorViewModel.DiscountKind.none)
-                Text("quote.editor.discount.percent").tag(QuoteEditorViewModel.DiscountKind.percent)
-                Text("quote.editor.discount.amount").tag(QuoteEditorViewModel.DiscountKind.amount)
-            }
-            .onChange(of: viewModel.discountKind) { _, _ in
-                viewModel.persistDetails()
-            }
-            if viewModel.discountKind != .none {
-                TextField("quote.editor.discount.value", text: $viewModel.discountValue)
-                    .keyboardType(.decimalPad)
-                    .onChange(of: viewModel.discountValue) { _, _ in
-                        viewModel.persistDetails()
-                    }
+        CardSurface {
+            VStack(alignment: .leading, spacing: 12) {
+                sectionHeading("quote.editor.discount", symbol: "percent")
+                Picker("quote.editor.discount.kind", selection: $viewModel.discountKind) {
+                    Text("quote.editor.discount.none").tag(QuoteEditorViewModel.DiscountKind.none)
+                    Text("quote.editor.discount.percent").tag(QuoteEditorViewModel.DiscountKind.percent)
+                    Text("quote.editor.discount.amount").tag(QuoteEditorViewModel.DiscountKind.amount)
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: viewModel.discountKind) { _, _ in
+                    viewModel.persistDetails()
+                }
+                if viewModel.discountKind != .none {
+                    TextField("quote.editor.discount.value", text: $viewModel.discountValue)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(.roundedBorder)
+                        .onChange(of: viewModel.discountValue) { _, _ in
+                            viewModel.persistDetails()
+                        }
+                }
             }
         }
     }
 
     private var notesSection: some View {
-        Section("quote.editor.notes") {
-            TextField("quote.editor.notes.placeholder", text: $viewModel.notes, axis: .vertical)
-                .lineLimit(3...6)
+        CardSurface {
+            VStack(alignment: .leading, spacing: 12) {
+                sectionHeading("quote.editor.notes", symbol: "note.text")
+                TextField("quote.editor.notes.placeholder", text: $viewModel.notes, axis: .vertical)
+                    .lineLimit(3...6)
+                    .textFieldStyle(.roundedBorder)
+            }
         }
+    }
+
+    private func sectionHeading(_ key: LocalizedStringKey, symbol: String) -> some View {
+        Label {
+            Text(key).font(.headline)
+        } icon: {
+            Image(systemName: symbol)
+                .foregroundStyle(BrandPalette.accent)
+        }
+        .padding(.bottom, 2)
     }
 
     private var itemPicker: some View {
@@ -256,6 +327,7 @@ private struct QuoteLineRow: View {
     let total: Decimal
     let onDecrease: () -> Void
     let onIncrease: () -> Void
+    let onDelete: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -277,6 +349,12 @@ private struct QuoteLineRow: View {
                     onDecrease: onDecrease,
                     onIncrease: onIncrease
                 )
+                Button(role: .destructive, action: onDelete) {
+                    Image(systemName: "trash")
+                        .frame(minWidth: 44, minHeight: 44)
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel("action.delete")
             }
         }
         .padding(.vertical, 4)

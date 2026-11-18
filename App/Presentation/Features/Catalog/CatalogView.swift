@@ -22,13 +22,21 @@ struct CatalogView: View {
                             onEdit: { editingItem = item },
                             onDelete: { viewModel.deleteItem(item) }
                         )
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                     }
                 } header: {
                     Text(LocalizedStringKey(section.category))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(BrandPalette.accent)
                 }
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(BrandPalette.background)
+        .readableContentWidth(780)
         .searchable(text: $viewModel.searchText, prompt: "catalog.search")
         .navigationTitle("catalog.title")
         .navigationBarTitleDisplayMode(.large)
@@ -93,28 +101,37 @@ private struct ItemRow: View {
 
     var body: some View {
         Button(action: onEdit) {
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(item.name)
-                        .foregroundStyle(.primary)
-                    Text(LocalizedStringKey(DomainLabels.measureUnit(item.unit)))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                if item.unitPrice > 0 {
-                    Text(CurrencyFormatter.string(from: item.unitPrice))
-                        .font(.body.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text("catalog.noPrice")
-                        .font(.footnote)
-                        .foregroundStyle(.tertiary)
+            CardSurface(padding: 14) {
+                HStack(alignment: .center, spacing: 12) {
+                    Image(systemName: "wrench.and.screwdriver")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(BrandPalette.accent)
+                        .frame(width: 38, height: 38)
+                        .background(BrandPalette.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 11))
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(item.name)
+                            .font(.body.weight(.medium))
+                            .foregroundStyle(.primary)
+                        Text(LocalizedStringKey(DomainLabels.measureUnit(item.unit)))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 8)
+                    if item.unitPrice > 0 {
+                        Text(CurrencyFormatter.string(from: item.unitPrice))
+                            .font(.body.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(.primary)
+                            .multilineTextAlignment(.trailing)
+                    } else {
+                        Text("catalog.noPrice")
+                            .font(.footnote)
+                            .foregroundStyle(.tertiary)
+                    }
                 }
             }
-            .padding(.vertical, 4)
-            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .swipeActions {
             Button(role: .destructive, action: onDelete) {
                 Label("action.delete", systemImage: "trash")

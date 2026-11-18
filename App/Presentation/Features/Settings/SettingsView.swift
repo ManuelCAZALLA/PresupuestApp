@@ -1,3 +1,4 @@
+import PhotosUI
 import SwiftUI
 import UIKit
 
@@ -11,6 +12,7 @@ struct SettingsView: View {
     @Environment(\.openURL) private var openURL
     @State private var walkthroughPresentation: WalkthroughPresentation?
     @State private var isMailUnavailablePresented = false
+    @State private var photoItem: PhotosPickerItem?
 
     @State private var name = ""
     @State private var taxID = ""
@@ -37,6 +39,8 @@ struct SettingsView: View {
             } header: {
                 Text("settings.businessSection")
             }
+
+            logoSection
 
             Section {
                 TextField("field.defaultVAT", text: $defaultVATRate)
@@ -178,6 +182,9 @@ struct SettingsView: View {
             Text("settings.contact.unavailable.message")
         }
         .task { viewModel.load() }
+        .onChange(of: photoItem) { _, item in
+            loadLogo(from: item)
+        }
         .onChange(of: viewModel.state) { _, newState in
             if case .loaded = newState, !viewModel.saved {
                 name = viewModel.profile.name
@@ -216,12 +223,67 @@ struct SettingsView: View {
         viewModel.save()
     }
 
+    private func loadLogo(from item: PhotosPickerItem?) {
+        guard let item else { return }
+        Task {
+            let data = try? await item.loadTransferable(type: Data.self)
+            viewModel.setLogo(data)
+        }
+    }
+
+    @ViewBuilder
+    private var logoPreview: some View {
+        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+        if let data = viewModel.profile.logo, let image = UIImage(data: data) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 56, height: 56)
+                .clipShape(shape)
+                .overlay(shape.strokeBorder(BrandPalette.border, lineWidth: 1))
+                .accessibilityHidden(true)
+        } else {
+            shape
+                .fill(BrandPalette.card)
+                .overlay(shape.strokeBorder(BrandPalette.border, lineWidth: 1))
+                .overlay { Image(systemName: "photo").foregroundStyle(.secondary) }
+                .frame(width: 56, height: 56)
+                .accessibilityHidden(true)
+        }
+    }
+
     private var supportMailtoURL: URL? {
         links.supportMailtoURL(
             appVersion: appVersion,
             buildVersion: buildVersion,
             iosVersion: UIDevice.current.systemVersion
         )
+    }
+
+    private var logoSection: some View {
+        // PhotosPicker recibe un cierre Sendable: captura solo esta clave,
+        // resuelta aquí en el contexto principal, y no el ViewModel.
+        let actionKey = viewModel.profile.logo == nil ? "settings.logo.add" : "settings.logo.change"
+
+        return Section {
+            HStack(spacing: 14) {
+                logoPreview
+                PhotosPicker(selection: $photoItem, matching: .images) {
+                    Text(LocalizedStringKey(actionKey))
+                        .frame(minHeight: 44, alignment: .leading)
+                }
+                if viewModel.profile.logo != nil {
+                    Button("settings.logo.remove", role: .destructive) {
+                        viewModel.setLogo(nil)
+                    }
+                    .frame(minHeight: 44)
+                }
+            }
+        } header: {
+            Text("settings.logo.section")
+        } footer: {
+            Text("settings.logo.footer")
+        }
     }
 
     private var appVersion: String {

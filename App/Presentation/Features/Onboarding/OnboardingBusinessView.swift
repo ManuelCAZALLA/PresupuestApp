@@ -60,6 +60,9 @@ struct OnboardingBusinessView: View {
             Text("onboarding.business.subtitle")
                 .font(.body)
                 .foregroundStyle(.secondary)
+            Text("onboarding.business.hint")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
         .fixedSize(horizontal: false, vertical: true)
         .padding(.top, 8)

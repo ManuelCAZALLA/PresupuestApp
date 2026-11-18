@@ -35,7 +35,8 @@ struct QuotePDFRendererTests {
             lines: [lineA, lineB],
             discount: .none,
             notes: "Notas de prueba",
-            defaultVATRate: Decimal(21)
+            defaultVATRate: Decimal(21),
+            workDescription: "Reforma de baño de prueba"
         )
         let totals = QuoteCalculator().calculate(lines: quote.lines, discount: quote.discount)
         let url = try DeviceQuotePDFRenderer().render(
@@ -50,6 +51,10 @@ struct QuotePDFRendererTests {
             .joined(separator: "\n")
         #expect(text.contains("P-2026-0001"))
         #expect(text.contains("Cliente de prueba"))
+        #expect(text.contains("Descripción del Proyecto"))
+        #expect(text.contains("Reforma de baño de prueba"))
+        #expect(text.contains("Notas"))
+        #expect(text.contains("Notas de prueba"))
         #expect(text.contains("387,20") || text.contains("387.20"))
         #expect(text.contains("21"))
         #expect(text.uppercased().contains("PRESUPUESTO"))
@@ -164,12 +169,12 @@ struct QuotePDFRendererTests {
         let profile = BusinessProfile(name: "Taller PRUEBA", logo: Self.onePixelPNG)
 
         let clean = try renderText(quote, totals: totals, watermark: false, profile: profile)
-        #expect(!clean.contains("PresupuestApp"))
+        #expect(!clean.contains("Presupuestos para Autónomos"))
         #expect(clean.contains("Taller PRUEBA"))
         #expect(clean.contains("121,00"))
 
         let marked = try renderText(quote, totals: totals, watermark: true, profile: profile)
-        #expect(marked.contains("PresupuestApp"))
+        #expect(marked.contains("Presupuestos para Autónomos"))
     }
 
     // MARK: - Apoyo

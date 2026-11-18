@@ -113,8 +113,12 @@ final class ImportTariffViewModel {
 
     // MARK: - Origen
 
-    /// Lee un archivo Excel (`.xlsx`, `.xlsm`, `.xls`) o `.csv` elegido por el usuario.
+    /// Lee Excel/CSV en el mapeador y enruta PDF con texto seleccionable a revisión.
     func loadFile(at url: URL) {
+        if url.pathExtension.lowercased() == "pdf" {
+            loadPlainTextFile(at: url)
+            return
+        }
         state = .loading
         do {
             let loaded = try source.tables(from: url)
@@ -138,8 +142,15 @@ final class ImportTariffViewModel {
         do {
             pastedText = try source.plainText(from: url)
             loadPastedText()
+            if url.pathExtension.lowercased() == "pdf", rows.isEmpty {
+                state = .failed("importTariff.error.pdfNoRows")
+            }
         } catch {
-            state = .failed(AppErrorMapper.message(for: error))
+            state = .failed(
+                url.pathExtension.lowercased() == "pdf"
+                    ? "importTariff.error.pdfNoText"
+                    : AppErrorMapper.message(for: error)
+            )
         }
     }
 
@@ -149,6 +160,8 @@ final class ImportTariffViewModel {
         switch url.pathExtension.lowercased() {
         case "xlsx", "xlsm", "xls", "csv":
             loadFile(at: url)
+        case "pdf":
+            loadPlainTextFile(at: url)
         default:
             loadPlainTextFile(at: url)
         }
@@ -217,33 +230,53 @@ final class ImportTariffViewModel {
     func updateName(_ name: String, for id: UUID) {
         guard let index = rows.firstIndex(where: { $0.id == id }) else { return }
         rows[index].name = name
+        rows[index].warnings = rows[index].warnings.map { Self.renaming($0, to: name) }
+        refreshDuplicateWarnings()
     }
 
     func updateUnit(_ unit: MeasureUnit, for id: UUID) {
         guard let index = rows.firstIndex(where: { $0.id == id }) else { return }
         rows[index].unit = unit
+        rows[index].warnings.removeAll { $0.type == "unidadDesconocida" }
     }
 
-    /// Cambia el precio. Si el archivo traía IVA, el valor escrito también lo
-    /// trae y se convierte a neto.
+    /// Edita el precio neto que muestra la revisión. La conversión desde
+    /// precio con IVA ya se hizo al interpretar el archivo.
     func updatePrice(_ text: String, for id: UUID) {
         guard let index = rows.firstIndex(where: { $0.id == id }) else { return }
         let name = rows[index].name
         var warnings = rows[index].warnings.filter {
-            $0.type != "precioInvalido" && $0.type != "precioAmbiguo"
+            !["sinPrecio", "precioInvalido", "precioAmbiguo", "precioSinMoneda"].contains($0.type)
         }
         switch PriceParser.parse(text) {
-        case .value(let gross, _):
-            rows[index].netPrice = net(gross)
-        case .ambiguous(let gross, let raw):
-            rows[index].netPrice = net(gross)
+        case .value(let price, _):
+            rows[index].netPrice = price
+        case .ambiguous(let price, let raw):
+            rows[index].netPrice = price
             warnings.append(.precioAmbiguo(name: name, raw: raw))
         case .invalid(let raw):
-            if !text.trimmingCharacters(in: .whitespaces).isEmpty {
+            rows[index].netPrice = 0
+            if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                warnings.append(.sinPrecio(name: name))
+            } else {
                 warnings.append(.precioInvalido(name: name, raw: raw))
             }
         }
         rows[index].warnings = warnings
+    }
+
+    func updateVATRate(_ text: String, for id: UUID) {
+        guard let index = rows.firstIndex(where: { $0.id == id }) else { return }
+        let raw = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        rows[index].warnings.removeAll { $0.type == "vatInvalido" }
+        if raw.isEmpty {
+            rows[index].vatRate = nil
+        } else if let rate = VATParser.parse(raw) {
+            rows[index].vatRate = rate
+        } else {
+            rows[index].vatRate = nil
+            rows[index].warnings.append(.vatInvalido(name: rows[index].name, raw: raw))
+        }
     }
 
     func removeRow(_ id: UUID) {
@@ -272,8 +305,30 @@ final class ImportTariffViewModel {
         ImportOptions(vatIncluded: vatIncluded, vatRate: vatRate)
     }
 
-    private func net(_ gross: Decimal) -> Decimal {
-        vatIncluded ? RoundingPolicy.netPrice(fromGross: gross, vatRate: vatRate) : gross
+    private func refreshDuplicateWarnings() {
+        for index in rows.indices {
+            rows[index].warnings.removeAll { $0.type == "duplicado" }
+        }
+        var seen: Set<String> = []
+        for index in rows.indices {
+            let key = Item.nameKey(rows[index].name)
+            guard !key.isEmpty else { continue }
+            if !seen.insert(key).inserted {
+                rows[index].warnings.append(.duplicado(name: rows[index].name))
+            }
+        }
+    }
+
+    private static func renaming(_ warning: ImportWarning, to name: String) -> ImportWarning {
+        switch warning {
+        case .sinPrecio: return .sinPrecio(name: name)
+        case .precioInvalido(_, let raw): return .precioInvalido(name: name, raw: raw)
+        case .unidadDesconocida(_, let raw): return .unidadDesconocida(name: name, raw: raw)
+        case .duplicado: return .duplicado(name: name)
+        case .precioAmbiguo(_, let raw): return .precioAmbiguo(name: name, raw: raw)
+        case .precioSinMoneda: return .precioSinMoneda(name: name)
+        case .vatInvalido(_, let raw): return .vatInvalido(name: name, raw: raw)
+        }
     }
 
     private func applySuggestion(for table: RawTable) {

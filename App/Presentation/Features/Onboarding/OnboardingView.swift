@@ -23,6 +23,17 @@ struct OnboardingView: View {
 
     private var topBar: some View {
         HStack {
+            if !viewModel.isFirstStep {
+                Button {
+                    animate { viewModel.back() }
+                } label: {
+                    Label("onboarding.back", systemImage: "chevron.left")
+                        .labelStyle(.titleAndIcon)
+                        .font(.body.weight(.semibold))
+                        .frame(minHeight: 44)
+                }
+                .accessibilityHint("onboarding.back.hint")
+            }
             Spacer(minLength: 0)
             if viewModel.showsSkip {
                 Button("onboarding.skip") {
@@ -81,12 +92,10 @@ struct OnboardingView: View {
     @ViewBuilder
     private var footer: some View {
         VStack(spacing: 12) {
-            if viewModel.showsPageIndicator {
-                OnboardingPageIndicator(
-                    pageCount: viewModel.pageCount,
-                    currentIndex: viewModel.pageIndex
-                )
-            }
+            OnboardingPageIndicator(
+                stepCount: viewModel.progressCount,
+                currentIndex: viewModel.progressIndex
+            )
 
             if let titleKey = viewModel.primaryTitleKey {
                 Button {
@@ -137,20 +146,41 @@ struct OnboardingView: View {
 
 /// Indicador de página del carrusel (tres puntos).
 private struct OnboardingPageIndicator: View {
-    let pageCount: Int
+    let stepCount: Int
     let currentIndex: Int
 
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<pageCount, id: \.self) { index in
-                Capsule()
-                    .fill(index == currentIndex ? BrandPalette.accent : BrandPalette.border)
-                    .frame(width: index == currentIndex ? 22 : 8, height: 8)
+        VStack(spacing: 8) {
+            HStack {
+                Text("onboarding.progress.label")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(progressDescription)
+                    .font(.caption.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(BrandPalette.accent)
+            }
+            HStack(spacing: 5) {
+                ForEach(0..<stepCount, id: \.self) { index in
+                    Capsule()
+                        .fill(index <= currentIndex ? BrandPalette.accent : BrandPalette.border)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 5)
+                }
             }
         }
-        .frame(minHeight: 20)
+        .frame(minHeight: 30)
         .accessibilityElement()
-        .accessibilityLabel(Text("onboarding.page.indicator"))
-        .accessibilityValue(Text(verbatim: "\(currentIndex + 1)/\(pageCount)"))
+        .accessibilityLabel(Text("onboarding.progress.label"))
+        .accessibilityValue(Text(verbatim: progressDescription))
+        .animation(.easeInOut(duration: 0.2), value: currentIndex)
+    }
+
+    private var progressDescription: String {
+        String.localizedStringWithFormat(
+            String(localized: "onboarding.progress.format"),
+            currentIndex + 1,
+            stepCount
+        )
     }
 }

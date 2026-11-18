@@ -117,6 +117,7 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
             y += textHeight(quote.workDescription, font: .systemFont(ofSize: 11.5), width: Self.contentWidth) + 8
         }
         if !quote.notes.isEmpty {
+            y += lineHeight("Notas", font: .boldSystemFont(ofSize: 16)) + 8
             y += textHeight(quote.notes, font: .systemFont(ofSize: 11), width: Self.contentWidth) + 10
         }
         y += 14
@@ -227,16 +228,9 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
             y += 6
         }
         if !quote.notes.isEmpty {
-            let label = "Nota: "
-            let full = label + quote.notes
-            let attr = NSMutableAttributedString(string: full, attributes: [
-                .font: UIFont.systemFont(ofSize: 11),
-                .foregroundColor: Self.secondary
-            ])
-            attr.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 11), range: NSRange(location: 0, length: (label as NSString).length))
-            let h = attr.boundingRect(with: CGSize(width: Self.contentWidth, height: 9999), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
-            attr.draw(in: CGRect(x: Self.marginLeft, y: y, width: Self.contentWidth, height: ceil(h)))
-            y += ceil(h) + 8
+            y = drawSectionTitle("Notas", at: y)
+            y = drawText(quote.notes, font: .systemFont(ofSize: 11), color: Self.secondary, x: Self.marginLeft, y: y, width: Self.contentWidth)
+            y += 8
         }
         return y + 6
     }
@@ -329,7 +323,7 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
     }
 
     private func drawWatermark(in context: UIGraphicsPDFRendererContext) {
-        let text = "PresupuestApp"
+        let text = "Presupuestos para Autónomos"
         let font = UIFont.systemFont(ofSize: 48, weight: .semibold)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font,

@@ -14,7 +14,7 @@ struct AppLinksTests {
         #expect(links.validPrivacyURL == nil)
         #expect(links.validTermsURL == nil)
         #expect(links.reviewURL == nil)
-        #expect(links.shareText(appName: "PresupuestApp", phrase: "Presupuesta con tu tarifa") == "PresupuestApp\nPresupuesta con tu tarifa")
+        #expect(links.shareText(appName: "Presupuestos para Autónomos", phrase: "Presupuesta con tu tarifa") == "Presupuestos para Autónomos\nPresupuesta con tu tarifa")
     }
 
     @Test("El mailto codifica el asunto y los datos de versión")
@@ -30,7 +30,7 @@ struct AppLinksTests {
 
         #expect(components.scheme == "mailto")
         #expect(components.path == "ayuda@example.com")
-        #expect(query["subject"] == "Soporte PresupuestApp")
+        #expect(query["subject"] == "Soporte Presupuestos para Autónomos")
         #expect(query["body"] == "Versión: 1.0\nCompilación: 7\niOS: iOS 17.4")
         #expect(url.absoluteString.contains("%40") == false)
         #expect(url.absoluteString.contains("%0A"))
@@ -63,9 +63,9 @@ struct AppLinksTests {
     @Test("Compartir añade un enlace solo si hay uno configurado")
     func shareTextUsesConfiguredLink() {
         let withWebsite = AppLinks(websiteURL: URL(string: "https://example.com"))
-        #expect(withWebsite.shareText(appName: "PresupuestApp", phrase: "Presupuesta con tu tarifa") == "PresupuestApp\nPresupuesta con tu tarifa\nhttps://example.com")
+        #expect(withWebsite.shareText(appName: "Presupuestos para Autónomos", phrase: "Presupuesta con tu tarifa") == "Presupuestos para Autónomos\nPresupuesta con tu tarifa\nhttps://example.com")
 
         let withStoreID = AppLinks(appStoreID: "1234567890")
-        #expect(withStoreID.shareText(appName: "PresupuestApp", phrase: "Presupuesta con tu tarifa").hasSuffix("https://apps.apple.com/app/id1234567890?action=write-review"))
+        #expect(withStoreID.shareText(appName: "Presupuestos para Autónomos", phrase: "Presupuesta con tu tarifa").hasSuffix("https://apps.apple.com/app/id1234567890?action=write-review"))
     }
 }

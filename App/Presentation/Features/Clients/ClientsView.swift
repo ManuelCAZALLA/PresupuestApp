@@ -66,7 +66,9 @@ struct ClientsView: View {
             List {
                 clientRows
             }
-            .listStyle(.insetGrouped)
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(BrandPalette.background)
             .searchable(text: $viewModel.searchText, prompt: "clients.search")
             .navigationTitle("clients.title")
             .navigationBarTitleDisplayMode(.large)
@@ -79,7 +81,9 @@ struct ClientsView: View {
         List(selection: $selectedClientID) {
             clientRows
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(BrandPalette.background)
         .searchable(text: $viewModel.searchText, prompt: "clients.search")
         .navigationTitle("clients.title")
         .navigationBarTitleDisplayMode(.large)
@@ -93,12 +97,18 @@ struct ClientsView: View {
                 if horizontalSizeClass == .regular {
                     ClientRow(group: group)
                         .tag(group.id)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
                 } else {
                     NavigationLink {
                         ClientDetailView(clientID: group.id, viewModel: viewModel)
                     } label: {
                         ClientRow(group: group)
                     }
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
                 }
             }
         } footer: {
@@ -126,28 +136,37 @@ private struct ClientRow: View {
     let group: ClientGroup
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(group.client.name)
-                .font(.headline)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
-
-            HStack(spacing: 8) {
-                if !group.client.phone.isEmpty {
-                    Text(group.client.phone)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+        CardSurface(padding: 14) {
+            HStack(spacing: 12) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(BrandPalette.accent)
+                    .frame(width: 42, height: 42)
+                    .background(BrandPalette.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 13))
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(group.client.name)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    HStack(spacing: 8) {
+                        if !group.client.phone.isEmpty {
+                            Text(group.client.phone)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        Text(verbatim: quoteCountText)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                Text(verbatim: quoteCountText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Spacer()
+                Spacer(minLength: 0)
                 Text(group.lastDate, format: .dateTime.day().month().year())
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
             }
         }
-        .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
     }
 

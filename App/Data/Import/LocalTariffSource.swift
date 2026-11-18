@@ -1,5 +1,6 @@
 import Foundation
 import os
+import PDFKit
 import QuoteCore
 import UniformTypeIdentifiers
 
@@ -8,10 +9,10 @@ import UniformTypeIdentifiers
 enum ImportFileTypes {
     /// `.xlsm` es el mismo contenedor OpenXML que `.xlsx`; `.xls` se acepta
     /// para poder explicar que el formato binario antiguo no se puede leer.
-    private static let extensions = ["xlsx", "xlsm", "xls", "csv"]
+    private static let extensions = ["xlsx", "xlsm", "xls", "csv", "pdf"]
 
     static var allowed: [UTType] {
-        var types: [UTType] = []
+        var types: [UTType] = [.pdf]
         for fileExtension in extensions {
             guard let type = UTType(filenameExtension: fileExtension),
                   !types.contains(type) else { continue }
@@ -96,6 +97,19 @@ struct LocalTariffSource: TariffImportSource {
 
     func plainText(from url: URL) throws -> String {
         let data = try readData(from: url)
+        if url.pathExtension.lowercased() == "pdf" {
+            guard let document = PDFDocument(data: data) else {
+                throw DomainError.importFailed("invalid PDF")
+            }
+            let text = (0..<document.pageCount)
+                .compactMap { document.page(at: $0)?.string }
+                .joined(separator: "\n")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !text.isEmpty else {
+                throw DomainError.importFailed("PDF without selectable text")
+            }
+            return text
+        }
         guard let decoded = CSVReader.decode(data) else {
             throw DomainError.importFailed("No se pudo leer el archivo de texto")
         }

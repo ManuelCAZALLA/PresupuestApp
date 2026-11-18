@@ -1,6 +1,6 @@
 # Hoja de ruta
 
-> **Versión 1.0 (2026-11-11)**: se publica con el flujo sin dictado (M4b), PDF profesional, Agrupaciones y Clientes. El dictado (M5) y el Paywall (M7) quedan fuera de esta entrega. Las ramas activas son `main`, `develop` y `release`.
+> **Versión 1.0.1 (2026-11-18, build 2)**: correcciones de importación y soporte para PDF con texto seleccionable. OCR para PDF escaneado sigue fuera del alcance. La versión 1.0 se publicó con el flujo sin dictado (M4b), PDF profesional, Agrupaciones y Clientes.
 
 Un hito = una rama. Al terminar un hito: tests en verde, `reviewer` aprueba, se marca como hecho aquí.
 Estado: [ ] pendiente · [~] en curso · [x] hecho.

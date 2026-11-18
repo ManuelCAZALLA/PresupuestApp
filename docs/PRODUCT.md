@@ -75,8 +75,8 @@ Un presupuesto nuevo copia los textos por defecto del perfil (condiciones de pag
 Al compartir se ofrece un **mensaje editable** con la plantilla: `"Hola {cliente}, te paso el presupuesto de {título} (ref. {número}). Cualquier duda, me dices."`
 
 ## Funcionalidades
-- Catálogo 100 % del usuario: la app no trae partidas. El catálogo vacío ofrece importar Excel/CSV, pegar una lista o añadir a mano.
-- Importación de tarifa (Excel `.xlsx`/`.xlsm`, CSV, texto pegado, alta manual y archivo recibido desde otra app) y plantilla Excel descargable con columnas Nombre, Unidad y Precio. El `.xls` binario antiguo se rechaza con un mensaje que pide guardarlo como `.xlsx`. Foto/PDF con OCR: después del MVP.
+- Catálogo 100 % del usuario: la app no trae partidas. El catálogo vacío ofrece importar Excel/CSV/PDF con texto, pegar una lista o añadir a mano.
+- Importación de tarifa (Excel `.xlsx`/`.xlsm`, CSV, PDF con texto seleccionable, texto pegado, alta manual y archivo recibido desde otra app) y plantilla Excel descargable con columnas Nombre, Unidad y Precio. El `.xls` binario antiguo se rechaza con un mensaje que pide guardarlo como `.xlsx`. Foto y PDF escaneado con OCR: después del MVP.
 - Motor de interpretación sin IA (ver `docs/PARSER.md`).
 - Cálculo con IVA editable por presupuesto y por línea (ver `docs/DOMAIN.md`).
 - PDF generado en el dispositivo.
@@ -85,7 +85,7 @@ Al compartir se ofrece un **mensaje editable** con la plantilla: `"Hola {cliente
 - Copia de seguridad: exportar/importar catálogo.
 
 ## Fuera del MVP
-Facturación, firma del cliente, agenda, nube/sincronización, multiusuario, IA, precios de mayoristas, formato BC3, foto/PDF con OCR, packs de partidas por oficio (los sinónimos pasan a una base común más los alias del usuario).
+Facturación, firma del cliente, agenda, nube/sincronización, multiusuario, IA, precios de mayoristas, formato BC3, foto y PDF escaneado con OCR, packs de partidas por oficio (los sinónimos pasan a una base común más los alias del usuario).
 
 ## Modelo de negocio (propuesto, por confirmar)
 - Gratis: hasta 5 presupuestos al mes, con marca de agua discreta en el PDF.

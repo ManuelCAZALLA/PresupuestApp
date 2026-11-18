@@ -2,7 +2,7 @@
 
 App para profesionales de oficios: carga tu tarifa de precios, describe un trabajo y obtén un presupuesto en PDF con tus propios precios. Sin IA y sin conexión.
 
-Versión **1.0** (marketing) · build **1**. Ver `docs/ROADMAP.md`.
+Versión **1.0.1** (marketing) · build **2**. Ver `docs/ROADMAP.md`.
 
 ## Estructura
 - `Packages/QuoteCore` — dominio puro (solo Foundation), cálculo, importación y puertos. Tests: `swift test --package-path Packages/QuoteCore`.
@@ -13,7 +13,7 @@ Versión **1.0** (marketing) · build **1**. Ver `docs/ROADMAP.md`.
 ## Ramas
 - `main` — versión estable.
 - `develop` — integración de la siguiente entrega.
-- `release` — rama de publicación; versión 1.0.
+- `release` — rama de publicación; versión 1.0.1.
 
 ## Tests
 ```
@@ -25,4 +25,4 @@ xcodebuild test -scheme PresupuestApp -destination 'platform=iOS Simulator,name=
 Abre `PresupuestApp.xcodeproj` en Xcode y ejecuta en un simulador de iOS 17 o superior.
 
 ## Importar una tarifa
-Formatos admitidos: `.xlsx`, `.xlsm`, `.csv` y listas de texto pegadas. Los `.xls` binarios antiguos deben guardarse como `.xlsx` desde Excel. La app también acepta archivos compartidos desde el selector del sistema o «Abrir con».
+Formatos admitidos: `.xlsx`, `.xlsm`, `.csv`, PDF con texto seleccionable y listas de texto pegadas. Los PDF escaneados como imagen aún requieren OCR; los `.xls` binarios antiguos deben guardarse como `.xlsx` desde Excel. La app también acepta archivos compartidos desde el selector del sistema o «Abrir con».

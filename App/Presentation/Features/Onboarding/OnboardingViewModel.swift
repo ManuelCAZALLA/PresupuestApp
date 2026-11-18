@@ -90,9 +90,8 @@ final class OnboardingViewModel {
     /// "Saltar" solo existe en el carrusel del onboarding real.
     var showsSkip: Bool { mode == .onboarding && Self.carouselSteps.contains(step) }
 
-    var showsPageIndicator: Bool { Self.carouselSteps.contains(step) }
-    var pageCount: Int { Self.carouselSteps.count }
-    var pageIndex: Int { Self.carouselSteps.firstIndex(of: step) ?? 0 }
+    var progressCount: Int { visibleSteps.count }
+    var progressIndex: Int { visibleSteps.firstIndex(of: step) ?? 0 }
 
     /// Título del botón principal; `nil` en el último paso, donde la
     /// acción la dan las tarjetas y "Lo haré luego".

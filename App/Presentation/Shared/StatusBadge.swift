@@ -26,7 +26,7 @@ struct StatusBadge: View {
     private var color: Color {
         switch status {
         case .draft: return .secondary
-        case .sent: return .blue
+        case .sent: return BrandPalette.accent
         case .accepted: return .green
         case .rejected: return .red
         }

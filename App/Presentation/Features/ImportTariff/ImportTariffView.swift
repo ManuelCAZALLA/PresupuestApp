@@ -239,7 +239,8 @@ struct ImportTariffView: View {
                         unitLabel: { DomainLabels.measureUnit($0) },
                         onName: { viewModel.updateName($0, for: row.id) },
                         onUnit: { viewModel.updateUnit($0, for: row.id) },
-                        onPrice: { viewModel.updatePrice($0, for: row.id) }
+                        onPrice: { viewModel.updatePrice($0, for: row.id) },
+                        onVATRate: { viewModel.updateVATRate($0, for: row.id) }
                     )
                 }
                 .onDelete { offsets in
@@ -315,22 +316,27 @@ private struct ImportRowEditor: View {
     let onName: (String) -> Void
     let onUnit: (MeasureUnit) -> Void
     let onPrice: (String) -> Void
+    let onVATRate: (String) -> Void
 
     @State private var priceText: String
+    @State private var vatText: String
 
     init(
         row: ImportedRow,
         unitLabel: @escaping (MeasureUnit) -> String,
         onName: @escaping (String) -> Void,
         onUnit: @escaping (MeasureUnit) -> Void,
-        onPrice: @escaping (String) -> Void
+        onPrice: @escaping (String) -> Void,
+        onVATRate: @escaping (String) -> Void
     ) {
         self.row = row
         self.unitLabel = unitLabel
         self.onName = onName
         self.onUnit = onUnit
         self.onPrice = onPrice
-        _priceText = State(initialValue: CurrencyFormatter.plainString(from: row.netPrice))
+        self.onVATRate = onVATRate
+        _priceText = State(initialValue: Self.initialPriceText(for: row))
+        _vatText = State(initialValue: Self.initialVATText(for: row))
     }
 
     var body: some View {
@@ -354,10 +360,32 @@ private struct ImportRowEditor: View {
                     }
             }
 
+            TextField("importTariff.review.vat", text: $vatText)
+                .keyboardType(.decimalPad)
+                .onChange(of: vatText) { _, newValue in
+                    onVATRate(newValue)
+                }
+            Text("importTariff.review.vat.hint")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
             ForEach(Array(row.warnings.enumerated()), id: \.offset) { _, warning in
-                Label(LocalizedStringKey(DomainLabels.importWarning(warning)), systemImage: "exclamationmark.triangle")
-                    .font(.caption)
-                    .foregroundStyle(.orange)
+                VStack(alignment: .leading, spacing: 4) {
+                    Label {
+                        Text(verbatim: DomainLabels.importWarning(warning))
+                    } icon: {
+                        Image(systemName: "exclamationmark.triangle")
+                    }
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                    if warning.type == "unidadDesconocida" {
+                        Button("importTariff.review.unit.confirm") {
+                            onUnit(row.unit)
+                        }
+                        .font(.caption.weight(.semibold))
+                        .frame(minHeight: 44, alignment: .leading)
+                    }
+                }
             }
         }
         .padding(.vertical, 2)
@@ -369,6 +397,30 @@ private struct ImportRowEditor: View {
 
     private var unitBinding: Binding<MeasureUnit> {
         Binding(get: { row.unit }, set: { onUnit($0) })
+    }
+
+    private static func initialPriceText(for row: ImportedRow) -> String {
+        for warning in row.warnings {
+            switch warning {
+            case .precioInvalido(_, let raw), .precioAmbiguo(_, let raw):
+                return raw
+            case .sinPrecio:
+                return ""
+            default:
+                continue
+            }
+        }
+        return CurrencyFormatter.plainString(from: row.netPrice)
+    }
+
+    private static func initialVATText(for row: ImportedRow) -> String {
+        if let rate = row.vatRate {
+            return CurrencyFormatter.plainString(from: rate)
+        }
+        for warning in row.warnings {
+            if case .vatInvalido(_, let raw) = warning { return raw }
+        }
+        return ""
     }
 }
 

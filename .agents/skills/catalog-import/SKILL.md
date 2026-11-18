@@ -8,7 +8,7 @@ description: Importación de la tarifa del usuario (Excel .xlsx, CSV, texto pega
 Pantalla S8 (`ImportTariff`) y caso de uso `ImportTariff`. Los lectores viven en `App/Data/Import`; el caso de uso, en QuoteCore.
 
 ## Flujo (siempre igual)
-1. **Origen**: archivo (.xlsx, .csv), texto pegado o recibido desde "Abrir con".
+1. **Origen**: archivo (.xlsx, .csv, PDF con texto seleccionable), texto pegado o recibido desde "Abrir con".
 2. **Lectura** → tabla cruda (filas × columnas) + hoja elegida si hay varias.
 3. **Asignación de columnas**: nombre, precio, unidad (opcional), categoría (opcional). Sugerir por cabeceras ("precio", "pvp", "importe", "ud", "unidad", "concepto", "descripción").
 4. **Interruptor**: "Los precios incluyen IVA" sí/no y tipo de IVA. Convertir con `round4(precio / (1 + tipo))`.
@@ -29,4 +29,4 @@ Pantalla S8 (`ImportTariff`) y caso de uso `ImportTariff`. Los lectores viven en
 Archivos de ejemplo en `Tests/` (xlsx con cabeceras en español, csv con `;` y coma decimal, texto pegado de WhatsApp, un archivo con filas basura). Cada archivo con su resultado esperado.
 
 ## Después del MVP
-Foto de una tarifa en papel (OCR en el dispositivo con Vision/ML Kit) y PDF con texto. Mismo flujo, mismo paso de revisión, pero con avisos de baja confianza.
+Foto de una tarifa en papel y PDF escaneado como imagen (OCR en el dispositivo con Vision). Mismo flujo, mismo paso de revisión, pero con avisos de baja confianza.

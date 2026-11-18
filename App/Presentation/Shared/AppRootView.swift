@@ -23,7 +23,7 @@ struct AppRootView: View {
                 )
             }
         }
-        .tint(Color.accentColor)
+        .tint(BrandPalette.accent)
         .environment(router)
         .sheet(isPresented: $router.isImportPresented) {
             NavigationStack {
