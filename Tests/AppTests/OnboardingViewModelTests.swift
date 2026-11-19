@@ -39,24 +39,26 @@ struct OnboardingViewModelTests {
 
         #expect(viewModel.step == .business)
         #expect(viewModel.showsSkip == false)
-        #expect(viewModel.showsPageIndicator == false)
+        #expect(viewModel.progressCount == 5)
+        #expect(viewModel.progressIndex == 3)
 
         viewModel.back()
         #expect(viewModel.step == .send)
         #expect(viewModel.showsSkip)
-        #expect(viewModel.showsPageIndicator)
+        #expect(viewModel.progressCount == 5)
+        #expect(viewModel.progressIndex == 2)
     }
 
     @Test("El indicador cuenta los tres pasos del carrusel")
     func pageIndicatorCountsCarousel() throws {
         let viewModel = makeOnboarding()
 
-        #expect(viewModel.pageCount == 3)
-        #expect(viewModel.pageIndex == 0)
+        #expect(viewModel.progressCount == 3)
+        #expect(viewModel.progressIndex == 0)
         viewModel.next()
-        #expect(viewModel.pageIndex == 1)
+        #expect(viewModel.progressIndex == 1)
         viewModel.next()
-        #expect(viewModel.pageIndex == 2)
+        #expect(viewModel.progressIndex == 2)
     }
 
     @Test("Continuar solo se activa con nombre")
