@@ -39,7 +39,7 @@ final class CatalogViewModel {
 ## Vista
 - SwiftUI puro: lee estado, llama a métodos. Sin cálculos ni reglas.
 - Textos: `Text("catalog.title")` con clave en `Localizable.xcstrings`, nunca literales.
-- Moneda: formateador compartido de `Presentation/Shared` (es-ES).
+- Moneda: formateador compartido de `Presentation/Shared` (EUR con formato regional del dispositivo).
 - Botones principales ≥ 56 pt de alto; zonas táctiles ≥ 44 pt.
 - Dynamic Type: sin alturas fijas en texto; probar el tamaño más grande.
 - VoiceOver: `accessibilityLabel` en iconos y acciones.
@@ -55,6 +55,6 @@ final class CatalogViewModel {
 ## Lista de comprobación antes de terminar
 - [ ] Compila sin warnings nuevos.
 - [ ] Sin lógica de precios/IVA en la vista ni en el ViewModel.
-- [ ] Textos en español en `Localizable.xcstrings`.
+- [ ] Textos visibles mediante claves de `Localizable.xcstrings`, con todas las localizaciones mantenidas.
 - [ ] Estados vacío, carga y error diseñados.
 - [ ] Funciona con una mano y con el tamaño de letra más grande.

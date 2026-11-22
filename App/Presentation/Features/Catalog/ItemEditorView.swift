@@ -79,10 +79,8 @@ struct ItemEditorView: View {
             .split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
-        let priceDecimal = Decimal(
-            string: price.replacingOccurrences(of: ",", with: ".")
-        ) ?? Decimal(0)
-        let vat = Decimal(string: vatRate.replacingOccurrences(of: ",", with: "."))
+        let priceDecimal = CurrencyFormatter.decimal(from: price) ?? Decimal(0)
+        let vat = CurrencyFormatter.decimal(from: vatRate)
         onSave(
             Item(
                 id: item?.id ?? UUID(),

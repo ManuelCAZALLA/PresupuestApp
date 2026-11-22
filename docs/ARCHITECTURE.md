@@ -40,7 +40,7 @@ PresupuestApp/
 │  │  ├─ Import/          CSVReader, XLSXReader, XLSXOpenXMLReader, XLSXZipArchive, PastedTextParser, LocalTariffSource, TariffTemplateExporter
 │  │  └─ PDF/             DeviceQuotePDFRenderer
 │  ├─ Presentation/
-│  │  ├─ Shared/          componentes, tema, formateadores (moneda es-ES)
+│  │  ├─ Shared/          componentes, tema, formateadores regionales (EUR)
 │  │  └─ Features/<Feature>/  <Feature>View.swift, <Feature>ViewModel.swift
 │  └─ Resources/          Localizable.xcstrings, Assets.xcassets
 └─ Tests/                 AppTests (target de tests unitarios, `xcodebuild test`), ImportSamples/ (archivos de ejemplo y `expected_imports.json`, no se editan)
@@ -48,7 +48,7 @@ PresupuestApp/
 
 ## MVVM en este proyecto
 - **View**: SwiftUI puro, sin lógica. Lee propiedades del ViewModel y llama a sus métodos.
-- **ViewModel**: `@MainActor @Observable final class`. Recibe casos de uso por `init`. Expone estado (`var`), acciones (métodos `func`) y un estado de carga/error. Traduce `DomainError` a texto en español.
+- **ViewModel**: `@MainActor @Observable final class`. Recibe casos de uso por `init`. Expone estado (`var`), acciones (métodos `func`) y un estado de carga/error. Traduce `DomainError` con claves localizadas de `Localizable.xcstrings`.
 - **Estado de pantalla**: enum `ViewState { idle, loading, loaded, failed(message) }` cuando haya carga; propiedades simples en el resto.
 - **Navegación**: `NavigationStack` con una ruta tipada (`enum AppRoute: Hashable`) en `AppRouter` (`@Observable`), creado en Composition.
 - **Casos de uso**: `struct` con dependencias protocolo y un método `execute(...)`. Síncronos si son puros (motor, cálculo); `async` si hay E/S.
@@ -81,3 +81,18 @@ PresupuestApp/
 
 ## Dependencias externas
 La 1.0 usa CoreXLSX como lector de respaldo de `.xlsx`; el lector OpenXML propio es el principal. RevenueCat se estudiará en M7 (ver `DECISIONS.md`).
+
+## Aplicación Android
+Android es una implementación nativa independiente en `Android/`, no una capa de interoperabilidad con SwiftUI:
+
+```text
+Compose + ViewModels → domain (Kotlin/JVM, BigDecimal) ← data (Room, archivos, PDF)
+                                  ↑
+                              app/composition
+```
+
+- `Android/domain` contiene entidades, cálculo y casos de uso Kotlin puros; no depende de Android ni de Compose.
+- `Android/app` contiene pantallas Compose, ViewModels, navegación, Room, importación y PDF. SwiftData nunca se usa en Android.
+- Las dos implementaciones de cálculo se verifican con la misma fixture TSV. `QuoteCore` sigue siendo el dominio Swift para iOS; no se mezcla código de plataforma en ambos targets.
+- El manifiesto Android no declara Internet y desactiva las copias automáticas. La persistencia funcional se implementará con Room y permanecerá local.
+- Hitos de Android: `docs/ANDROID_ROADMAP.md`; decisión de tecnología: D-023.

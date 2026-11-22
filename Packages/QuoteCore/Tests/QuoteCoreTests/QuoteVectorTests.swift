@@ -209,3 +209,56 @@ struct QuoteVectorTests {
         #expect(RoundingPolicy.netPrice(fromGross: d("25.00"), vatRate: d("21")) == d("20.6612"))
     }
 }
+
+/// Contract fixture consumed by both the Swift and Android domain tests.
+struct SharedQuoteCalculatorFixtureTests {
+    @Test func sharedVectorsMatch() throws {
+        let url = try #require(Bundle.module.url(forResource: "quote_calculator_vectors", withExtension: "tsv"))
+        let fixture = try String(contentsOf: url, encoding: .utf8)
+        let calculator = QuoteCalculator()
+
+        for row in fixture.split(whereSeparator: \.isNewline) {
+            guard !row.isEmpty, !row.hasPrefix("#") else { continue }
+            let fields = row.split(separator: "|", omittingEmptySubsequences: false).map(String.init)
+            #expect(fields.count == 7)
+
+            let lineValues = fields[1].split(separator: ";").map { $0.split(separator: ",") }
+            let lines = lineValues.map { values in
+                QuoteLine(
+                    itemID: nil,
+                    name: "Fixture",
+                    unit: .unit,
+                    quantity: d(String(values[0])),
+                    unitPrice: d(String(values[1])),
+                    vatRate: d(String(values[2])),
+                    origin: .manual
+                )
+            }
+            let discountParts = fields[2].split(separator: ":", maxSplits: 1).map(String.init)
+            let discount: Discount
+            switch discountParts[0] {
+            case "none": discount = .none
+            case "percent": discount = .percent(d(discountParts[1]))
+            case "amount": discount = .amount(d(discountParts[1]))
+            default: Issue.record("Unknown discount in shared vector \(fields[0])")
+                continue
+            }
+
+            let totals = calculator.calculate(lines: lines, discount: discount)
+            #expect(totals.subtotal == d(fields[3]), "\(fields[0]): subtotal")
+            #expect(totals.discount == d(fields[4]), "\(fields[0]): discount")
+            #expect(totals.total == d(fields[6]), "\(fields[0]): total")
+            #expect(totals.vatBreakdown.count == fields[5].split(separator: ";").count, "\(fields[0]): group count")
+
+            for (line, expectedValues) in zip(lines, lineValues) {
+                #expect(calculator.lineTotal(line) == d(String(expectedValues[3])), "\(fields[0]): line total")
+            }
+            for (group, expectedValues) in zip(totals.vatBreakdown, fields[5].split(separator: ";")) {
+                let values = expectedValues.split(separator: ",")
+                #expect(group.rate == d(String(values[0])), "\(fields[0]): VAT rate")
+                #expect(group.base == d(String(values[1])), "\(fields[0]): VAT base")
+                #expect(group.vat == d(String(values[2])), "\(fields[0]): VAT amount")
+            }
+        }
+    }
+}

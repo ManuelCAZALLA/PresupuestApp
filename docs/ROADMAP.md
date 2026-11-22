@@ -78,4 +78,6 @@ Es el hito de mayor riesgo: no se pasa a M5 sin cumplirlo.
 **Hecho cuando**: TestFlight listo para enseñar a fontaneros reales.
 
 ## Después del MVP (no tocar antes)
-OCR de fotos y PDF, Android, IA opcional como función Pro, facturación, packs de partidas por oficio como mejora opcional (los sinónimos de oficio se mantienen como vocabulario del motor).
+OCR de fotos y PDF, IA opcional como función Pro, facturación, packs de partidas por oficio como mejora opcional (los sinónimos de oficio se mantienen como vocabulario del motor).
+
+La versión Android nativa está autorizada y en curso desde el 2026-11-19; sus hitos están en `docs/ANDROID_ROADMAP.md`.

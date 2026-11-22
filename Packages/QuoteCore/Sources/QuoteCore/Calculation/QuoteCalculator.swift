@@ -65,7 +65,7 @@ public final class QuoteCalculator {
         case .none:
             return Decimal(0)
         case .percent(let p):
-            return RoundingPolicy.round2(subtotal * p / Decimal(100))
+            return min(RoundingPolicy.round2(subtotal * p / Decimal(100)), subtotal)
         case .amount(let a):
             return min(a, subtotal)
         }

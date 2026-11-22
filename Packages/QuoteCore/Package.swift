@@ -15,7 +15,11 @@ let package = Package(
         .testTarget(
             name: "QuoteCoreTests",
             dependencies: ["QuoteCore"],
-            exclude: ["Fixtures"]
+            exclude: [
+                "Fixtures/catalog_fontaneria.sample.json",
+                "Fixtures/parser_cases_fontaneria.json"
+            ],
+            resources: [.copy("Fixtures/quote_calculator_vectors.tsv")]
         )
     ]
 )

@@ -231,7 +231,7 @@ final class QuoteEditorViewModel {
     }
 
     private func parsedDiscount() -> Discount {
-        let value = Decimal(string: discountValue.replacingOccurrences(of: ",", with: ".")) ?? Decimal(0)
+        let value = CurrencyFormatter.decimal(from: discountValue) ?? Decimal(0)
         switch discountKind {
         case .none:
             return .none

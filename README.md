@@ -8,6 +8,7 @@ Versión **1.0.1** (marketing) · build **2**. Ver `docs/ROADMAP.md`.
 - `Packages/QuoteCore` — dominio puro (solo Foundation), cálculo, importación y puertos. Tests: `swift test --package-path Packages/QuoteCore`.
 - `App/` — app SwiftUI: `Composition` (inyección), `Data` (SwiftData, importación, PDF), `Presentation` (vistas y ViewModels), `Resources` (textos, assets).
 - `PresupuestApp.xcodeproj` — proyecto de la app.
+- `Android/` — app nativa Kotlin/Compose; dominio puro con vectores compartidos de cálculo.
 - `docs/` — producto, arquitectura, dominio, hoja de ruta y decisiones.
 
 ## Ramas

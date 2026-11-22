@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PresupuestApp</string>
+    <string name="quotes_title">Presupuestos</string>
+    <string name="android_foundation_message">La versión Android se está construyendo paso a paso. Tus datos no se envían a ningún servidor.</string>
+</resources>

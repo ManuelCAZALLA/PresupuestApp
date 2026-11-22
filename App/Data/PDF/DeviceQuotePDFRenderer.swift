@@ -104,24 +104,24 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         let leftLines = [profile.taxID, profile.address, profile.phone, profile.email].filter { !$0.isEmpty }.count
         leftBottom += CGFloat(leftLines) * (lineHeight("x", font: .systemFont(ofSize: 10.5)) + 2)
 
-        var rightBottom = y + lineHeight("Presupuesto para", font: .systemFont(ofSize: 10.5)) + 4
+        var rightBottom = y + lineHeight(String(localized: "pdf.quoteFor", bundle: .main), font: .systemFont(ofSize: 10.5)) + 4
         rightBottom += lineHeight(quote.client.name, font: .boldSystemFont(ofSize: 13)) + 2
 
         y = max(leftBottom, rightBottom) + 14
-        y += lineHeight("PROPUESTA DE PRESUPUESTO", font: .boldSystemFont(ofSize: 28)) + 10
+        y += lineHeight(String(localized: "pdf.proposalTitle", bundle: .main), font: .boldSystemFont(ofSize: 28)) + 10
         y += 40 // 3 columns labels+values
         y += 10 // blue line spacing
         y += 18
-        y += lineHeight("Descripción del Proyecto", font: .boldSystemFont(ofSize: 16)) + 6
+        y += lineHeight(String(localized: "pdf.projectDescription", bundle: .main), font: .boldSystemFont(ofSize: 16)) + 6
         if !quote.workDescription.isEmpty {
             y += textHeight(quote.workDescription, font: .systemFont(ofSize: 11.5), width: Self.contentWidth) + 8
         }
         if !quote.notes.isEmpty {
-            y += lineHeight("Notas", font: .boldSystemFont(ofSize: 16)) + 8
+            y += lineHeight(String(localized: "pdf.notes", bundle: .main), font: .boldSystemFont(ofSize: 16)) + 8
             y += textHeight(quote.notes, font: .systemFont(ofSize: 11), width: Self.contentWidth) + 10
         }
         y += 14
-        y += lineHeight("Partidas", font: .boldSystemFont(ofSize: 16)) + 8
+        y += lineHeight(String(localized: "quote.editor.lines", bundle: .main), font: .boldSystemFont(ofSize: 16)) + 8
         return y
     }
 
@@ -147,7 +147,7 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         if page == 0 {
             y = drawHeader(quote: quote, profile: profile, at: y)
             y = drawDescription(quote: quote, at: y)
-            y = drawSectionTitle("Partidas", at: y)
+            y = drawSectionTitle(String(localized: "quote.editor.lines", bundle: .main), at: y)
         }
 
         // draw lines that belong to this page
@@ -192,11 +192,11 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         let rightW: CGFloat = 190
         let rightX = Self.pageRect.width - Self.marginRight - rightW
         var rightY = startY
-        rightY = drawText("Presupuesto para", font: .systemFont(ofSize: 10.5), color: Self.secondary, x: rightX, y: rightY, width: rightW, align: .right)
+        rightY = drawText(String(localized: "pdf.quoteFor", bundle: .main), font: .systemFont(ofSize: 10.5), color: Self.secondary, x: rightX, y: rightY, width: rightW, align: .right)
         rightY = drawText(quote.client.name.isEmpty ? "—" : quote.client.name, font: .boldSystemFont(ofSize: 13), color: Self.text, x: rightX, y: rightY, width: rightW, align: .right)
 
         var y = max(leftY, rightY) + 14
-        y = drawText("PROPUESTA DE PRESUPUESTO", font: .boldSystemFont(ofSize: 28), color: Self.blue, x: Self.marginLeft, y: y, width: Self.contentWidth)
+        y = drawText(String(localized: "pdf.proposalTitle", bundle: .main), font: .boldSystemFont(ofSize: 28), color: Self.blue, x: Self.marginLeft, y: y, width: Self.contentWidth)
         y += 6
         y = drawIDBlock(quote: quote, at: y)
         drawHLine(y: y, color: Self.blue, width: 1.5)
@@ -207,7 +207,11 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         let colW = Self.contentWidth / 3
         let labelFont = UIFont.boldSystemFont(ofSize: 10.5)
         let valueFont = UIFont.systemFont(ofSize: 12.5)
-        let labels = ["Número de presupuesto:", "Fecha:", "Válido hasta:"]
+        let labels = [
+            String(localized: "pdf.number", bundle: .main),
+            String(localized: "pdf.date", bundle: .main),
+            String(localized: "pdf.validUntil", bundle: .main),
+        ]
         let dateStr = Self.dateFormatter.string(from: quote.issueDate)
         let until = Calendar.current.date(byAdding: .day, value: quote.validityDays, to: quote.issueDate)
         let untilStr = until.map { Self.dateFormatter.string(from: $0) } ?? "—"
@@ -222,13 +226,13 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
 
     private func drawDescription(quote: Quote, at y: CGFloat) -> CGFloat {
         var y = y
-        y = drawSectionTitle("Descripción del Proyecto", at: y)
+        y = drawSectionTitle(String(localized: "pdf.projectDescription", bundle: .main), at: y)
         if !quote.workDescription.isEmpty {
             y = drawText(quote.workDescription, font: .systemFont(ofSize: 11.5), color: Self.secondary, x: Self.marginLeft, y: y, width: Self.contentWidth)
             y += 6
         }
         if !quote.notes.isEmpty {
-            y = drawSectionTitle("Notas", at: y)
+            y = drawSectionTitle(String(localized: "pdf.notes", bundle: .main), at: y)
             y = drawText(quote.notes, font: .systemFont(ofSize: 11), color: Self.secondary, x: Self.marginLeft, y: y, width: Self.contentWidth)
             y += 8
         }
@@ -241,9 +245,17 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
 
     private func columns(showLineAmounts: Bool) -> [(String, CGFloat, NSTextAlignment)] {
         if showLineAmounts {
-            return [("DESCRIPCIÓN", 280, .left), ("CANT.", 54, .right), ("PRECIO", 76, .right), ("TOTAL", 76, .right)]
+            return [
+                (String(localized: "pdf.descriptionColumn", bundle: .main), 280, .left),
+                (String(localized: "pdf.quantityColumn", bundle: .main), 54, .right),
+                (String(localized: "pdf.priceColumn", bundle: .main), 76, .right),
+                (String(localized: "pdf.totalColumn", bundle: .main), 76, .right),
+            ]
         }
-        return [("DESCRIPCIÓN", Self.contentWidth - 70, .left), ("CANT.", 62, .right)]
+        return [
+            (String(localized: "pdf.descriptionColumn", bundle: .main), Self.contentWidth - 70, .left),
+            (String(localized: "pdf.quantityColumn", bundle: .main), 62, .right),
+        ]
     }
 
     @discardableResult
@@ -303,14 +315,18 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
             y += height
         }
 
-        row("Subtotal", formatMoney(totals.subtotal), bg: Self.summaryBG, textColor: Self.secondary, bold: false, fontSize: 11.5, height: 24)
+        row(String(localized: "pdf.subtotal", bundle: .main), formatMoney(totals.subtotal), bg: Self.summaryBG, textColor: Self.secondary, bold: false, fontSize: 11.5, height: 24)
         if totals.discount > 0 {
-            row("Descuento", "−\(formatMoney(totals.discount))", bg: Self.summaryBG, textColor: Self.secondary, bold: false, fontSize: 11.5, height: 24)
+            row(String(localized: "pdf.discount", bundle: .main), "−\(formatMoney(totals.discount))", bg: Self.summaryBG, textColor: Self.secondary, bold: false, fontSize: 11.5, height: 24)
         }
         for group in totals.vatBreakdown {
-            row("IVA \(formatAmount(group.rate)) %", formatMoney(group.vat), bg: Self.summaryBG, textColor: Self.secondary, bold: false, fontSize: 11, height: 22)
+            let taxRate = String.localizedStringWithFormat(
+                String(localized: "pdf.taxRate", bundle: .main),
+                formatAmount(group.rate)
+            )
+            row(taxRate, formatMoney(group.vat), bg: Self.summaryBG, textColor: Self.secondary, bold: false, fontSize: 11, height: 22)
         }
-        row("TOTAL:", formatMoney(totals.total), bg: Self.blue, textColor: .white, bold: true, fontSize: 15.5, height: 34)
+        row(String(localized: "quote.totals.total", bundle: .main).uppercased(), formatMoney(totals.total), bg: Self.blue, textColor: .white, bold: true, fontSize: 15.5, height: 34)
         return y
     }
 
@@ -318,12 +334,12 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
         let y = Self.pageRect.height - Self.marginBottom + 6
         drawHLine(y: y, color: Self.separator, width: 0.8)
         let textY = y + 6
-        _ = drawText("Gracias por su confianza.", font: .systemFont(ofSize: 11), color: Self.secondary, x: Self.marginLeft, y: textY, width: Self.contentWidth, align: .center)
+        _ = drawText(String(localized: "pdf.thankYou", bundle: .main), font: .systemFont(ofSize: 11), color: Self.secondary, x: Self.marginLeft, y: textY, width: Self.contentWidth, align: .center)
         _ = drawText("\(page) / \(total)", font: .systemFont(ofSize: 10), color: Self.secondary, x: Self.marginLeft, y: textY, width: Self.contentWidth, align: .right)
     }
 
     private func drawWatermark(in context: UIGraphicsPDFRendererContext) {
-        let text = "Presupuestos para Autónomos"
+        let text = String(localized: "settings.appName", bundle: .main)
         let font = UIFont.systemFont(ofSize: 48, weight: .semibold)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font,
@@ -373,8 +389,9 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
             .replacingOccurrences(of: "/", with: "-")
             .replacingOccurrences(of: ":", with: "-")
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        let suffix = client.isEmpty ? "cliente" : client
-        return "Presupuesto-\(quote.number)-\(suffix).pdf"
+        let suffix = client.isEmpty ? "" : "-\(client)"
+        let prefix = String(localized: "pdf.fileNamePrefix", bundle: .main)
+        return "\(prefix)-\(quote.number)\(suffix).pdf"
     }
 
     private func formatMoney(_ value: Decimal) -> String {
@@ -388,7 +405,8 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
     private static var money: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "es_ES")
+        formatter.locale = .current
+        formatter.currencyCode = "EUR"
         formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
         return formatter
@@ -397,7 +415,8 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
     private static var amount: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "es_ES")
+        formatter.locale = .current
+        formatter.usesGroupingSeparator = false
         formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 2
         return formatter
@@ -405,8 +424,9 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
 
     private static var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "es_ES")
-        formatter.dateFormat = "dd/MM/yyyy"
+        formatter.locale = .current
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
         return formatter
     }
 }

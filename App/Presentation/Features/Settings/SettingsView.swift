@@ -213,9 +213,7 @@ struct SettingsView: View {
             taxID: taxID,
             phone: phone,
             email: email,
-            defaultVATRate: Decimal(
-                string: defaultVATRate.replacingOccurrences(of: ",", with: ".")
-            ) ?? Decimal(0),
+            defaultVATRate: CurrencyFormatter.decimal(from: defaultVATRate) ?? Decimal(0),
             terms: terms,
             validityDays: Int(validityDays) ?? 30,
             numberPrefix: numberPrefix

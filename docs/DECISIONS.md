@@ -172,3 +172,17 @@ Formato: cada decisión lleva fecha, estado y motivo. Una decisión nueva se añ
 - **Decisión**: `StubEntitlements` usa el plan `.pro` por defecto. `CreateQuote` conserva la comprobación de cuota para el futuro Paywall (M7), pero en la 1.0 no se alcanza. Se añade `ReleaseConfigurationTests` para fijar el comportamiento.
 - **Motivo**: la app se publica sin compras ni Paywall; un límite de cinco presupuestos al mes dejaría al usuario bloqueado sin forma de desbloquearlo.
 - **Consecuencia**: cuando se active el Paywall se cambiará el plan por defecto y se decidirá el tratamiento de duplicados y borrados (Q-007). `CheckQuota` y `QuotaPolicy` se mantienen como dominio probado, aunque la UI de la v1 no los use.
+
+## D-023 — Aplicación Android nativa con contrato de cálculo compartido
+- **Fecha**: 2026-11-19
+- **Estado**: aceptada
+- **Decisión**: Android se implementa en Kotlin con Jetpack Compose y una capa de dominio Kotlin pura. El dinero usa `java.math.BigDecimal`; la persistencia será local con Room; no se añaden servicios de red. La implementación Swift de `QuoteCore` sigue siendo la de iOS, y ambas plataformas consumen los mismos vectores de cálculo en `Packages/QuoteCore/Tests/QuoteCoreTests/Fixtures/quote_calculator_vectors.tsv`.
+- **Motivo**: las interfaces y APIs de plataforma (selección de archivos, persistencia y PDF/compartir) se integran directamente con Android, mientras un fixture único comprueba la paridad de las reglas de dinero.
+- **Consecuencia**: el proyecto Android vive en `Android/` con módulos `app` y `domain`. La configuración inicial desactiva permisos de Internet y copias automáticas. El SDK mínimo y el identificador definitivo quedan abiertos en Q-010.
+
+## D-024 — Idiomas y formatos regionales de la app
+- **Fecha**: 2026-11-22
+- **Estado**: aceptada
+- **Decisión**: el catálogo `Localizable.xcstrings` incluye español (España), inglés, español latinoamericano (`es-419`), francés, alemán, italiano y portugués de Brasil (`pt-BR`). iOS selecciona el idioma según la configuración del sistema. Los textos del PDF también se localizan. Los importes continúan en EUR, con separadores y formato de fecha de la región del dispositivo.
+- **Motivo**: ampliar el acceso a la interfaz sin duplicar pantallas ni alterar el dominio.
+- **Consecuencia**: las tasas fiscales siguen siendo editables y mantienen el valor inicial del producto español (21 %); la localización de idioma no convierte la app en una solución fiscal para otros países (Q-011).

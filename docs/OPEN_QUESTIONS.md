@@ -47,3 +47,13 @@ Cosas que el producto o la técnica no definen y que **no se inventan**. Cada un
 - **Bloquea**: no a la cuarta pestaña ni a la v1. Sí a una gestión de clientes con edición, fusión o alta antes del primer presupuesto.
 - **Propuesta**: mantener el directorio derivado mientras no haya una necesidad real. Si se pide editar/fusionar, añadir `ClientRecord` con identificador estable, relación opcional desde `QuoteRecord` y migración; decidir entonces si los presupuestos antiguos se reescriben o conservan su copia (hoy se conserva).
 
+## Q-010 — Requisitos de publicación de Android
+- **Contexto**: la versión Android acaba de arrancar. El producto aún no fija la versión mínima de Android ni el identificador de aplicación para Google Play.
+- **Bloquea**: no a la implementación local inicial.
+- **Provisional**: `minSdk 26` (Android 8.0) y `com.manuelcazalla.presupuestapp`; confirmar ambos antes de publicar o crear recursos permanentes en Play Console.
+
+## Q-011 — Fiscalidad y moneda para idiomas internacionales
+- **Contexto**: D-024 añade inglés, español latinoamericano, francés, alemán, italiano y portugués de Brasil, pero el producto calcula con reglas de IVA editables y usa EUR. La tasa inicial del 21 % corresponde al mercado español.
+- **Bloquea**: no la traducción de interfaz; sí presentar la app como adaptada fiscalmente a otros países.
+- **Propuesta**: antes de lanzar fuera de España, definir países, moneda, impuestos y valores iniciales por región con revisión fiscal local. Hasta entonces, los idiomas adicionales solo localizan la interfaz y el formato regional.
+

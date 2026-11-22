@@ -16,14 +16,16 @@ App móvil para profesionales de oficios (fontanería, albañilería, electricid
 
 ## Arquitectura (resumen; detalle en `docs/ARCHITECTURE.md`)
 Clean Architecture + MVVM. Dependencias: `Presentation → QuoteCore (Domain) ← Data`.
-- `Packages/QuoteCore`: dominio + motor de interpretación. Swift puro (solo Foundation). NO importa SwiftUI, SwiftData, UIKit, PDFKit ni Speech.
+- `Packages/QuoteCore`: dominio + motor de interpretación de iOS. Swift puro (solo Foundation). NO importa SwiftUI, SwiftData, UIKit, PDFKit ni Speech.
+- `Android/domain`: dominio Android puro Kotlin/JVM. Usa `BigDecimal` para dinero y la fixture de cálculo compartida con `QuoteCore`.
 - `App/Data`: SwiftData, repositorios, importadores, PDF, dictado.
 - `App/Presentation`: vistas SwiftUI y ViewModels por feature.
 - `App/Composition`: raíz de composición (inyección de dependencias manual).
+- `Android/app`: Android nativo con Jetpack Compose; datos locales con Room.
 
 ## Reglas de código
 - Dinero: `Decimal`. Nunca `Double`/`Float`. Reglas de redondeo en `docs/DOMAIN.md`.
-- Código e identificadores en inglés. Textos visibles en español, en `Localizable.xcstrings` (nunca literales sueltos en vistas).
+- Código e identificadores en inglés. El español es el idioma fuente; los textos visibles van en `Localizable.xcstrings` con traducciones para `en`, `es-419`, `fr`, `de`, `it` y `pt-BR` (nunca literales sueltos en vistas).
 - ViewModels: `@MainActor`, `@Observable`, sin importar SwiftData; reciben casos de uso por inicializador.
 - Un caso de uso = un tipo con un método `execute`. Los repositorios son protocolos en QuoteCore.
 - Los tipos `@Model` de SwiftData nunca salen de `App/Data`. Se traducen a entidades de dominio con mappers.

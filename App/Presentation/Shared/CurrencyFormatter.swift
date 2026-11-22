@@ -1,12 +1,13 @@
 import Foundation
 
-/// Formateo de moneda (es-ES, 2 decimales). Solo en Presentation:
+/// Formateo de moneda EUR según la región del dispositivo. Solo en Presentation:
 /// el dominio nunca formatea (ver docs/DOMAIN.md).
 enum CurrencyFormatter {
     private static let currency: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "es_ES")
+        formatter.locale = .current
+        formatter.currencyCode = "EUR"
         formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
         return formatter
@@ -15,7 +16,8 @@ enum CurrencyFormatter {
     private static let plain: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "es_ES")
+        formatter.locale = .current
+        formatter.usesGroupingSeparator = false
         formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
         return formatter
@@ -29,5 +31,14 @@ enum CurrencyFormatter {
     /// `121,00` para editar (sin símbolo, coma decimal).
     static func plainString(from amount: Decimal) -> String {
         plain.string(from: amount as NSNumber) ?? "\(amount)"
+    }
+
+    /// Accepts either comma or period as the decimal separator in editable fields.
+    static func decimal(from text: String) -> Decimal? {
+        let normalized = text
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: ",", with: ".")
+        guard !normalized.isEmpty else { return nil }
+        return Decimal(string: normalized, locale: Locale(identifier: "en_US_POSIX"))
     }
 }
