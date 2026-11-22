@@ -26,7 +26,7 @@ struct QuotePreviewView: View {
                 ContentUnavailableView {
                     Label("quote.preview.error", systemImage: "exclamationmark.triangle")
                 } description: {
-                    Text(LocalizedStringKey(message))
+                    Text(verbatim: message)
                 }
             } else {
                 ProgressView("quote.preview.loading")

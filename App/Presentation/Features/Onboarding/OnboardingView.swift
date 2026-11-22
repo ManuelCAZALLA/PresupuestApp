@@ -97,11 +97,18 @@ struct OnboardingView: View {
                 currentIndex: viewModel.progressIndex
             )
 
-            if let titleKey = viewModel.primaryTitleKey {
+            if let title = viewModel.primaryTitle {
                 Button {
                     primaryAction()
                 } label: {
-                    Text(LocalizedStringKey(titleKey))
+                    Group {
+                        switch title {
+                        case .close: Text("action.close")
+                        case .next: Text("onboarding.next")
+                        case .start: Text("onboarding.start")
+                        case .continueSetup: Text("onboarding.continue")
+                        }
+                    }
                         .font(.headline)
                         .frame(maxWidth: .infinity, minHeight: 56)
                 }

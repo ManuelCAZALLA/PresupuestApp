@@ -2,17 +2,24 @@
   "sourceLanguage" : "es",
   "strings" : {
     "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
       "localizations" : {
-        "es" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Presupuestos para Autónomos"
+            "value" : "Angebote für Selbstständige"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quotes for Independent Pros"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presupuestos para Autónomos"
           }
         },
         "es-419" : {
@@ -27,12 +34,6 @@
             "value" : "Devis pour professionnels"
           }
         },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Angebote für Selbstständige"
-          }
-        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43,6 +44,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orçamentos para profissionais"
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "PresupuestApp"
           }
         }
       }

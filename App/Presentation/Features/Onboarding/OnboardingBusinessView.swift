@@ -8,6 +8,9 @@ struct OnboardingBusinessView: View {
     @Bindable var viewModel: OnboardingViewModel
     @State private var photoItem: PhotosPickerItem?
 
+    private static let standardVATRate = Decimal(string: "0.21", locale: Locale(identifier: "en_US_POSIX")) ?? .zero
+    private static let reducedVATRate = Decimal(string: "0.10", locale: Locale(identifier: "en_US_POSIX")) ?? .zero
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -39,7 +42,7 @@ struct OnboardingBusinessView: View {
                 vatCard
 
                 if case .failed(let message) = viewModel.state {
-                    Label(LocalizedStringKey(message), systemImage: "exclamationmark.triangle.fill")
+                    Label { Text(verbatim: message) } icon: { Image(systemName: "exclamationmark.triangle.fill") }
                         .font(.footnote)
                         .foregroundStyle(.red)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,18 +73,21 @@ struct OnboardingBusinessView: View {
     }
 
     private var logoRow: some View {
-        // La clave se resuelve fuera del cierre de PhotosPicker, que es
-        // `@Sendable` y no puede leer el estado del ViewModel.
-        let actionKey = viewModel.logo == nil ? "onboarding.logo.add" : "onboarding.logo.change"
-
+        let hasLogo = viewModel.logo != nil
         return HStack(spacing: 14) {
             logoPreview
 
             PhotosPicker(selection: $photoItem, matching: .images) {
-                Text(LocalizedStringKey(actionKey))
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(BrandPalette.accent)
-                    .frame(minHeight: 44, alignment: .leading)
+                Group {
+                    if !hasLogo {
+                        Text("onboarding.logo.add")
+                    } else {
+                        Text("onboarding.logo.change")
+                    }
+                }
+                .font(.body.weight(.semibold))
+                .foregroundStyle(BrandPalette.accent)
+                .frame(minHeight: 44, alignment: .leading)
             }
 
             if viewModel.logo != nil {
@@ -131,8 +137,10 @@ struct OnboardingBusinessView: View {
                     .accessibilityHidden(true)
 
                 Picker("onboarding.vat.title", selection: $viewModel.vatChoice) {
-                    Text("onboarding.vat.standard").tag(OnboardingViewModel.VATChoice.standard)
-                    Text("onboarding.vat.reduced").tag(OnboardingViewModel.VATChoice.reduced)
+                    Text(Self.standardVATRate, format: .percent.precision(.fractionLength(0)))
+                        .tag(OnboardingViewModel.VATChoice.standard)
+                    Text(Self.reducedVATRate, format: .percent.precision(.fractionLength(0)))
+                        .tag(OnboardingViewModel.VATChoice.reduced)
                     Text("onboarding.vat.other").tag(OnboardingViewModel.VATChoice.other)
                 }
                 .pickerStyle(.segmented)

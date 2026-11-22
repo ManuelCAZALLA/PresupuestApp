@@ -5,6 +5,16 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+@Entity(tableName = "business_profile")
+data class BusinessProfileRecord(
+    @PrimaryKey val id: Int = 1,
+    val name: String,
+    val phone: String,
+    val taxId: String,
+    val defaultVatRate: String,
+    val hasCompletedOnboarding: Boolean,
+)
+
 @Entity(tableName = "catalog_items")
 data class CatalogItemRecord(
     @PrimaryKey val id: String,

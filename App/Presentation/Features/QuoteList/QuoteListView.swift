@@ -125,7 +125,7 @@ struct QuoteListView: View {
             Button("action.ok", role: .cancel) {}
         } message: {
             if case .failed(let message) = viewModel.state {
-                Text(LocalizedStringKey(message))
+                Text(verbatim: message)
             }
         }
         .confirmationDialog(

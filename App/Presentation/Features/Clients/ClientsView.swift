@@ -36,7 +36,7 @@ struct ClientsView: View {
             Button("action.ok", role: .cancel) {}
         } message: {
             if case .failed(let message) = viewModel.state {
-                Text(LocalizedStringKey(message))
+                Text(verbatim: message)
             }
         }
     }
@@ -171,11 +171,11 @@ private struct ClientRow: View {
     }
 
     private var quoteCountText: String {
-        let key = group.quoteCount == 1
-            ? "clients.quoteCount.one"
-            : "clients.quoteCount.other"
+        let format = group.quoteCount == 1
+            ? String(localized: "clients.quoteCount.one")
+            : String(localized: "clients.quoteCount.other")
         return String.localizedStringWithFormat(
-            NSLocalizedString(key, comment: ""),
+            format,
             group.quoteCount
         )
     }
@@ -218,7 +218,7 @@ private struct ClientDetailView: View {
             }
         } message: {
             if let message = viewModel.actionError {
-                Text(LocalizedStringKey(message))
+                Text(verbatim: message)
             }
         }
     }

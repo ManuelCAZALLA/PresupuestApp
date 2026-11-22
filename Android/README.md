@@ -13,7 +13,8 @@ Run the domain tests with:
 ./gradlew :domain:test
 ```
 
-The local Android SDK must be installed. The current prototype supports manual
-catalog entry, draft quotes with catalog snapshots, VAT/percentage discount
-calculation, and local PDF sharing. Business profile, imports, quote editing,
-and final PDF styling remain future milestones.
+The local Android SDK must be installed. The current prototype supports a
+locally stored business profile, manual catalog entry, draft quotes with
+catalog snapshots, VAT/percentage discount calculation, and local PDF sharing.
+The profile is collected on first launch and can be edited from the home screen.
+Imports and final PDF styling remain future milestones.

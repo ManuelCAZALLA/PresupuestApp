@@ -123,7 +123,7 @@ final class ImportTariffViewModel {
         do {
             let loaded = try source.tables(from: url)
             guard !loaded.isEmpty else {
-                state = .failed("importTariff.error.emptyFile")
+                state = .failed(String(localized: "importTariff.error.emptyFile"))
                 return
             }
             tables = loaded
@@ -143,14 +143,14 @@ final class ImportTariffViewModel {
             pastedText = try source.plainText(from: url)
             loadPastedText()
             if url.pathExtension.lowercased() == "pdf", rows.isEmpty {
-                state = .failed("importTariff.error.pdfNoRows")
+                state = .failed(String(localized: "importTariff.error.pdfNoRows"))
             }
         } catch {
-            state = .failed(
-                url.pathExtension.lowercased() == "pdf"
-                    ? "importTariff.error.pdfNoText"
-                    : AppErrorMapper.message(for: error)
-            )
+            if url.pathExtension.lowercased() == "pdf" {
+                state = .failed(String(localized: "importTariff.error.pdfNoText"))
+            } else {
+                state = .failed(AppErrorMapper.message(for: error))
+            }
         }
     }
 

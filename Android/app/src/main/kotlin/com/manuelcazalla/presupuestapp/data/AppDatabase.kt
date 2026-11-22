@@ -7,6 +7,14 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS business_profile (id INTEGER NOT NULL, name TEXT NOT NULL, phone TEXT NOT NULL, taxId TEXT NOT NULL, defaultVatRate TEXT NOT NULL, hasCompletedOnboarding INTEGER NOT NULL, PRIMARY KEY(id))")
+    }
+}
 
 @Dao
 interface CatalogItemDao {
@@ -48,12 +56,22 @@ interface QuoteDao {
     }
 }
 
+@Dao
+interface BusinessProfileDao {
+    @Query("SELECT * FROM business_profile WHERE id = 1 LIMIT 1")
+    suspend fun load(): BusinessProfileRecord?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun save(record: BusinessProfileRecord)
+}
+
 @Database(
-    entities = [CatalogItemRecord::class, QuoteRecord::class, QuoteLineRecord::class],
-    version = 1,
+    entities = [CatalogItemRecord::class, QuoteRecord::class, QuoteLineRecord::class, BusinessProfileRecord::class],
+    version = 2,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun catalogItems(): CatalogItemDao
     abstract fun quotes(): QuoteDao
+    abstract fun businessProfile(): BusinessProfileDao
 }

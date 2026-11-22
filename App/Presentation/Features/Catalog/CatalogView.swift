@@ -27,9 +27,15 @@ struct CatalogView: View {
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                     }
                 } header: {
-                    Text(LocalizedStringKey(section.category))
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(BrandPalette.accent)
+                    Group {
+                        if let category = section.category {
+                            Text(category)
+                        } else {
+                            Text("category.uncategorized")
+                        }
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(BrandPalette.accent)
                 }
             }
         }

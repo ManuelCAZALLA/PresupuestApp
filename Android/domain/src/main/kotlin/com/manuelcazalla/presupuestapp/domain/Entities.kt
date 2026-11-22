@@ -22,3 +22,11 @@ data class SavedQuote(
     val defaultVatRate: BigDecimal,
     val total: BigDecimal,
 )
+
+data class BusinessProfile(
+    val name: String = "",
+    val phone: String = "",
+    val taxId: String = "",
+    val defaultVatRate: BigDecimal = BigDecimal("21"),
+    val hasCompletedOnboarding: Boolean = false,
+)

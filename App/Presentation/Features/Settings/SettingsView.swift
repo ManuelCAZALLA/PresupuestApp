@@ -71,7 +71,7 @@ struct SettingsView: View {
                 }
 
                 if case .failed(let message) = viewModel.state {
-                    Text(LocalizedStringKey(message))
+                    Text(verbatim: message)
                         .foregroundStyle(.red)
                 }
             }
@@ -259,16 +259,20 @@ struct SettingsView: View {
     }
 
     private var logoSection: some View {
-        // PhotosPicker recibe un cierre Sendable: captura solo esta clave,
-        // resuelta aquí en el contexto principal, y no el ViewModel.
-        let actionKey = viewModel.profile.logo == nil ? "settings.logo.add" : "settings.logo.change"
+        let hasLogo = viewModel.profile.logo != nil
 
         return Section {
             HStack(spacing: 14) {
                 logoPreview
                 PhotosPicker(selection: $photoItem, matching: .images) {
-                    Text(LocalizedStringKey(actionKey))
-                        .frame(minHeight: 44, alignment: .leading)
+                    Group {
+                        if hasLogo {
+                            Text("settings.logo.change")
+                        } else {
+                            Text("settings.logo.add")
+                        }
+                    }
+                    .frame(minHeight: 44, alignment: .leading)
                 }
                 if viewModel.profile.logo != nil {
                     Button("settings.logo.remove", role: .destructive) {

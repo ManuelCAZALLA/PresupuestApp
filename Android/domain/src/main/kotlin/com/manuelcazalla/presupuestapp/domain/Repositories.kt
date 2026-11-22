@@ -11,3 +11,8 @@ interface QuoteRepository {
     suspend fun quote(id: String): SavedQuote?
     suspend fun save(quote: SavedQuote)
 }
+
+interface BusinessProfileRepository {
+    suspend fun load(): BusinessProfile
+    suspend fun save(profile: BusinessProfile)
+}

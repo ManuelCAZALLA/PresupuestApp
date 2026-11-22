@@ -44,7 +44,7 @@ struct ImportTariffView: View {
             ContentUnavailableView {
                 Label("importTariff.error.title", systemImage: "exclamationmark.triangle")
             } description: {
-                Text(LocalizedStringKey(message))
+                Text(verbatim: message)
             } actions: {
                 Button("importTariff.error.retry") { viewModel.backToOrigin() }
                     .frame(minHeight: 56)
@@ -252,7 +252,7 @@ struct ImportTariffView: View {
                 Text("importTariff.review.rows")
             } footer: {
                 if let errorMessage = viewModel.errorMessage {
-                    Text(LocalizedStringKey(errorMessage)).foregroundStyle(.red)
+                    Text(verbatim: errorMessage).foregroundStyle(.red)
                 }
             }
 

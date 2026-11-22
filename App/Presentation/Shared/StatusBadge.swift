@@ -5,21 +5,21 @@ struct StatusBadge: View {
     let status: QuoteStatus
 
     var body: some View {
-        Text(LocalizedStringKey(labelKey))
+        label
             .font(.caption.weight(.semibold))
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .foregroundStyle(color)
             .background(color.opacity(0.14), in: Capsule())
-            .accessibilityLabel(Text(LocalizedStringKey(labelKey)))
+            .accessibilityLabel(label)
     }
 
-    private var labelKey: String {
+    private var label: Text {
         switch status {
-        case .draft: return "quote.status.draft"
-        case .sent: return "quote.status.sent"
-        case .accepted: return "quote.status.accepted"
-        case .rejected: return "quote.status.rejected"
+        case .draft: Text("quote.status.draft")
+        case .sent: Text("quote.status.sent")
+        case .accepted: Text("quote.status.accepted")
+        case .rejected: Text("quote.status.rejected")
         }
     }
 

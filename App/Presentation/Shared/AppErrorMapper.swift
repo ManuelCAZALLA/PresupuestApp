@@ -1,30 +1,29 @@
 import Foundation
 import QuoteCore
 
-/// Traduce errores a claves de texto localizado
-/// (ver App/Resources/Localizable.xcstrings).
+/// Traduce errores del dominio a texto localizado.
 enum AppErrorMapper {
     static func message(for error: Error) -> String {
         guard let domainError = error as? DomainError else {
-            return "error.generic"
+            return String(localized: "error.generic")
         }
         switch domainError {
         case .emptyQuote:
-            return "error.emptyQuote"
+            return String(localized: "error.emptyQuote")
         case .quotaExceeded:
-            return "error.quotaExceeded"
+            return String(localized: "error.quotaExceeded")
         case .invalidTransition:
-            return "error.invalidTransition"
+            return String(localized: "error.invalidTransition")
         case .importFailed:
-            return "error.importFailed"
+            return String(localized: "error.importFailed")
         case .quoteNotFound:
-            return "error.quoteNotFound"
+            return String(localized: "error.quoteNotFound")
         case .lineNotFound:
-            return "error.lineNotFound"
+            return String(localized: "error.lineNotFound")
         case .itemNotFound:
-            return "error.itemNotFound"
+            return String(localized: "error.itemNotFound")
         case .kitNotFound:
-            return "error.kitNotFound"
+            return String(localized: "error.kitNotFound")
         }
     }
 }

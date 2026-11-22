@@ -1,12 +1,30 @@
 package com.manuelcazalla.presupuestapp.data
 
 import com.manuelcazalla.presupuestapp.domain.CatalogItem
+import com.manuelcazalla.presupuestapp.domain.BusinessProfile
+import com.manuelcazalla.presupuestapp.domain.BusinessProfileRepository
 import com.manuelcazalla.presupuestapp.domain.CatalogRepository
 import com.manuelcazalla.presupuestapp.domain.Discount
 import com.manuelcazalla.presupuestapp.domain.QuoteLine
 import com.manuelcazalla.presupuestapp.domain.QuoteRepository
 import com.manuelcazalla.presupuestapp.domain.SavedQuote
 import java.math.BigDecimal
+
+class RoomBusinessProfileRepository(private val dao: BusinessProfileDao) : BusinessProfileRepository {
+    override suspend fun load(): BusinessProfile = dao.load()?.let { record ->
+        BusinessProfile(record.name, record.phone, record.taxId, record.defaultVatRate.toBigDecimal(), record.hasCompletedOnboarding)
+    } ?: BusinessProfile()
+
+    override suspend fun save(profile: BusinessProfile) {
+        dao.save(BusinessProfileRecord(
+            name = profile.name,
+            phone = profile.phone,
+            taxId = profile.taxId,
+            defaultVatRate = profile.defaultVatRate.toPlainString(),
+            hasCompletedOnboarding = profile.hasCompletedOnboarding,
+        ))
+    }
+}
 
 class RoomCatalogRepository(private val dao: CatalogItemDao) : CatalogRepository {
     override suspend fun all(): List<CatalogItem> = dao.all().map { record ->

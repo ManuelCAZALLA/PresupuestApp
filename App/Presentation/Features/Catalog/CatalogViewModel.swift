@@ -35,11 +35,11 @@ final class CatalogViewModel {
     }
 
     /// Partidas agrupadas por categoría, para la lista por secciones.
-    var sections: [(category: String, items: [Item])] {
+    var sections: [(category: String?, items: [Item])] {
         let sorted = filteredItems.sorted { ($0.category ?? "") < ($1.category ?? "") }
-        return Dictionary(grouping: sorted) { $0.category ?? "category.uncategorized" }
+        return Dictionary(grouping: sorted) { $0.category }
             .map { (category: $0.key, items: $0.value) }
-            .sorted { $0.category < $1.category }
+            .sorted { ($0.category ?? "").localizedCaseInsensitiveCompare($1.category ?? "") == .orderedAscending }
     }
 
     func load() {

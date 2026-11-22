@@ -29,13 +29,25 @@ enum DomainLabels {
     static func importWarning(_ warning: ImportWarning) -> String {
         switch warning {
         case .unidadDesconocida(_, let raw):
-            return formattedWarning("importTariff.warning.unidadDesconocida.detail", raw)
+            return String.localizedStringWithFormat(
+                String(localized: "importTariff.warning.unidadDesconocida.detail"),
+                raw
+            )
         case .precioInvalido(_, let raw):
-            return formattedWarning("importTariff.warning.precioInvalido.detail", raw)
+            return String.localizedStringWithFormat(
+                String(localized: "importTariff.warning.precioInvalido.detail"),
+                raw
+            )
         case .precioAmbiguo(_, let raw):
-            return formattedWarning("importTariff.warning.precioAmbiguo.detail", raw)
+            return String.localizedStringWithFormat(
+                String(localized: "importTariff.warning.precioAmbiguo.detail"),
+                raw
+            )
         case .vatInvalido(_, let raw):
-            return formattedWarning("importTariff.warning.vatInvalido.detail", raw)
+            return String.localizedStringWithFormat(
+                String(localized: "importTariff.warning.vatInvalido.detail"),
+                raw
+            )
         case .sinPrecio:
             return String(localized: "importTariff.warning.sinPrecio")
         case .duplicado:
@@ -45,7 +57,4 @@ enum DomainLabels {
         }
     }
 
-    private static func formattedWarning(_ key: String, _ value: String) -> String {
-        String.localizedStringWithFormat(NSLocalizedString(key, comment: ""), value)
-    }
 }

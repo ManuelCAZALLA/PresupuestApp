@@ -25,6 +25,13 @@ final class OnboardingViewModel {
         case loadTariff
     }
 
+    enum PrimaryTitle: Equatable {
+        case close
+        case next
+        case start
+        case continueSetup
+    }
+
     enum ViewState: Equatable {
         case idle
         case saving
@@ -95,15 +102,15 @@ final class OnboardingViewModel {
 
     /// Título del botón principal; `nil` en el último paso, donde la
     /// acción la dan las tarjetas y "Lo haré luego".
-    var primaryTitleKey: String? {
+    var primaryTitle: PrimaryTitle? {
         switch mode {
         case .walkthrough:
-            return isLastVisibleStep ? "action.close" : "onboarding.next"
+            return isLastVisibleStep ? .close : .next
         case .onboarding:
             switch step {
-            case .tariff, .estimate: return "onboarding.next"
-            case .send: return "onboarding.start"
-            case .business: return "onboarding.continue"
+            case .tariff, .estimate: return .next
+            case .send: return .start
+            case .business: return .continueSetup
             case .loadTariff: return nil
             }
         }
