@@ -2,7 +2,9 @@ package com.manuelcazalla.presupuestapp
 
 import android.app.Application
 import android.content.Intent
+import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Bundle
@@ -58,6 +60,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.math.BigDecimal
 import java.text.NumberFormat
+import java.text.DateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
@@ -233,7 +237,7 @@ private fun QuoteApp(vm: HomeViewModel = viewModel()) {
                 if (state.quotes.isEmpty()) Text("Todavía no hay presupuestos. Añade precios a tu tarifa y crea el primero.")
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(state.quotes, key = { it.id }) { quote ->
-                        QuoteCard(quote, onEdit = { quoteBeingEdited = quote; showQuoteForm = true })
+                        QuoteCard(quote, state.profile, onEdit = { quoteBeingEdited = quote; showQuoteForm = true })
                     }
                 }
             } else {
@@ -421,7 +425,7 @@ private fun QuoteDialog(items: List<CatalogItem>, defaultVatRate: BigDecimal, qu
 }
 
 @Composable
-private fun QuoteCard(quote: SavedQuote, onEdit: () -> Unit) {
+private fun QuoteCard(quote: SavedQuote, profile: BusinessProfile, onEdit: () -> Unit) {
     val context = LocalContext.current
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -429,43 +433,157 @@ private fun QuoteCard(quote: SavedQuote, onEdit: () -> Unit) {
             Text("${quote.number} · ${quote.clientName.ifBlank { "Sin cliente" }}")
             Text("${quote.lines.size} líneas · ${money(quote.total)}")
             TextButton(onClick = onEdit) { Text("Editar presupuesto") }
-            OutlinedButton(onClick = { sharePdf(context, quote) }) { Text("Compartir PDF") }
+            OutlinedButton(onClick = { sharePdf(context, quote, profile) }) { Text("Compartir PDF") }
         }
     }
 }
 
-private fun sharePdf(context: android.content.Context, quote: SavedQuote) {
+private fun sharePdf(context: android.content.Context, quote: SavedQuote, profile: BusinessProfile) {
     val document = PdfDocument()
     val totals = QuoteCalculator().calculate(quote.lines, quote.discount)
-    val page = document.startPage(PdfDocument.PageInfo.Builder(595, 842, 1).create())
-    val paint = Paint().apply { textSize = 14f }
-    var y = 56
-    page.canvas.drawText("PRESUPUESTO ${quote.number}", 40f, y.toFloat(), paint); y += 28
-    page.canvas.drawText(quote.title, 40f, y.toFloat(), paint); y += 22
-    if (quote.clientName.isNotBlank()) { page.canvas.drawText("Cliente: ${quote.clientName}", 40f, y.toFloat(), paint); y += 24 }
-    quote.lines.forEach { line ->
-        page.canvas.drawText("${line.quantity.stripTrailingZeros().toPlainString()} ${line.unit}  ${line.name}", 40f, y.toFloat(), paint)
-        y += 22
+    val pageWidth = 595
+    val pageHeight = 842
+    val left = 40f
+    val right = pageWidth - 40f
+    val contentBottom = pageHeight - 52f
+    val bodyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFF202938.toInt(); textSize = 12f }
+    val smallPaint = Paint(bodyPaint).apply { color = 0xFF596579.toInt(); textSize = 10.5f }
+    val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFFE2E7EF.toInt(); strokeWidth = 0.8f }
+    val titlePaint = Paint(bodyPaint).apply {
+        color = 0xFF194F91.toInt()
+        textSize = 22f
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     }
-    y += 18
-    page.canvas.drawText("Subtotal: ${money(totals.subtotal)}", 40f, y.toFloat(), paint); y += 22
-    if (totals.discount > BigDecimal.ZERO) {
-        page.canvas.drawText("Descuento: −${money(totals.discount)}", 40f, y.toFloat(), paint); y += 22
+    val sectionPaint = Paint(bodyPaint).apply { typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD) }
+    val totalPaint = Paint(titlePaint).apply { textSize = 17f }
+    val lineHeight = bodyPaint.fontSpacing
+    var pageNumber = 0
+    var page: PdfDocument.Page? = null
+    var canvas = Canvas()
+    var y = 0f
+
+    fun drawParagraph(text: String, paint: Paint, width: Float = right - left, indent: Float = 0f): Int {
+        val lines = wrapPdfText(text, paint, width - indent)
+        lines.forEachIndexed { index, line ->
+            canvas.drawText(line, left + indent, y + paint.fontMetrics.descent.let { -it }, paint)
+            if (index < lines.lastIndex) y += paint.fontSpacing
+        }
+        y += paint.fontSpacing + 5f
+        return lines.size
     }
-    totals.vatBreakdown.forEach { group ->
-        page.canvas.drawText("Base IVA ${group.rate}%: ${money(group.base)}  ·  Cuota: ${money(group.vat)}", 40f, y.toFloat(), paint)
-        y += 22
+
+    fun finishPage() {
+        val footerY = pageHeight - 28f
+        canvas.drawLine(left, footerY - 12f, right, footerY - 12f, linePaint)
+        canvas.drawText("PresupuestApp · ${quote.number}", left, footerY + 2f, smallPaint)
+        val pageLabel = pageNumber.toString()
+        canvas.drawText(pageLabel, right - smallPaint.measureText(pageLabel), footerY + 2f, smallPaint)
+        document.finishPage(requireNotNull(page))
     }
-    y += 8
-    page.canvas.drawText("Total: ${money(quote.total)}", 40f, y.toFloat(), paint)
-    document.finishPage(page)
+
+    fun startPage(first: Boolean) {
+        pageNumber += 1
+        page = document.startPage(PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create())
+        canvas = requireNotNull(page).canvas
+        y = 44f
+        if (first) {
+            if (profile.name.isNotBlank()) drawParagraph(profile.name, titlePaint)
+            val businessDetails = listOfNotNull(
+                profile.taxId.takeIf(String::isNotBlank)?.let { "NIF $it" },
+                profile.phone.takeIf(String::isNotBlank)?.let { "Tel. $it" },
+            ).joinToString("   ·   ")
+            if (businessDetails.isNotBlank()) drawParagraph(businessDetails, smallPaint)
+            y += 5f
+            canvas.drawLine(left, y, right, y, linePaint)
+            y += 20f
+            drawParagraph("PRESUPUESTO ${quote.number}", titlePaint)
+            drawParagraph(quote.title.ifBlank { "Presupuesto" }, sectionPaint)
+            val date = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.forLanguageTag("es-ES"))
+                .format(Date(quote.createdAtEpochMillis))
+            drawParagraph("Fecha: $date", smallPaint)
+            if (quote.clientName.isNotBlank()) drawParagraph("Cliente: ${quote.clientName}", bodyPaint)
+        } else {
+            drawParagraph("${profile.name.ifBlank { "Presupuesto" }} · ${quote.number}", sectionPaint)
+            canvas.drawLine(left, y, right, y, linePaint)
+            y += 18f
+        }
+        canvas.drawText("DESCRIPCIÓN", left, y + bodyPaint.fontMetrics.descent.let { -it }, sectionPaint)
+        val quantityHeading = "CANTIDAD"
+        canvas.drawText(quantityHeading, right - sectionPaint.measureText(quantityHeading), y + bodyPaint.fontMetrics.descent.let { -it }, sectionPaint)
+        y += bodyPaint.fontSpacing + 8f
+        canvas.drawLine(left, y, right, y, linePaint)
+        y += 9f
+    }
+
+    val normalizedLines = quote.lines.map { line ->
+        line.name to wrapPdfText(line.name, bodyPaint, 385f)
+    }
+    val discountRows = if (totals.discount > BigDecimal.ZERO) 1 else 0
+    val requiredSummaryHeight = 24f + discountRows * 24f + totals.vatBreakdown.size * 25f + 45f
     val file = File(context.cacheDir, "presupuesto-${quote.number}.pdf")
-    file.outputStream().use(document::writeTo)
-    document.close()
+
+    startPage(first = true)
+    try {
+        quote.lines.forEachIndexed { index, _ ->
+            val wrapped = normalizedLines[index].second
+            val rowHeight = wrapped.size * lineHeight + 12f
+            val reserve = if (index == quote.lines.lastIndex) requiredSummaryHeight + 30f else 0f
+            if (y + rowHeight + reserve > contentBottom) startPage(first = false)
+            val baseline = y + bodyPaint.fontMetrics.descent.let { -it }
+            wrapped.forEachIndexed { lineIndex, text ->
+                canvas.drawText(text, left, baseline + lineIndex * lineHeight, bodyPaint)
+            }
+            val line = quote.lines[index]
+            val quantity = "${line.quantity.stripTrailingZeros().toPlainString()} ${line.unit}"
+            canvas.drawText(quantity, right - bodyPaint.measureText(quantity), baseline, bodyPaint)
+            y += rowHeight
+            canvas.drawLine(left, y - 4f, right, y - 4f, linePaint)
+        }
+
+        y += 10f
+        canvas.drawLine(left, y, right, y, linePaint)
+        y += 16f
+        fun summaryRow(label: String, value: String, strong: Boolean = false) {
+            val paint = if (strong) totalPaint else bodyPaint
+            val baseline = y + paint.fontMetrics.descent.let { -it }
+            canvas.drawText(label, left + 5f, baseline, paint)
+            canvas.drawText(value, right - 5f - paint.measureText(value), baseline, paint)
+            y += if (strong) 38f else 24f
+        }
+        summaryRow("Subtotal", money(totals.subtotal))
+        if (totals.discount > BigDecimal.ZERO) summaryRow("Descuento", "−${money(totals.discount)}")
+        totals.vatBreakdown.forEach { group ->
+            summaryRow("IVA ${group.rate}% · base ${money(group.base)}", money(group.vat))
+        }
+        y += 3f
+        canvas.drawLine(left, y, right, y, linePaint)
+        y += 8f
+        summaryRow("TOTAL", money(totals.total), strong = true)
+        finishPage()
+        file.outputStream().use(document::writeTo)
+    } finally {
+        document.close()
+    }
     val uri: Uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
     context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
         type = "application/pdf"; putExtra(Intent.EXTRA_STREAM, uri); addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }, "Compartir presupuesto"))
+}
+
+private fun wrapPdfText(text: String, paint: Paint, maxWidth: Float): List<String> = buildList {
+    text.split('\n').forEach { paragraph ->
+        var current = ""
+        paragraph.split(Regex("\\s+")).filter(String::isNotBlank).forEach { word ->
+            val candidate = if (current.isEmpty()) word else "$current $word"
+            if (current.isNotEmpty() && paint.measureText(candidate) > maxWidth) {
+                add(current)
+                current = word
+            } else {
+                current = candidate
+            }
+        }
+        if (current.isNotEmpty()) add(current)
+    }
 }
 
 private fun String.toDecimalOrNull(): BigDecimal? = trim().replace(',', '.').takeIf { it.isNotEmpty() }?.toBigDecimalOrNull()

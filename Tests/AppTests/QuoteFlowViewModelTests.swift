@@ -101,7 +101,7 @@ struct QuoteFlowViewModelTests {
         viewModel.requestDelete(quote)
         viewModel.confirmDelete()
 
-        #expect(viewModel.state == .failed("error.quoteNotFound"))
+        #expect(viewModel.state == .failed(String(localized: "error.quoteNotFound")))
         #expect(viewModel.quotes.map(\.id) == [quote.id])
     }
 

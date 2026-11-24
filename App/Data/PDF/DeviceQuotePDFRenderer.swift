@@ -66,7 +66,9 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
             let summaryReserve = summaryHeight(totals: totals)
             for (index, _) in quote.lines.enumerated() {
                 let rowH = Self.rowHeight
-                if y + rowH + summaryReserve > Self.bottomLimit - Self.footerReserve {
+                let isLastLine = index == quote.lines.index(before: quote.lines.endIndex)
+                let requiredHeight = rowH + (isLastLine ? 18 + summaryReserve : 0)
+                if y + requiredHeight > Self.bottomLimit - Self.footerReserve {
                     page += 1
                     y = Self.marginTop
                     linesStartYByPage[page] = y
@@ -75,12 +77,8 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
                 firstLinePage[index] = page
                 y += rowH
             }
-            // summary after last line
-            let sHeight = summaryHeight(totals: totals)
-            if y + 18 + sHeight > Self.bottomLimit - Self.footerReserve {
-                page += 1
-                y = Self.marginTop
-            }
+            // The last line is moved with the summary when they do not fit;
+            // this keeps the totals from becoming a page by themselves.
             let summaryPage = page
             let totalPages = page + 1
             return LayoutPlan(pageCount: totalPages, firstLinePage: firstLinePage, summaryPage: summaryPage, linesStartYByPage: linesStartYByPage)
@@ -340,13 +338,13 @@ struct DeviceQuotePDFRenderer: QuotePDFRenderer {
 
     private func drawWatermark(in context: UIGraphicsPDFRendererContext) {
         let text = String(localized: "settings.appName", bundle: .main)
-        let font = UIFont.systemFont(ofSize: 48, weight: .semibold)
+        let font = UIFont.systemFont(ofSize: 38, weight: .semibold)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font,
             .foregroundColor: UIColor.gray.withAlphaComponent(0.10)
         ]
         context.cgContext.saveGState()
-        context.cgContext.translateBy(x: 180, y: 520)
+        context.cgContext.translateBy(x: 65, y: 680)
         context.cgContext.rotate(by: -CGFloat.pi / 4)
         text.draw(at: .zero, withAttributes: attributes)
         context.cgContext.restoreGState()

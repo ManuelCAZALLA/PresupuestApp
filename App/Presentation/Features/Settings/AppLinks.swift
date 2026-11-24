@@ -26,7 +26,7 @@ struct AppLinks: Equatable {
         websiteURL: URL(string: "https://manuelcazalla.github.io/PresupuestApp-Web/"),
         privacyURL: URL(string: "https://manuelcazalla.github.io/PresupuestApp-Politica-Privacidad.html/"),
         termsURL: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"),
-        appStoreID: "0000000000"
+        appStoreID: "6834888121"
     )
 
     func supportMailtoURL(

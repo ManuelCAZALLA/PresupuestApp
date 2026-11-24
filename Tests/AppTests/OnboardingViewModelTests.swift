@@ -49,11 +49,11 @@ struct OnboardingViewModelTests {
         #expect(viewModel.progressIndex == 2)
     }
 
-    @Test("El indicador cuenta los tres pasos del carrusel")
+    @Test("El indicador cuenta los cinco pasos del onboarding")
     func pageIndicatorCountsCarousel() throws {
         let viewModel = makeOnboarding()
 
-        #expect(viewModel.progressCount == 3)
+        #expect(viewModel.progressCount == 5)
         #expect(viewModel.progressIndex == 0)
         viewModel.next()
         #expect(viewModel.progressIndex == 1)

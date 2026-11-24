@@ -69,7 +69,7 @@ struct ClientsViewModelTests {
         let group = try #require(viewModel.groups.first)
 
         #expect(viewModel.createQuote(for: group) == nil)
-        #expect(viewModel.actionError == "error.quotaExceeded")
+        #expect(viewModel.actionError == String(localized: "error.quotaExceeded"))
 
         viewModel.clearActionError()
         #expect(viewModel.actionError == nil)

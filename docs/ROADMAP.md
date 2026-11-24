@@ -1,6 +1,6 @@
 # Hoja de ruta
 
-> **Versión 1.0.1 (2026-11-18, build 2)**: correcciones de importación y soporte para PDF con texto seleccionable. OCR para PDF escaneado sigue fuera del alcance. La versión 1.0 se publicó con el flujo sin dictado (M4b), PDF profesional, Agrupaciones y Clientes.
+> **Preparación de versión 1.0.2 (build 3, 2026-11-24)**: localización de la app en español, inglés, español latinoamericano, francés, alemán, italiano y portugués de Brasil. Pendiente completar el checklist y subir a App Store Connect. La versión 1.0.1 (build 2) añadió correcciones de importación y PDF con texto seleccionable. OCR para PDF escaneado sigue fuera del alcance.
 
 Un hito = una rama. Al terminar un hito: tests en verde, `reviewer` aprueba, se marca como hecho aquí.
 Estado: [ ] pendiente · [~] en curso · [x] hecho.

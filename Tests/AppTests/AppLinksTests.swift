@@ -60,6 +60,12 @@ struct AppLinksTests {
         #expect(AppLinks(appStoreID: "app-id").reviewURL == nil)
     }
 
+    @Test("La configuración apunta a la ficha publicada de PresupuestApp")
+    func configuredReviewURLUsesPublishedAppID() throws {
+        let url = try #require(AppLinks.configured.reviewURL)
+        #expect(url.absoluteString == "https://apps.apple.com/app/id6834888121?action=write-review")
+    }
+
     @Test("Compartir añade un enlace solo si hay uno configurado")
     func shareTextUsesConfiguredLink() {
         let withWebsite = AppLinks(websiteURL: URL(string: "https://example.com"))
